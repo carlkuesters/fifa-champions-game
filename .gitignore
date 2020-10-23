@@ -67,6 +67,7 @@ workspace
 *.mtl
 *.fbx
 *.FBX
+*.psd
 *.blend
 *.mesh.xml
 *.skeleton.xml
