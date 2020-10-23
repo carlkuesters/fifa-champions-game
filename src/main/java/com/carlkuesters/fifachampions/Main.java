@@ -97,7 +97,7 @@ public class Main extends SimpleApplication {
         postFilterAppState.addFilter(shadowFilter);
         stateManager.attach(postFilterAppState);
 
-        Spatial stadium = assetManager.loadModel("Models/stadium/stadium.j3o");
+        Spatial stadium = assetManager.loadModel("models/stadium/stadium.j3o");
         stadium.move(12.765f, 0, -10.06f);
         stadium.rotate(0, FastMath.HALF_PI, 0);
         stadium.scale(1.1775f);
@@ -133,7 +133,7 @@ public class Main extends SimpleApplication {
         for (Team team : game.getTeams()) {
             for (PlayerObject playerObject : team.getPlayers()) {
                 Node playerVisual = new Node();
-                Node playerModel = (Node) assetManager.loadModel("Models/player/player.j3o");
+                Node playerModel = (Node) assetManager.loadModel("models/player/player.j3o");
                 playerModel.scale(0.0106f);
                 playerModel.move(0, 1.302f, 0);
                 playerModel.rotate(0, -1 * FastMath.HALF_PI, 0);
@@ -141,18 +141,18 @@ public class Main extends SimpleApplication {
                 AnimChannel animChannel = animControl.createChannel();
                 // Head
                 Material materialHead = createTextureMaterial(
-                    "Models/player/resources/WSP_head_D.png",
-                    "Models/player/resources/WSP_head_N.png",
-                    "Models/player/resources/WSP_head_SP.png"
+                    "models/player/resources/WSP_head_D.png",
+                    "models/player/resources/WSP_head_N.png",
+                    "models/player/resources/WSP_head_SP.png"
                 );
                 Geometry head = (Geometry) playerModel.getChild("head");
                 head.setMaterial(materialHead);
                 // Body
                 String trikotName = ((playerObject.getPlayer() instanceof Goalkeeper) ? "thinstripes" : teamColorName);
                 Material materialBody = createTextureMaterial(
-                    "Models/player/resources/WSP_body_" + trikotName + "_D.png",
-                    "Models/player/resources/WSP_body_N.png",
-                    "Models/player/resources/WSP_body_SP.png"
+                    "models/player/resources/WSP_body_" + trikotName + "_D.png",
+                    "models/player/resources/WSP_body_N.png",
+                    "models/player/resources/WSP_body_SP.png"
                 );
                 Geometry body = (Geometry) playerModel.getChild("body");
                 body.setMaterial(materialBody);
@@ -181,14 +181,14 @@ public class Main extends SimpleApplication {
         }
 
         Node ballNode = new Node();
-        ballModel = assetManager.loadModel("Models/ball/ball.j3o");
+        ballModel = assetManager.loadModel("models/ball/ball.j3o");
         // Target circumference = 2 * (69cm / 2*Pi) = 21.9633821467
         ballModel.setLocalScale(0.001606f);
         ballModel.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         Material materialBall = createTextureMaterial(
-            "Models/ball/resources/ball_D.png",
-            "Models/ball/resources/ball_N.png",
-            "Models/ball/resources/ball_SP.png"
+            "models/ball/resources/ball_D.png",
+            "models/ball/resources/ball_N.png",
+            "models/ball/resources/ball_SP.png"
         );
         ballNode.setLocalTranslation(0, 0.432f, 0);
         ballNode.attachChild(ballModel);
