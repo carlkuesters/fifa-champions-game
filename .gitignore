@@ -63,4 +63,11 @@ nbactions.xml
 
 # FIFA-Champions specific #
 workspace
+*.obj
+*.mtl
+*.fbx
+*.FBX
 *.blend
+*.mesh.xml
+*.skeleton.xml
+animations.csv
