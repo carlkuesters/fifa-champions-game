@@ -1,0 +1,49 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.carlkuesters.fifachampions.game.situations;
+
+import com.jme3.math.Vector3f;
+import com.carlkuesters.fifachampions.game.MathUtil;
+import com.carlkuesters.fifachampions.game.PlayerObject;
+import com.carlkuesters.fifachampions.game.Situation;
+import com.carlkuesters.fifachampions.game.Team;
+
+/**
+ *
+ * @author Carl
+ */
+public class CornerKickSituation extends Situation {
+
+    public CornerKickSituation(Team team, Vector3f ballPosition) {
+        super(getStartingPlayer(team), true);
+        this.ballPosition = ballPosition.clone();
+    }
+    private Vector3f ballPosition;
+
+    // TODO: Properly choosing a starting player (based on position?)
+    private static PlayerObject getStartingPlayer(Team team) {
+        return team.getPlayers().get(team.getPlayers().size() - 1);
+    }
+
+    @Override
+    public Vector3f getBallPosition() {
+        return ballPosition;
+    }
+
+    @Override
+    public Vector3f getPlayerPosition(PlayerObject playerObject) {
+        if (playerObject == startingPlayer) {
+            // Step a bit out of the field away from the ball
+            return ballPosition.add(ballPosition.normalize().mult(0.5f));
+        }
+        return MathUtil.convertTo3D_XZ(playerObject.getTeam().getIdealLocation(playerObject));
+    }
+
+    @Override
+    public Vector3f getPlayerDirection(PlayerObject playerObject) {
+        return ballPosition.subtract(playerObject.getPosition()).normalizeLocal();
+    }
+}
