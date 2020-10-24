@@ -8,6 +8,7 @@ public class MathUtil {
 
     public static final float EPSILON = 0.00001f;
     public static final float EPSILON_SQUARED = (EPSILON * EPSILON);
+    public static final Vector2f UNIT_2D_Y = new Vector2f(0, 1);
 
     public static boolean equalsWithEpsilon(Vector2f vector1, Vector2f vector2) {
         return (vector1.distanceSquared(vector2) < EPSILON_SQUARED);

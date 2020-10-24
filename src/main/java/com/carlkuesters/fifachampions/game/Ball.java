@@ -21,9 +21,9 @@ public class Ball extends PhysicsObject {
     private float rotationProgressInRadians;
 
     @Override
-    protected void updateTransform(Vector3f position, Vector3f direction, Vector3f velocity, float tpf) {
+    protected void updateTransform(Vector3f position, Quaternion rotation, Vector3f velocity, float tpf) {
         lastPosition.set(position);
-        super.updateTransform(position, direction, velocity, tpf);
+        super.updateTransform(position, rotation, velocity, tpf);
         if (owner != null) {
             placeInFrontOfOwner(position, velocity);
             velocity.set(position.subtract(lastPosition)).divideLocal(tpf);
@@ -35,7 +35,7 @@ public class Ball extends PhysicsObject {
         Vector3f rotationAxis = new Quaternion().fromAngleAxis(-1 * FastMath.HALF_PI, movedDistance).mult(Vector3f.UNIT_Y).normalizeLocal();
         rotationProgressInRadians += (movedDistance.length() * 2);
         Quaternion moveRotation = new Quaternion().fromAngleAxis(rotationProgressInRadians, rotationAxis);
-        direction.set(moveRotation.mult(Vector3f.UNIT_Y));
+        setDirection(moveRotation.mult(Vector3f.UNIT_Y));
     }
 
     public void accelerate(Vector3f velocity, boolean canTriggerOffside) {

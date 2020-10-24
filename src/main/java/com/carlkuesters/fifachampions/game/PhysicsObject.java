@@ -1,7 +1,9 @@
 package com.carlkuesters.fifachampions.game;
 
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.util.TempVars;
 
 import java.util.function.Predicate;
 
@@ -12,30 +14,30 @@ public class PhysicsObject extends GameObject {
     protected float bouncinessGround = 0;
     protected float bouncinessWalls = 0;
     private Vector3f tmpPrecomputedPosition = new Vector3f();
-    private Vector3f tmpPrecomputedDirection = new Vector3f();
+    private Quaternion tmpPrecomputedRotation = new Quaternion();
     private Vector3f tmpPrecomputedVelocity = new Vector3f();
     private Vector3f tmpNewPosition = new Vector3f();
     protected Vector3f position = new Vector3f();
-    protected Vector3f direction = new Vector3f(0, 0, 1);
+    protected Quaternion rotation = new Quaternion();
     protected Vector3f velocity = new Vector3f();
 
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        updateTransform(position, direction, velocity, tpf);
+        updateTransform(position, rotation, velocity, tpf);
     }
 
-    public PhysicsPrecomputationResult precomputePositionUntil(Predicate<PhysicsPrecomputationResult> endCondition) {
+    public PhysicsPrecomputationResult precomputeTransformUntil(Predicate<PhysicsPrecomputationResult> endCondition) {
         tmpPrecomputedPosition.set(position);
-        tmpPrecomputedDirection.set(direction);
+        tmpPrecomputedRotation.set(rotation);
         tmpPrecomputedVelocity.set(velocity);
-        PhysicsPrecomputationResult precomputationResult = new PhysicsPrecomputationResult(tmpPrecomputedPosition, tmpPrecomputedDirection, tmpPrecomputedVelocity);
+        PhysicsPrecomputationResult precomputationResult = new PhysicsPrecomputationResult(tmpPrecomputedPosition, tmpPrecomputedRotation, tmpPrecomputedVelocity);
         float passedTime = 0;
         while (passedTime < 5) {
             passedTime += PRECOMPUTE_TIME_PER_FRAME;
-            updateTransform(tmpPrecomputedPosition, tmpPrecomputedDirection, tmpPrecomputedVelocity, PRECOMPUTE_TIME_PER_FRAME);
+            updateTransform(tmpPrecomputedPosition, tmpPrecomputedRotation, tmpPrecomputedVelocity, PRECOMPUTE_TIME_PER_FRAME);
             precomputationResult.setPosition(tmpPrecomputedPosition);
-            precomputationResult.setDirection(tmpPrecomputedDirection);
+            precomputationResult.setRotation(tmpPrecomputedRotation);
             precomputationResult.setVelocity(tmpPrecomputedVelocity);
             precomputationResult.setPassedTime(passedTime);
             if (endCondition.test(precomputationResult)) {
@@ -45,7 +47,7 @@ public class PhysicsObject extends GameObject {
         return null;
     }
 
-    protected void updateTransform(Vector3f position, Vector3f direction, Vector3f velocity, float tpf) {
+    protected void updateTransform(Vector3f position, Quaternion rotation, Vector3f velocity, float tpf) {
         velocity.setY(velocity.getY() - (gravitation * tpf));
         tmpNewPosition.set(position);
         tmpNewPosition.addLocal(velocity.mult(tpf));
@@ -124,11 +126,13 @@ public class PhysicsObject extends GameObject {
     }
 
     public void lookAt_XZ(Vector3f position) {
-        direction.set(position.getX(), 0, position.getZ()).subtractLocal(this.position.getX(), 0, this.position.getZ()).normalizeLocal();
+        TempVars tempVars = TempVars.get();
+        setDirection(tempVars.vect1.set(position.getX(), 0, position.getZ()).subtractLocal(this.position.getX(), 0, this.position.getZ()).normalizeLocal());
+        tempVars.release();
     }
 
-    public void setDirection(Vector3f direction) {
-        this.direction.set(direction);
+    public void setRotation(Quaternion rotation) {
+        this.rotation = rotation;
     }
 
     public void setVelocity(Vector3f velocity) {
@@ -139,8 +143,19 @@ public class PhysicsObject extends GameObject {
         return position;
     }
 
+    public Quaternion getRotation() {
+        return rotation;
+    }
+
     public Vector3f getDirection() {
+        TempVars tempVars = TempVars.get();
+        Vector3f direction = rotation.multLocal(tempVars.vect1.set(Vector3f.UNIT_Z));
+        tempVars.release();
         return direction;
+    }
+
+    public void setDirection(Vector3f direction) {
+        rotation.lookAt(direction, Vector3f.UNIT_Y);
     }
 
     public Vector3f getVelocity() {

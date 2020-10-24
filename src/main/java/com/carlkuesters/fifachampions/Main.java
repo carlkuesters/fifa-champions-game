@@ -130,15 +130,17 @@ public class Main extends SimpleApplication {
         }*/
 
         String teamColorName = "yellow";
+        float playerModelOffsetForFeetsOnGround = 1.302f;
         for (Team team : game.getTeams()) {
             for (PlayerObject playerObject : team.getPlayers()) {
-                Node playerVisual = new Node();
                 Node playerModel = (Node) assetManager.loadModel("models/player/player.j3o");
                 playerModel.scale(0.0106f);
-                playerModel.move(0, 1.302f, 0);
+                float halfPlayerModelHeight = (JMonkeyUtil.getSpatialDimension(playerModel).getY() / 2);
+                // Center player model on y axis
+                playerModel.move(0, (playerModelOffsetForFeetsOnGround - halfPlayerModelHeight), 0);
                 playerModel.rotate(0, -1 * FastMath.HALF_PI, 0);
                 AnimControl animControl = playerModel.getControl(AnimControl.class);
-                AnimChannel animChannel = animControl.createChannel();
+                animControl.createChannel();
                 // Head
                 Material materialHead = createTextureMaterial(
                     "models/player/resources/WSP_head_D.png",
@@ -157,8 +159,15 @@ public class Main extends SimpleApplication {
                 Geometry body = (Geometry) playerModel.getChild("body");
                 body.setMaterial(materialBody);
                 playerModel.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+                // Add model to visual
+                Node playerVisual = new Node();
                 playerVisual.attachChild(playerModel);
-                rootNode.attachChild(playerVisual);
+                // Add visual to wrapper
+                Node playerWrapper = new Node();
+                playerWrapper.setLocalTranslation(0, halfPlayerModelHeight, 0);
+                playerWrapper.attachChild(playerVisual);
+                // Add wrapper to root
+                rootNode.attachChild(playerWrapper);
                 playerVisuals.put(playerObject, playerVisual);
             }
             teamColorName = "red";
@@ -319,7 +328,7 @@ public class Main extends SimpleApplication {
 
     private void updateTransform(PhysicsObject physicsObject, Spatial spatial) {
         spatial.setLocalTranslation(physicsObject.getPosition());
-        JMonkeyUtil.setLocalRotation(spatial, physicsObject.getDirection());
+        spatial.setLocalRotation(physicsObject.getRotation());
     }
 
     private PlayerAnimation RUN_ANIMATION_FAST = new PlayerAnimation("run_fast", 0.7f);

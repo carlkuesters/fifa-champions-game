@@ -2,6 +2,7 @@ package com.carlkuesters.fifachampions.game;
 
 import com.jme3.animation.LoopMode;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.cooldowns.UnownedBallPickupCooldown;
@@ -72,6 +73,8 @@ public class PlayerObject extends PhysicsObject {
                 slowDown(velocity, goalkeeperJumpSlowFactorZ, 2, tpf);
                 if (velocity.lengthSquared() <= 0) {
                     isGoalkeeperJumping = false;
+                    // TODO: Consider halftime
+                    setDirection(new Vector3f(team.getSide(), 0, 0));
                     setAnimation(null);
                 }
             } else {
@@ -139,7 +142,7 @@ public class PlayerObject extends PhysicsObject {
         turnIntoControllerTargetDirection();
         float effectiveStrength = (18 + (11 * strength));
         float effectiveSlope = (2 + (11 * strength));
-        Vector3f ballVelocity = direction.mult(effectiveStrength).addLocal(0, effectiveSlope, 0);
+        Vector3f ballVelocity = getDirection().mult(effectiveStrength).addLocal(0, effectiveSlope, 0);
         accelerateBall(ballVelocity, true);
         setAnimation(new PlayerAnimation("run_kick_end", 1));
     }
@@ -147,7 +150,7 @@ public class PlayerObject extends PhysicsObject {
     public void header(float strength) {
         turnIntoControllerTargetDirection();
         float effectiveStrength = (14 + (9 * strength));
-        Vector3f ballVelocity = direction.mult(effectiveStrength);
+        Vector3f ballVelocity = getDirection().mult(effectiveStrength);
         accelerateBall(ballVelocity, true);
         setAnimation(new PlayerAnimation("header_end", 0.5f));
     }
@@ -172,7 +175,7 @@ public class PlayerObject extends PhysicsObject {
                 controller.setPlayer(targetedPlayer);
             }
         } else {
-            passDirection = direction.clone();
+            passDirection = getDirection().clone();
         }
         return passDirection;
     }
@@ -184,9 +187,11 @@ public class PlayerObject extends PhysicsObject {
 
     private void turnIntoWalkDirection() {
         if (targetWalkDirection.lengthSquared() > MathUtil.EPSILON_SQUARED) {
-            direction.setX(targetWalkDirection.getX());
-            direction.setZ(targetWalkDirection.getY());
-            direction.normalizeLocal();
+            Vector3f newDirection = getDirection().clone();
+            newDirection.setX(targetWalkDirection.getX());
+            newDirection.setZ(targetWalkDirection.getY());
+            newDirection.normalizeLocal();
+            setDirection(newDirection);
         }
     }
 
@@ -199,7 +204,7 @@ public class PlayerObject extends PhysicsObject {
         if (remainingFallingDuration == 0) {
             isStraddling = true;
             float straddleVelocity = Math.max(3, velocity.length());
-            velocity.set(direction.mult(straddleVelocity));
+            velocity.set(getDirection().mult(straddleVelocity));
             this.remainingFallingDuration = (1 + (straddleVelocity / 9));
             setAnimation(new PlayerAnimation("tackle", (1.1f * remainingFallingDuration), LoopMode.DontLoop));
         }
@@ -274,9 +279,16 @@ public class PlayerObject extends PhysicsObject {
             initialVelocityY,
             initialVelocityZ
         );
-
         velocity.set(initialVelocity);
-        setAnimation(new PlayerAnimation("goalkeeper_jump", 1, LoopMode.DontLoop));
+
+        Vector3f distanceToTarget_XYZ = targetPosition.subtract(position);
+        Vector2f directionToTarget_ZY = new Vector2f(distanceToTarget_XYZ.getZ(), distanceToTarget_XYZ.getY()).normalizeLocal();
+        float jumpAngle = -1 * directionToTarget_ZY.angleBetween(MathUtil.UNIT_2D_Y);
+        // TODO: Consider halftime
+        rotation.lookAt(new Vector3f(team.getSide(), 0, 0), Vector3f.UNIT_Y);
+        rotation.multLocal(new Quaternion().fromAngleAxis(jumpAngle, Vector3f.UNIT_Z));
+
+        setAnimation(new PlayerAnimation("goalkeeper_jump", jumpDuration, LoopMode.DontLoop));
     }
 
     public boolean onBallPickUp() {

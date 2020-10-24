@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions.game;
 
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,13 +9,13 @@ import lombok.Setter;
 @Setter
 public class PhysicsPrecomputationResult {
 
-    public PhysicsPrecomputationResult(Vector3f position, Vector3f direction, Vector3f velocity) {
+    public PhysicsPrecomputationResult(Vector3f position, Quaternion rotation, Vector3f velocity) {
         this.position = position;
-        this.direction = direction;
+        this.rotation = rotation;
         this.velocity = velocity;
     }
     private Vector3f position;
-    private Vector3f direction;
+    private Quaternion rotation;
     private Vector3f velocity;
     private float passedTime;
 }

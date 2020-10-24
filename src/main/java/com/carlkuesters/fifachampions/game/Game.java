@@ -174,12 +174,13 @@ public class Game implements GameLoopListener {
                     if (!goalkeeper.isGoalkeeperJumping()) {
                         PhysicsPrecomputationResult ballInGoalResult;
                         if (team == teams[0]) {
-                            ballInGoalResult = ball.precomputePositionUntil(result -> isInsideGoal1(result.getPosition()));
+                            ballInGoalResult = ball.precomputeTransformUntil(result -> isInsideGoal1(result.getPosition()));
                         } else {
-                            ballInGoalResult = ball.precomputePositionUntil(result -> isInsideGoal2(result.getPosition()));
+                            ballInGoalResult = ball.precomputeTransformUntil(result -> isInsideGoal2(result.getPosition()));
                         }
                         if (ballInGoalResult != null) {
                             Vector3f goalLinePosition = ballInGoalResult.getPosition().clone();
+                            // TODO: Consider halftime
                             goalLinePosition.setX(-1 * team.getSide() * FIELD_HALF_WIDTH);
                             goalkeeper.goalkeeperJump(goalLinePosition, ballInGoalResult.getPassedTime());
                         }
@@ -218,7 +219,11 @@ public class Game implements GameLoopListener {
 
     private void updatePlayerObject(PlayerObject playerObject, float tpf) {
         Controller controller = playerObject.getController();
-        if (controller == null) {
+        if (controller != null) {
+            if (!controller.isChargingBallButton()) {
+                playerObject.setTargetWalkDirection(controller.getTargetDirection());
+            }
+        } else if (!playerObject.isGoalkeeperJumping()) {
             Vector2f idealLocation;
             if (situation != null) {
                 idealLocation = MathUtil.convertTo2D_XZ(situation.getPlayerPosition(playerObject));
@@ -227,8 +232,6 @@ public class Game implements GameLoopListener {
             }
             playerObject.setTargetLocation(idealLocation);
             playerObject.lookAt_XZ(ball.getPosition());
-        } else if (!controller.isChargingBallButton()) {
-            playerObject.setTargetWalkDirection(controller.getTargetDirection());
         }
         playerObject.update(tpf);
     }
@@ -413,7 +416,7 @@ public class Game implements GameLoopListener {
 
     private static boolean isInsideGoal1(Vector3f position) {
         return (position.getX() < (-1 * FIELD_HALF_WIDTH))
-            && (position.getX() < (-1 * (FIELD_HALF_WIDTH + GOAL_WIDTH)))
+            && (position.getX() > (-1 * (FIELD_HALF_WIDTH + GOAL_WIDTH)))
             && isInsideGoal_YZ(position);
     }
 
