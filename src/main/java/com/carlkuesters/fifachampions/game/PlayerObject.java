@@ -39,21 +39,7 @@ public class PlayerObject extends PhysicsObject {
         }
         if (canMove && (remainingFreezeTime == 0)) {
             float oldTargetDistanceSquared = Float.MAX_VALUE;
-            if (remainingFallingDuration > 0) {
-                slowDown(velocity, 7, tpf);
-                remainingFallingDuration -= tpf;
-                if (remainingFallingDuration <= 0) {
-                    isStraddling = false;
-                    remainingFallingDuration = 0;
-                    setAnimation(null);
-                }
-            } else if (isGoalkeeperJumping) {
-                slowDown(velocity, goalkeeperJumpSlowFactorZ, 2, tpf);
-                if (velocity.lengthSquared() <= 0) {
-                    isGoalkeeperJumping = false;
-                    setAnimation(null);
-                }
-            } else {
+            if ((remainingFallingDuration == 0) && (!isGoalkeeperJumping)) {
                 float speed = (isSprinting ? 10 : 6);
                 boolean wantsToMove = true;
                 if (isPressuring) {
@@ -74,7 +60,21 @@ public class PlayerObject extends PhysicsObject {
                 }
             }
             super.update(tpf);
-            if (remainingFallingDuration == 0) {
+            if (remainingFallingDuration > 0) {
+                slowDown(velocity, 7, tpf);
+                remainingFallingDuration -= tpf;
+                if (remainingFallingDuration <= 0) {
+                    isStraddling = false;
+                    remainingFallingDuration = 0;
+                    setAnimation(null);
+                }
+            } else if (isGoalkeeperJumping) {
+                slowDown(velocity, goalkeeperJumpSlowFactorZ, 2, tpf);
+                if (velocity.lengthSquared() <= 0) {
+                    isGoalkeeperJumping = false;
+                    setAnimation(null);
+                }
+            } else {
                 if (targetLocation != null) {
                     float newTargetDistanceSquared = targetLocation.subtract(position.getX(), position.getZ()).lengthSquared();
                     if ((newTargetDistanceSquared - oldTargetDistanceSquared) > -1 * MathUtil.EPSILON) {
@@ -231,16 +231,6 @@ public class PlayerObject extends PhysicsObject {
         // with x1=0
         // => initialVelocity.y = b
         // ----------
-        // y'(xM) = 0
-        // 2axM + b = 0
-        // 2axM = -b
-        // xM = -b/2a
-        // ----------
-        // x3 = x1 + 2 * (xM - x1)
-        // x3 = 2xM - x1
-        // with x1=0
-        // x3 = 2xM
-        // ----------
         float y1 = position.getY();
         float x2 = jumpDuration;
         float y2 = targetPosition.getY();
@@ -250,9 +240,6 @@ public class PlayerObject extends PhysicsObject {
 
         float initialVelocityY = b;
 
-        float xM = (-b / (2 * a));
-        float x3 = (2 * xM);
-
         // y = Ax²+Bx+C
         // y' = 2Ax+B
         // y'' = 2A = slowFactor
@@ -261,23 +248,23 @@ public class PlayerObject extends PhysicsObject {
         // A*0 + B*0 + C = 0
         // C = 0
         // ----------
-        // y'(x3) = 0
-        // 2A*x3 + B = 0
-        // B = -2A*x3
+        // y'(jumpDuration) = 0
+        // 2A*jumpDuration + B = 0
+        // B = -2A*jumpDuration
         // ----------
-        // y(x3) = absoluteDistanceZ
-        // A*(x3^2) + B*x3 + C = absoluteDistanceZ
-        // A*(x3^2) + B*x3 = absoluteDistanceZ
-        // A*(x3^2) + (-2A*x3)*x3 = absoluteDistanceZ
-        // A*(x3^2) - 2A*(x3^2) = absoluteDistanceZ
-        // -A*(x3^2) = absoluteDistanceZ
-        // A = -absoluteDistanceZ / x3^2
+        // y(jumpDuration) = absoluteDistanceZ
+        // A*(jumpDuration^2) + B*jumpDuration + C = absoluteDistanceZ
+        // A*(jumpDuration^2) + B*jumpDuration = absoluteDistanceZ
+        // A*(jumpDuration^2) + (-2A*jumpDuration)*jumpDuration = absoluteDistanceZ
+        // A*(jumpDuration^2) - 2A*(jumpDuration^2) = absoluteDistanceZ
+        // -A*(jumpDuration^2) = absoluteDistanceZ
+        // A = -absoluteDistanceZ / jumpDuration^2
         // ----------
         // => initialVelocity.z = y'(0) = 2A*0 + B = B
         float distanceZ = (targetPosition.getZ() - position.getZ());
         float absoluteDistanceZ = FastMath.abs(distanceZ);
-        float A = ((-1 * absoluteDistanceZ) / (x3 * x3));
-        float B = (-2 * A * x3);
+        float A = ((-1 * absoluteDistanceZ) / (jumpDuration * jumpDuration));
+        float B = (-2 * A * jumpDuration);
 
         float initialVelocityZ = Math.signum(distanceZ) * B;
         goalkeeperJumpSlowFactorZ = FastMath.abs(2 * A);
