@@ -33,7 +33,7 @@ import com.carlkuesters.fifachampions.game.Formation;
 import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.Goalkeeper;
 import com.carlkuesters.fifachampions.game.MathUtil;
-import com.carlkuesters.fifachampions.game.PhysicObject;
+import com.carlkuesters.fifachampions.game.PhysicsObject;
 import com.carlkuesters.fifachampions.game.Player;
 import com.carlkuesters.fifachampions.game.PlayerAnimation;
 import com.carlkuesters.fifachampions.game.PlayerObject;
@@ -317,9 +317,9 @@ public class Main extends SimpleApplication {
         cam.setLocation(targetCameraLocation);
     }
 
-    private void updateTransform(PhysicObject physicObject, Spatial spatial) {
-        spatial.setLocalTranslation(physicObject.getPosition());
-        JMonkeyUtil.setLocalRotation(spatial, physicObject.getDirection());
+    private void updateTransform(PhysicsObject physicsObject, Spatial spatial) {
+        spatial.setLocalTranslation(physicsObject.getPosition());
+        JMonkeyUtil.setLocalRotation(spatial, physicsObject.getDirection());
     }
 
     private PlayerAnimation RUN_ANIMATION_FAST = new PlayerAnimation("run_fast", 0.7f);

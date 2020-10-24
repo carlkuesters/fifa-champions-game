@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game;
 
 import com.jme3.math.FastMath;
@@ -12,11 +7,7 @@ import com.jme3.util.TempVars;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-/**
- *
- * @author Carl
- */
-public class Ball extends PhysicObject {
+public class Ball extends PhysicsObject {
 
     public Ball() {
         bouncinessGround = 0.5f;
@@ -25,20 +16,20 @@ public class Ball extends PhysicObject {
     private PlayerObject owner;
     private PlayerObject lastTouchedOwner;
     private Vector3f lastTouchedPosition = new Vector3f();
-    private LinkedList<PlayerObject> lastTouchedOffsidePlayers = new LinkedList<PlayerObject>();
+    private LinkedList<PlayerObject> lastTouchedOffsidePlayers = new LinkedList<>();
     private Vector3f lastPosition = new Vector3f();
     private float rotationProgressInRadians;
 
     @Override
-    public void update(float tpf) {
+    protected void updateTransform(Vector3f position, Vector3f direction, Vector3f velocity, float tpf) {
         lastPosition.set(position);
-        super.update(tpf);
+        super.updateTransform(position, direction, velocity, tpf);
         if (owner != null) {
-            placeInFrontOfOwner();
+            placeInFrontOfOwner(position, velocity);
             velocity.set(position.subtract(lastPosition)).divideLocal(tpf);
         } else {
             float slowDownStrength = ((position.getY() > 0) ? 3 : 4);
-            slowDown(slowDownStrength, tpf);
+            slowDown(velocity, slowDownStrength, tpf);
         }
         Vector3f movedDistance = position.subtract(lastPosition);
         Vector3f rotationAxis = new Quaternion().fromAngleAxis(-1 * FastMath.HALF_PI, movedDistance).mult(Vector3f.UNIT_Y).normalizeLocal();
@@ -82,23 +73,23 @@ public class Ball extends PhysicObject {
             game.selectPlayer(owner);
             owner.getTeam().getGoalkeeper().setIsPressuring(false);
             if (!owner.onBallPickUp()) {
-                placeInFrontOfOwner();
+                placeInFrontOfOwner(position, velocity);
                 velocity.set(0, 0);
             }
-            if (lastTouchedOffsidePlayers.contains(owner)) {
+            if (canTriggerOffside && lastTouchedOffsidePlayers.contains(owner)) {
                 game.onOffside(owner, lastTouchedPosition);
             }
         }
         lastTouchedOffsidePlayers.clear();
     }
 
-    private void placeInFrontOfOwner() {
+    private void placeInFrontOfOwner(Vector3f position, Vector3f velocity) {
         TempVars tempVars = TempVars.get();
         Vector3f newPosition = tempVars.vect1;
         newPosition.set(owner.getPosition().getX(), 0, owner.getPosition().getZ());
         float directionFactor = 0.7f;
         newPosition.addLocal(directionFactor * owner.getDirection().getX(), 0, directionFactor * owner.getDirection().getZ());
-        tryMoveToPosition(newPosition);
+        tryMoveToPosition(position, velocity, newPosition);
         tempVars.release();
     }
 

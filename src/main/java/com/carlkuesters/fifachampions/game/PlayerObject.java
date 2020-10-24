@@ -1,20 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game;
 
 import com.jme3.animation.LoopMode;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.cooldowns.UnownedBallPickupCooldown;
 
-/**
- *
- * @author Carl
- */
-public class PlayerObject extends PhysicObject {
+public class PlayerObject extends PhysicsObject {
 
     public PlayerObject(Team team, Player player) {
         this.team = team;
@@ -33,6 +25,8 @@ public class PlayerObject extends PhysicObject {
     private boolean isPressuring;
     private boolean isStraddling;
     private float remainingFallingDuration;
+    private boolean isGoalkeeperJumping;
+    private float goalkeeperJumpSlowFactorZ;
     private PlayerAnimation animation;
 
     @Override
@@ -46,11 +40,17 @@ public class PlayerObject extends PhysicObject {
         if (canMove && (remainingFreezeTime == 0)) {
             float oldTargetDistanceSquared = Float.MAX_VALUE;
             if (remainingFallingDuration > 0) {
-                slowDown(7, tpf);
+                slowDown(velocity, 7, tpf);
                 remainingFallingDuration -= tpf;
                 if (remainingFallingDuration <= 0) {
                     isStraddling = false;
                     remainingFallingDuration = 0;
+                    setAnimation(null);
+                }
+            } else if (isGoalkeeperJumping) {
+                slowDown(velocity, goalkeeperJumpSlowFactorZ, 2, tpf);
+                if (velocity.lengthSquared() <= 0) {
+                    isGoalkeeperJumping = false;
                     setAnimation(null);
                 }
             } else {
@@ -211,6 +211,87 @@ public class PlayerObject extends PhysicObject {
         setAnimation(new PlayerAnimation("collapse", (1.1f * remainingFallingDuration), LoopMode.DontLoop));
     }
 
+    public void goalkeeperJump(Vector3f targetPosition, float jumpDuration) {
+        isGoalkeeperJumping = true;
+
+        // y = ax²+bx+c
+        // y' = 2ax+b
+        // y'' = 2a = -gravity
+        // ----------
+        // y1=a(x1)²+bx1+c <=> c=y1-a(x1)²-bx1
+        // y2=a(x2)²+bx2+c <=> c=y2-a(x2)²-bx2
+        // ----------
+        // => y1-a(x1)²-bx1 = y2-a(x2)²-bx2
+        // <=> y1-a(x1)²-y2+a(x2)² = b(x1-x2)
+        // <=> b={y1-a(x1)²-y2+a(x2)²}/(x1-x2)
+        // with x1=0
+        // <=> b={y1-y2+a(x2)²}/-x2
+        // ----------
+        // => initialVelocity.y = y'(x1) = 2ax1+b
+        // with x1=0
+        // => initialVelocity.y = b
+        // ----------
+        // y'(xM) = 0
+        // 2axM + b = 0
+        // 2axM = -b
+        // xM = -b/2a
+        // ----------
+        // x3 = x1 + 2 * (xM - x1)
+        // x3 = 2xM - x1
+        // with x1=0
+        // x3 = 2xM
+        // ----------
+        float y1 = position.getY();
+        float x2 = jumpDuration;
+        float y2 = targetPosition.getY();
+
+        float a = ((-1 * gravitation) / 2);
+        float b = (y1 - y2 + (a * x2 * x2)) / (-1 * x2);
+
+        float initialVelocityY = b;
+
+        float xM = (-b / (2 * a));
+        float x3 = (2 * xM);
+
+        // y = Ax²+Bx+C
+        // y' = 2Ax+B
+        // y'' = 2A = slowFactor
+        // ----------
+        // y(0) = 0
+        // A*0 + B*0 + C = 0
+        // C = 0
+        // ----------
+        // y'(x3) = 0
+        // 2A*x3 + B = 0
+        // B = -2A*x3
+        // ----------
+        // y(x3) = absoluteDistanceZ
+        // A*(x3^2) + B*x3 + C = absoluteDistanceZ
+        // A*(x3^2) + B*x3 = absoluteDistanceZ
+        // A*(x3^2) + (-2A*x3)*x3 = absoluteDistanceZ
+        // A*(x3^2) - 2A*(x3^2) = absoluteDistanceZ
+        // -A*(x3^2) = absoluteDistanceZ
+        // A = -absoluteDistanceZ / x3^2
+        // ----------
+        // => initialVelocity.z = y'(0) = 2A*0 + B = B
+        float distanceZ = (targetPosition.getZ() - position.getZ());
+        float absoluteDistanceZ = FastMath.abs(distanceZ);
+        float A = ((-1 * absoluteDistanceZ) / (x3 * x3));
+        float B = (-2 * A * x3);
+
+        float initialVelocityZ = Math.signum(distanceZ) * B;
+        goalkeeperJumpSlowFactorZ = FastMath.abs(2 * A);
+
+        Vector3f initialVelocity = new Vector3f(
+            0,
+            initialVelocityY,
+            initialVelocityZ
+        );
+
+        velocity.set(initialVelocity);
+        setAnimation(new PlayerAnimation("goalkeeper_jump", 1, LoopMode.DontLoop));
+    }
+
     public boolean onBallPickUp() {
         if (controller != null) {
             return controller.triggerCurrentOrRecentBallCharge();
@@ -279,6 +360,10 @@ public class PlayerObject extends PhysicObject {
 
     public boolean isFalling() {
         return (remainingFallingDuration > 0);
+    }
+
+    public boolean isGoalkeeperJumping() {
+        return isGoalkeeperJumping;
     }
 
     public void setCanMove(boolean canMove) {

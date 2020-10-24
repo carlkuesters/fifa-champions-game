@@ -1,18 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 
-/**
- *
- * @author Carl
- */
 public class MathUtil {
 
     public static final float EPSILON = 0.00001f;
@@ -28,7 +19,7 @@ public class MathUtil {
 
     public static float getDistance_Line_Point(Vector2f line1, Vector2f line2, Vector2f point) {
         return FastMath.abs(((line2.y - line1.y) * point.x) - ((line2.x - line1.x) * point.y) + (line2.x * line1.y) - (line2.y * line1.x))
-             / FastMath.sqrt(FastMath.sqr(line2.y - line1.y) + FastMath.sqr(line2.x - line1.x));
+                / FastMath.sqrt(FastMath.sqr(line2.y - line1.y) + FastMath.sqr(line2.x - line1.x));
     }
 
     public static Vector2f convertTo2D_XZ(Vector3f point) {

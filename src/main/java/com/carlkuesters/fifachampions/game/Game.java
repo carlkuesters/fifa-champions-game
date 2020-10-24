@@ -145,6 +145,7 @@ public class Game implements GameLoopListener {
 
             OutSide outSide = getOutside(ball.getPosition());
             if (outSide == null) {
+                // Fight around ball
                 LinkedList<PlayerObject> playersNearBall = getNearPlayers(ball.getPosition(), 1, 2.5f);
                 Collections.shuffle(playersNearBall);
                 for (PlayerObject playerNearBall : playersNearBall) {
@@ -164,6 +165,23 @@ public class Game implements GameLoopListener {
                                 cooldownManager.putOnCooldown(fightCooldown);
                                 ball.setOwner(ballWinner, false);
                             }
+                        }
+                    }
+                }
+                // Goalkeeper jump
+                for (Team team : teams) {
+                    PlayerObject goalkeeper = team.getGoalkeeper();
+                    if (!goalkeeper.isGoalkeeperJumping()) {
+                        PhysicsPrecomputationResult ballInGoalResult;
+                        if (team == teams[0]) {
+                            ballInGoalResult = ball.precomputePositionUntil(result -> isInsideGoal1(result.getPosition()));
+                        } else {
+                            ballInGoalResult = ball.precomputePositionUntil(result -> isInsideGoal2(result.getPosition()));
+                        }
+                        if (ballInGoalResult != null) {
+                            Vector3f goalLinePosition = ballInGoalResult.getPosition().clone();
+                            goalLinePosition.setX(-1 * team.getSide() * FIELD_HALF_WIDTH);
+                            goalkeeper.goalkeeperJump(goalLinePosition, ballInGoalResult.getPassedTime());
                         }
                     }
                 }
@@ -390,7 +408,23 @@ public class Game implements GameLoopListener {
     public static boolean isInsideGoal(Vector3f position) {
         return (FastMath.abs(position.getX()) > FIELD_HALF_WIDTH)
             && (FastMath.abs(position.getX()) < FIELD_HALF_WIDTH + GOAL_WIDTH)
-            && (FastMath.abs(position.getY()) < GOAL_HEIGHT)
+            && isInsideGoal_YZ(position);
+    }
+
+    private static boolean isInsideGoal1(Vector3f position) {
+        return (position.getX() < (-1 * FIELD_HALF_WIDTH))
+            && (position.getX() < (-1 * (FIELD_HALF_WIDTH + GOAL_WIDTH)))
+            && isInsideGoal_YZ(position);
+    }
+
+    private static boolean isInsideGoal2(Vector3f position) {
+        return (position.getX() > FIELD_HALF_WIDTH)
+            && (position.getX() < FIELD_HALF_WIDTH + GOAL_WIDTH)
+            && isInsideGoal_YZ(position);
+    }
+
+    private static boolean isInsideGoal_YZ(Vector3f position) {
+        return (position.getY() < GOAL_HEIGHT)
             && (position.getZ() > GOAL_Z_BOTTOM)
             && (position.getZ() < GOAL_Z_TOP);
     }
