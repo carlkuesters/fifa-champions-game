@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions;
 
+import com.carlkuesters.fifachampions.game.*;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.SimpleApplication;
@@ -16,6 +17,7 @@ import com.jme3.input.event.TouchEvent;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
@@ -25,20 +27,11 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Quad;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
-import com.carlkuesters.fifachampions.game.Controller;
-import com.carlkuesters.fifachampions.game.Formation;
-import com.carlkuesters.fifachampions.game.Game;
-import com.carlkuesters.fifachampions.game.Goalkeeper;
-import com.carlkuesters.fifachampions.game.MathUtil;
-import com.carlkuesters.fifachampions.game.PhysicsObject;
-import com.carlkuesters.fifachampions.game.Player;
-import com.carlkuesters.fifachampions.game.PlayerAnimation;
-import com.carlkuesters.fifachampions.game.PlayerObject;
-import com.carlkuesters.fifachampions.game.PostFilterAppState;
-import com.carlkuesters.fifachampions.game.Team;
+
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -62,6 +55,7 @@ public class Main extends SimpleApplication {
 
     private HashMap<PlayerObject, Node> playerVisuals = new HashMap<>();
     private HashMap<Controller, Spatial> controllerVisuals = new HashMap<>();
+    private Node ballGroundIndicator;
     private Vector3f targetCameraLocation = new Vector3f();
     private Spatial ballModel;
     private Controller controller1;
@@ -204,6 +198,21 @@ public class Main extends SimpleApplication {
         Geometry ballGeometry = (Geometry) ballNode.getChild("ball");
         ballGeometry.setMaterial(materialBall);
         rootNode.attachChild(ballNode);
+        float groundHeight = (ballNode.getLocalTranslation().getY() - (JMonkeyUtil.getSpatialDimension(ballModel).getY() / 2));
+
+        float ballGroundIndicatorSize = 0.5f;
+        Geometry ballGroundIndicatorGeometry = new Geometry(null, new Quad(ballGroundIndicatorSize, ballGroundIndicatorSize));
+        ballGroundIndicatorGeometry.setLocalTranslation((ballGroundIndicatorSize / -2), groundHeight, (ballGroundIndicatorSize / 2));
+        ballGroundIndicatorGeometry.rotate(JMonkeyUtil.getQuaternion_X(-90));
+        Material materialBallGroundIndicator = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        Texture texture = loadTexture("textures/ball_ground_indicator.png");
+        materialBallGroundIndicator.setTexture("ColorMap", texture);
+        materialBallGroundIndicator.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        materialBallGroundIndicator.getAdditionalRenderState().setDepthTest(false);
+        ballGroundIndicatorGeometry.setMaterial(materialBallGroundIndicator);
+        ballGroundIndicator = new Node();
+        ballGroundIndicator.attachChild(ballGroundIndicatorGeometry);
+        rootNode.attachChild(ballGroundIndicator);
 
         cam.setFrustumPerspective(45, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000);
         cam.setLocation(new Vector3f(0, 100, 0));
@@ -319,7 +328,19 @@ public class Main extends SimpleApplication {
             animChannel.setSpeed(animChannel.getAnimMaxTime() / playerAnimation.getLoopDuration());
             animChannel.setLoopMode(playerAnimation.getLoopMode());
         }
+
         updateTransform(game.getBall(), ballModel);
+
+        PhysicsPrecomputationResult ballOnGroundResult = null;
+        if ((game.getSituation() == null) && (game.getNextSituation() == null)) {
+            ballOnGroundResult = game.getBall().precomputeTransformUntil(result -> result.getPosition().getY() <= 0);
+        }
+        if ((ballOnGroundResult != null) && (ballOnGroundResult.getPassedTime() > 0)) {
+            ballGroundIndicator.setLocalTranslation(ballOnGroundResult.getPosition());
+            ballGroundIndicator.setCullHint(Spatial.CullHint.Inherit);
+        } else {
+            ballGroundIndicator.setCullHint(Spatial.CullHint.Always);
+        }
 
         targetCameraLocation.set(0.8f * game.getBall().getPosition().getX(), 0, 0.5f * (game.getBall().getPosition().getZ() + 25));
         targetCameraLocation.addLocal(0, 20, 20);

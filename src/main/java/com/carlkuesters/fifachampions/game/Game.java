@@ -459,4 +459,8 @@ public class Game implements GameLoopListener {
     public Situation getSituation() {
         return situation;
     }
+
+    public NextSituation getNextSituation() {
+        return nextSituation;
+    }
 }

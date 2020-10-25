@@ -33,18 +33,18 @@ public class PhysicsObject extends GameObject {
         tmpPrecomputedVelocity.set(velocity);
         PhysicsPrecomputationResult precomputationResult = new PhysicsPrecomputationResult(tmpPrecomputedPosition, tmpPrecomputedRotation, tmpPrecomputedVelocity);
         float passedTime = 0;
-        while (passedTime < 5) {
+        while (!endCondition.test(precomputationResult)) {
             passedTime += PRECOMPUTE_TIME_PER_FRAME;
+            if (passedTime > 5) {
+                return null;
+            }
             updateTransform(tmpPrecomputedPosition, tmpPrecomputedRotation, tmpPrecomputedVelocity, PRECOMPUTE_TIME_PER_FRAME);
             precomputationResult.setPosition(tmpPrecomputedPosition);
             precomputationResult.setRotation(tmpPrecomputedRotation);
             precomputationResult.setVelocity(tmpPrecomputedVelocity);
             precomputationResult.setPassedTime(passedTime);
-            if (endCondition.test(precomputationResult)) {
-                return precomputationResult;
-            }
         }
-        return null;
+        return precomputationResult;
     }
 
     protected void updateTransform(Vector3f position, Quaternion rotation, Vector3f velocity, float tpf) {
