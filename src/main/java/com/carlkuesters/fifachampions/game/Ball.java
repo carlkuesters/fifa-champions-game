@@ -46,8 +46,7 @@ public class Ball extends PhysicsObject {
         if (canTriggerOffside) {
             Team allyTeam = lastTouchedOwner.getTeam();
             Team enemyTeam = game.getTeams()[(allyTeam == game.getTeams()[0]) ? 1 : 0];
-            // TODO: Consider halftime
-            float goalX = ((allyTeam == game.getTeams()[0]) ? 1 : -1) * Game.FIELD_HALF_WIDTH;
+            float goalX = (game.getHalfTimeSideFactor() * allyTeam.getSide() * Game.FIELD_HALF_WIDTH);
             float distanceToGoalPassingAlly = FastMath.abs(goalX - lastTouchedOwner.getPosition().getX());
             float distanceToGoalSecondLastEnemy = enemyTeam.getPlayers().stream()
                     .map(enemyPlayer -> FastMath.abs(goalX - enemyPlayer.getPosition().getX()))

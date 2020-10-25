@@ -1,16 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game;
 
 import com.jme3.math.Vector3f;
 
-/**
- *
- * @author Carl
- */
 public abstract class Situation {
 
     public Situation(PlayerObject startingPlayer, boolean isFromGroundOrHands) {
@@ -19,12 +10,17 @@ public abstract class Situation {
     }
     protected PlayerObject startingPlayer;
     private boolean isFromGroundOrHands;
+    protected Game game;
 
     public abstract Vector3f getBallPosition();
 
-    public abstract Vector3f getPlayerPosition(PlayerObject playerObject);
+    public Vector3f getPlayerPosition(PlayerObject playerObject) {
+        return MathUtil.convertTo3D_XZ(playerObject.getTeam().getIdealLocation(playerObject));
+    }
 
-    public abstract Vector3f getPlayerDirection(PlayerObject playerObject);
+    public Vector3f getPlayerDirection(PlayerObject playerObject) {
+        return game.getBall().getPosition().subtract(playerObject.getPosition()).setY(0).normalizeLocal();
+    }
 
     public PlayerObject getStartingPlayer() {
         return startingPlayer;
@@ -32,5 +28,9 @@ public abstract class Situation {
 
     public boolean isFromGroundOrHands() {
         return isFromGroundOrHands;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 }

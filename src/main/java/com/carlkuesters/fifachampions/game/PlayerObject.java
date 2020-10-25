@@ -73,8 +73,7 @@ public class PlayerObject extends PhysicsObject {
                 slowDown(velocity, goalkeeperJumpSlowFactorZ, 2, tpf);
                 if (velocity.lengthSquared() <= 0) {
                     isGoalkeeperJumping = false;
-                    // TODO: Consider halftime
-                    setDirection(new Vector3f(team.getSide(), 0, 0));
+                    setDirection(new Vector3f(game.getHalfTimeSideFactor() * team.getSide(), 0, 0));
                     setAnimation(null);
                 }
             } else {
@@ -283,9 +282,8 @@ public class PlayerObject extends PhysicsObject {
 
         Vector3f distanceToTarget_XYZ = targetPosition.subtract(position);
         Vector2f directionToTarget_ZY = new Vector2f(distanceToTarget_XYZ.getZ(), distanceToTarget_XYZ.getY()).normalizeLocal();
-        float jumpAngle = -1 * directionToTarget_ZY.angleBetween(MathUtil.UNIT_2D_Y);
-        // TODO: Consider halftime
-        rotation.lookAt(new Vector3f(team.getSide(), 0, 0), Vector3f.UNIT_Y);
+        float jumpAngle = -1 * game.getHalfTimeSideFactor() * directionToTarget_ZY.angleBetween(MathUtil.UNIT_2D_Y);
+        rotation.lookAt(new Vector3f(game.getHalfTimeSideFactor() * team.getSide(), 0, 0), Vector3f.UNIT_Y);
         rotation.multLocal(new Quaternion().fromAngleAxis(jumpAngle, Vector3f.UNIT_Z));
 
         setAnimation(new PlayerAnimation("goalkeeper_jump", jumpDuration, LoopMode.DontLoop));

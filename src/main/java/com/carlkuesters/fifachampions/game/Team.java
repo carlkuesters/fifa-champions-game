@@ -1,22 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game;
 
 import com.jme3.math.Vector2f;
 import java.util.ArrayList;
 
-/**
- *
- * @author Carl
- */
 public class Team {
 
     public Team(Player[] players, Formation formation) {
-        for (int i = 0; i < players.length; i++) {
-            this.players.add(new PlayerObject(this, players[i]));
+        for (Player player : players) {
+            this.players.add(new PlayerObject(this, player));
         }
         this.formation = formation;
     }
@@ -45,15 +36,6 @@ public class Team {
         return players.stream()
                 .filter(playerObject -> playerObject.getPlayer() instanceof Goalkeeper)
                 .findAny().get();
-    }
-
-    public Vector2f getIdealLocation_FormationOnly(PlayerObject playerObject) {
-        for (int i = 0; i < players.size(); i++) {
-            if (players.get(i) == playerObject) {
-                return getIdealLocation_FormationOnly(i);
-            }
-        }
-        throw new IllegalArgumentException();
     }
 
     public Vector2f getIdealLocation(PlayerObject playerObject) {
@@ -101,11 +83,7 @@ public class Team {
     }
 
     private Vector2f getIdealLocation_FormationOnly(int playerIndex) {
-        Vector2f formationLocation = formation.getLocation(playerIndex).mult(side);
+        Vector2f formationLocation = formation.getLocation(playerIndex).mult(game.getHalfTimeSideFactor() * side);
         return new Vector2f(Game.FIELD_HALF_WIDTH * formationLocation.getX(), Game.FIELD_HALF_HEIGHT * formationLocation.getY());
-    }
-
-    public Vector2f transformLocationToOwnSide(Vector2f location) {
-        return location.subtract(side * Game.FIELD_HALF_WIDTH, 0).multLocal(new Vector2f(0.5f, 1));
     }
 }

@@ -1,20 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game.situations;
 
 import com.jme3.math.Vector3f;
-import com.carlkuesters.fifachampions.game.MathUtil;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 import com.carlkuesters.fifachampions.game.Situation;
 import com.carlkuesters.fifachampions.game.Team;
 
-/**
- *
- * @author Carl
- */
 public class CornerKickSituation extends Situation {
 
     public CornerKickSituation(Team team, Vector3f ballPosition) {
@@ -39,11 +29,6 @@ public class CornerKickSituation extends Situation {
             // Step a bit out of the field away from the ball
             return ballPosition.add(ballPosition.normalize().mult(0.5f));
         }
-        return MathUtil.convertTo3D_XZ(playerObject.getTeam().getIdealLocation(playerObject));
-    }
-
-    @Override
-    public Vector3f getPlayerDirection(PlayerObject playerObject) {
-        return ballPosition.subtract(playerObject.getPosition()).normalizeLocal();
+        return super.getPlayerPosition(playerObject);
     }
 }

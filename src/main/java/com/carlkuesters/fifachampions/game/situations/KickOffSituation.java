@@ -1,20 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game.situations;
 
+import com.carlkuesters.fifachampions.game.*;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.carlkuesters.fifachampions.game.MathUtil;
-import com.carlkuesters.fifachampions.game.PlayerObject;
-import com.carlkuesters.fifachampions.game.Situation;
 
-/**
- *
- * @author Carl
- */
 public class KickOffSituation extends Situation {
     
     public KickOffSituation(PlayerObject startingPlayer) {
@@ -29,19 +18,20 @@ public class KickOffSituation extends Situation {
     @Override
     public Vector3f getPlayerPosition(PlayerObject playerObject) {
         if (playerObject == startingPlayer) {
-            return new Vector3f(0.7f * playerObject.getTeam().getSide(), 0, 0);
+            return new Vector3f(game.getHalfTimeSideFactor() * playerObject.getTeam().getSide() * 0.7f, 0, 0);
         }
+        // Transfer ideal location to own side
         Vector2f position = playerObject.getTeam().getIdealLocation(playerObject);
-        position = playerObject.getTeam().transformLocationToOwnSide(position);
+        position.subtractLocal(game.getHalfTimeSideFactor() * playerObject.getTeam().getSide() * Game.FIELD_HALF_WIDTH, 0);
+        position.multLocal(new Vector2f(0.5f, 1));
         return MathUtil.convertTo3D_XZ(position);
     }
 
     @Override
     public Vector3f getPlayerDirection(PlayerObject playerObject) {
-        float x = playerObject.getTeam().getSide();
         if (playerObject == startingPlayer) {
-            x *= -1;
+            return new Vector3f(-1 * game.getHalfTimeSideFactor() * playerObject.getTeam().getSide(), 0, 0);
         }
-        return new Vector3f(x, 0, 0);
+        return super.getPlayerDirection(playerObject);
     }
 }

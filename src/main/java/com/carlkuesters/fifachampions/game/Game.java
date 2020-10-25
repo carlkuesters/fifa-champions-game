@@ -53,6 +53,8 @@ public class Game implements GameLoopListener {
     private static final Vector3f CORNER_KICK_BOTTOM_RIGHT = new Vector3f(FIELD_HALF_WIDTH, 0, -1 * FIELD_HALF_HEIGHT);
     private static final Vector3f CORNER_KICK_TOP_RIGHT = new Vector3f(FIELD_HALF_WIDTH, 0, FIELD_HALF_HEIGHT);
     private float logicTime = 0;
+    private int halfTime = 0;
+    private float nextOverTimeDuration = 2;
     private float gameTime = 0;
     private float gameOverTime;
     private Team[] teams;
@@ -77,8 +79,21 @@ public class Game implements GameLoopListener {
                 gameOverTime = (gameTime - HALFTIME_DURATION);
                 gameTime = HALFTIME_DURATION;
             }
-        } else {
+        } else if (halfTime < 1) {
             gameOverTime += tpf;
+            if (gameOverTime > nextOverTimeDuration) {
+                halfTime++;
+                if (halfTime < 2) {
+                    Team kickOffTeam = teams[halfTime];
+
+                    // Testing: Our team always has kick off
+                    kickOffTeam = teams[0];
+
+                    setNextSituation(new NextSituation(createKickOffSituation(kickOffTeam), 4, false));
+                } else {
+                    // TODO: End game
+                }
+            }
         }
 
         for (Controller controller : controllers) {
@@ -173,15 +188,15 @@ public class Game implements GameLoopListener {
                     PlayerObject goalkeeper = team.getGoalkeeper();
                     if (!goalkeeper.isGoalkeeperJumping()) {
                         PhysicsPrecomputationResult ballInGoalResult;
-                        if (team == teams[0]) {
-                            ballInGoalResult = ball.precomputeTransformUntil(result -> isInsideGoal1(result.getPosition()));
+                        if (((halfTime == 0) && (team == teams[0]))
+                         || ((halfTime == 1) && (team == teams[1]))) {
+                            ballInGoalResult = ball.precomputeTransformUntil(result -> isInsideGoalLeft(result.getPosition()));
                         } else {
-                            ballInGoalResult = ball.precomputeTransformUntil(result -> isInsideGoal2(result.getPosition()));
+                            ballInGoalResult = ball.precomputeTransformUntil(result -> isInsideGoalRight(result.getPosition()));
                         }
                         if (ballInGoalResult != null) {
                             Vector3f goalLinePosition = ballInGoalResult.getPosition().clone();
-                            // TODO: Consider halftime
-                            goalLinePosition.setX(-1 * team.getSide() * FIELD_HALF_WIDTH);
+                            goalLinePosition.setX(-1 * getHalfTimeSideFactor() * team.getSide() * FIELD_HALF_WIDTH);
                             goalkeeper.goalkeeperJump(goalLinePosition, ballInGoalResult.getPassedTime());
                         }
                     }
@@ -204,12 +219,17 @@ public class Game implements GameLoopListener {
                             setNextSituation(new NextSituation(new GoalKickSituation(goalOutsideTeam), 2, true));
                         }
                     } else {
+                        Team throwInTeam = ((ball.getLastTouchedOwner().getTeam() == teams[0]) ? teams[1] : teams[0]);
+
+                        // Testing: Our team always has throw in
+                        throwInTeam = teams[0];
+
+                        // TODO: Properly choosing a starting player (based on position?)
+                        PlayerObject throwInPlayer = throwInTeam.getPlayers().get(throwInTeam.getPlayers().size() - 1);
                         Vector3f throwInPosition = lastBallPosition.clone().setY(0);
                         // Go a bit out of field to throw in
                         throwInPosition.addLocal(0, 0, Math.signum(throwInPosition.getZ()));
-                        // TODO: Given enemy the throw in
-                        // TODO: Prevent goalkeeper to be throw-in starting player (in case he touched the ball last)
-                        setNextSituation(new NextSituation(new ThrowInSituation(ball.getLastTouchedOwner(), throwInPosition), 2, true));
+                        setNextSituation(new NextSituation(new ThrowInSituation(throwInPlayer, throwInPosition), 2, true));
                     }
                 }
             }
@@ -256,6 +276,7 @@ public class Game implements GameLoopListener {
     }
 
     private void setSituation(Situation situation) {
+        situation.setGame(this);
         this.situation = situation;
         PlayerObject startingPlayer = situation.getStartingPlayer();
         ball.setOwner(startingPlayer, false);
@@ -389,11 +410,10 @@ public class Game implements GameLoopListener {
     }
 
     private Team getGoalOutsideTeam(OutSide outSide) {
-        // TODO: Consider halftime
         if (outSide == OutSide.LEFT) {
-            return teams[0];
+            return teams[halfTime];
         } else if (outSide == OutSide.RIGHT) {
-            return teams[1];
+            return teams[(halfTime + 1) % 2];
         }
         return null;
     }
@@ -414,13 +434,13 @@ public class Game implements GameLoopListener {
             && isInsideGoal_YZ(position);
     }
 
-    private static boolean isInsideGoal1(Vector3f position) {
+    private static boolean isInsideGoalLeft(Vector3f position) {
         return (position.getX() < (-1 * FIELD_HALF_WIDTH))
             && (position.getX() > (-1 * (FIELD_HALF_WIDTH + GOAL_WIDTH)))
             && isInsideGoal_YZ(position);
     }
 
-    private static boolean isInsideGoal2(Vector3f position) {
+    private static boolean isInsideGoalRight(Vector3f position) {
         return (position.getX() > FIELD_HALF_WIDTH)
             && (position.getX() < FIELD_HALF_WIDTH + GOAL_WIDTH)
             && isInsideGoal_YZ(position);
@@ -434,6 +454,10 @@ public class Game implements GameLoopListener {
 
     public float getLogicTime() {
         return logicTime;
+    }
+
+    public int getHalfTimeSideFactor() {
+        return ((halfTime == 0) ? 1 : -1);
     }
 
     public Team[] getTeams() {
