@@ -31,6 +31,8 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
+import com.simsilica.lemur.*;
+import com.simsilica.lemur.style.BaseStyles;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -59,6 +61,7 @@ public class Main extends SimpleApplication {
     private Vector3f targetCameraLocation = new Vector3f();
     private Spatial ballModel;
     private Controller controller1;
+    private Label lblGoals;
 
     @Override
     public void simpleInitApp() {
@@ -221,6 +224,16 @@ public class Main extends SimpleApplication {
         flyCam.setEnabled(false);
 
         inputManager.addRawInputListener(new JoystickEventListener());
+
+        GuiGlobals.initialize(this);
+        BaseStyles.loadGlassStyle();
+        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
+
+        Container scoreContainer = new Container();
+        scoreContainer.setLocalTranslation(20, context.getSettings().getHeight() - 20, 0);
+        lblGoals = new Label("");
+        scoreContainer.addChild(lblGoals);
+        guiNode.attachChild(scoreContainer);
     }
 
     private Material createTextureMaterial(String diffusePath, String normalPath, String specularPath) {
@@ -345,6 +358,8 @@ public class Main extends SimpleApplication {
         targetCameraLocation.set(0.8f * game.getBall().getPosition().getX(), 0, 0.5f * (game.getBall().getPosition().getZ() + 25));
         targetCameraLocation.addLocal(0, 20, 20);
         cam.setLocation(targetCameraLocation);
+
+        lblGoals.setText(game.getGoals()[0] + " : " + game.getGoals()[1] + " --- " + game.getGameTime() + " (+" + game.getGameOverTime() + ")");
     }
 
     private void updateTransform(PhysicsObject physicsObject, Spatial spatial) {

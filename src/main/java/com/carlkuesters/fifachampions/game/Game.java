@@ -444,6 +444,14 @@ public class Game implements GameLoopListener {
         return logicTime;
     }
 
+    public float getGameTime() {
+        return gameTime;
+    }
+
+    public float getGameOverTime() {
+        return gameOverTime;
+    }
+
     public int getHalfTimeSideFactor() {
         return ((halfTime == 0) ? 1 : -1);
     }
@@ -474,5 +482,9 @@ public class Game implements GameLoopListener {
 
     public NextSituation getNextSituation() {
         return nextSituation;
+    }
+
+    public int[] getGoals() {
+        return goals;
     }
 }

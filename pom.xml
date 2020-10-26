@@ -14,6 +14,9 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <version.jdom>2.0.6</version.jdom>
         <version.jme3>3.2.1-stable</version.jme3>
+        <version.groovy>3.0.6</version.groovy>
+        <version.lemur>1.11.0</version.lemur>
+        <version.lemur-proto>1.10.0</version.lemur-proto>
         <version.lombok>1.18.10</version.lombok>
     </properties>
 
@@ -55,6 +58,22 @@
             <groupId>org.jmonkeyengine</groupId>
             <artifactId>jme3-jogg</artifactId>
             <version>${version.jme3}</version>
+        </dependency>
+        <!--Lemur-->
+        <dependency>
+            <groupId>com.simsilica</groupId>
+            <artifactId>lemur</artifactId>
+            <version>${version.lemur}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.simsilica</groupId>
+            <artifactId>lemur-proto</artifactId>
+            <version>${version.lemur-proto}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${version.groovy}</version>
         </dependency>
         <!--Lombok-->
         <dependency>
