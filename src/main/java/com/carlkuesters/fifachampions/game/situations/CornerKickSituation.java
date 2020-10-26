@@ -2,10 +2,9 @@ package com.carlkuesters.fifachampions.game.situations;
 
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.PlayerObject;
-import com.carlkuesters.fifachampions.game.Situation;
 import com.carlkuesters.fifachampions.game.Team;
 
-public class CornerKickSituation extends Situation {
+public class CornerKickSituation extends BallSituation {
 
     public CornerKickSituation(Team team, Vector3f ballPosition) {
         super(getStartingPlayer(team), true);

@@ -3,9 +3,8 @@ package com.carlkuesters.fifachampions.game.situations;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.PlayerObject;
-import com.carlkuesters.fifachampions.game.Situation;
 
-public class ThrowInSituation extends Situation {
+public class ThrowInSituation extends BallSituation {
     
     public ThrowInSituation(PlayerObject startingPlayer, Vector3f throwInPosition) {
         super(startingPlayer, false);

@@ -1,30 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game;
 
 import com.carlkuesters.fifachampions.game.cooldowns.UnownedBallPickupCooldown;
 import com.carlkuesters.fifachampions.game.cooldowns.FightCooldown;
+import com.carlkuesters.fifachampions.game.situations.*;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.util.TempVars;
 import com.carlkuesters.fifachampions.game.cooldowns.SwitchToPlayerCooldown;
-import com.carlkuesters.fifachampions.game.situations.CornerKickSituation;
-import com.carlkuesters.fifachampions.game.situations.FreeKickSituation;
-import com.carlkuesters.fifachampions.game.situations.GoalKickSituation;
-import com.carlkuesters.fifachampions.game.situations.KickOffSituation;
-import com.carlkuesters.fifachampions.game.situations.PenaltySituation;
-import com.carlkuesters.fifachampions.game.situations.ThrowInSituation;
+
 import java.util.Collections;
 import java.util.LinkedList;
 
-/**
- *
- * @author Carl
- */
 public class Game implements GameLoopListener {
 
     public Game(Team[] teams) {
@@ -245,8 +232,9 @@ public class Game implements GameLoopListener {
             }
         } else if (!playerObject.isGoalkeeperJumping()) {
             Vector2f idealLocation;
-            if (situation != null) {
-                idealLocation = MathUtil.convertTo2D_XZ(situation.getPlayerPosition(playerObject));
+            if (situation instanceof BallSituation) {
+                BallSituation ballSituation = (BallSituation) situation;
+                idealLocation = MathUtil.convertTo2D_XZ(ballSituation.getPlayerPosition(playerObject));
             } else {
                 idealLocation = playerObject.getTeam().getIdealLocation(playerObject);
             }
@@ -278,22 +266,13 @@ public class Game implements GameLoopListener {
     private void setSituation(Situation situation) {
         situation.setGame(this);
         this.situation = situation;
-        PlayerObject startingPlayer = situation.getStartingPlayer();
-        ball.setOwner(startingPlayer, false);
-        ball.setPosition(situation.getBallPosition());
-        for (Team team : teams) {
-            for (PlayerObject playerObject : team.getPlayers()) {
-                playerObject.setPosition(situation.getPlayerPosition(playerObject));
-                playerObject.setDirection(situation.getPlayerDirection(playerObject));
-            }
-        }
-        startingPlayer.setCanMove(false);
-        selectPlayer(startingPlayer);
+        situation.start();
     }
 
-    public void continueFromSituation() {
-        if (situation != null) {
-            situation.getStartingPlayer().setCanMove(true);
+    public void continueFromBallSituation() {
+        if (situation instanceof BallSituation) {
+            BallSituation ballSituation = (BallSituation) situation;
+            ballSituation.getStartingPlayer().setCanMove(true);
             situation = null;
         }
     }

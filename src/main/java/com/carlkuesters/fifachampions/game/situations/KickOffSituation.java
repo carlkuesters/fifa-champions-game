@@ -1,10 +1,12 @@
 package com.carlkuesters.fifachampions.game.situations;
 
-import com.carlkuesters.fifachampions.game.*;
+import com.carlkuesters.fifachampions.game.Game;
+import com.carlkuesters.fifachampions.game.MathUtil;
+import com.carlkuesters.fifachampions.game.PlayerObject;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 
-public class KickOffSituation extends Situation {
+public class KickOffSituation extends BallSituation {
     
     public KickOffSituation(PlayerObject startingPlayer) {
         super(startingPlayer, true);

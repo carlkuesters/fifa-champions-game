@@ -3,10 +3,9 @@ package com.carlkuesters.fifachampions.game.situations;
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PlayerObject;
-import com.carlkuesters.fifachampions.game.Situation;
 import com.carlkuesters.fifachampions.game.Team;
 
-public class GoalKickSituation extends Situation {
+public class GoalKickSituation extends BallSituation {
     
     public GoalKickSituation(Team team) {
         super(team.getGoalkeeper(), true);

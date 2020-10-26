@@ -107,7 +107,7 @@ public class PlayerObject extends PhysicsObject {
     }
 
     private void pass(float strength, float inRunFactor) {
-        game.continueFromSituation();
+        game.continueFromBallSituation();
         Vector3f passDirection = getPreparedPassDirection(inRunFactor);
         float effectiveStrength = (0.45f + (0.5f * strength));
         Vector3f ballVelocity = passDirection.multLocal(effectiveStrength * 25);
@@ -128,7 +128,7 @@ public class PlayerObject extends PhysicsObject {
     }
 
     private void throwIn(float strength, float inRunFactor) {
-        game.continueFromSituation();
+        game.continueFromBallSituation();
         Vector3f passDirection = getPreparedPassDirection(inRunFactor);
         float effectiveStrength = (13 + (4 * strength));
         float effectiveSlope = (2 + (3 * strength));
@@ -137,7 +137,7 @@ public class PlayerObject extends PhysicsObject {
     }
 
     public void shoot(float strength) {
-        game.continueFromSituation();
+        game.continueFromBallSituation();
         turnIntoControllerTargetDirection();
         float effectiveStrength = (18 + (11 * strength));
         float effectiveSlope = (2 + (11 * strength));
@@ -155,7 +155,7 @@ public class PlayerObject extends PhysicsObject {
     }
 
     public void flank(float strength) {
-        game.continueFromSituation();
+        game.continueFromBallSituation();
         Vector3f passDirection = getPreparedPassDirection(0);
         float effectiveStrength = (12 + (12 * strength));
         float effectiveSlope = (5 + (6 * strength));

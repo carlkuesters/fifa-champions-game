@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game.buttons;
 
 import com.carlkuesters.fifachampions.game.ControllerButton;
@@ -10,11 +5,8 @@ import com.carlkuesters.fifachampions.game.ControllerButtonBehaviour;
 import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 import com.carlkuesters.fifachampions.game.Situation;
+import com.carlkuesters.fifachampions.game.situations.BallSituation;
 
-/**
- *
- * @author Carl
- */
 public class DefaultBallActionButton extends ControllerButton {
 
     private ControllerButtonBehaviour behaviourWithOwnedBallGround;
@@ -43,7 +35,7 @@ public class DefaultBallActionButton extends ControllerButton {
         PlayerObject ballOwner = game.getBall().getOwner();
         Situation situation = game.getSituation();
         if (ballOwner == controller.getPlayerObject()) {
-            boolean isFromGroundOrHands = ((situation == null) || situation.isFromGroundOrHands());
+            boolean isFromGroundOrHands = ((situation == null) || ((BallSituation) situation).isFromGroundOrHands());
             return (isFromGroundOrHands ? behaviourWithOwnedBallGround : behaviourWithOwnedBallHands);
         }
         if (situation == null) {

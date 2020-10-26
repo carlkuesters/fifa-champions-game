@@ -4,10 +4,9 @@ import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.Goalkeeper;
 import com.carlkuesters.fifachampions.game.PlayerObject;
-import com.carlkuesters.fifachampions.game.Situation;
 import com.carlkuesters.fifachampions.game.Team;
 
-public class PenaltySituation extends Situation {
+public class PenaltySituation extends BallSituation {
 
     public PenaltySituation(Team team) {
         super(getStartingPlayer(team), true);
