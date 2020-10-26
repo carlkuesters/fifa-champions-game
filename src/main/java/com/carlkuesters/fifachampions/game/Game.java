@@ -42,7 +42,7 @@ public class Game implements GameLoopListener {
     private boolean isTimeRunning;
     private float logicTime = 0;
     private int halfTime = 0;
-    private float nextOverTimeDuration = 2;
+    private float nextOverTimeDuration = 0;
     private float gameTime = 0;
     private float gameOverTime;
     private Team[] teams;
@@ -53,6 +53,7 @@ public class Game implements GameLoopListener {
     private CooldownManager cooldownManager = new CooldownManager();
     private NextSituation nextSituation;
     private Situation situation;
+    private int[] goals = new int[2];
 
     public void start() {
         setSituation(createKickOffSituation(teams[0]));
@@ -185,6 +186,9 @@ public class Game implements GameLoopListener {
             } else if (didBallEnterFieldAfterSituation) {
                 Team goalOutsideTeam = getGoalOutsideTeam(outSide);
                 if (isInsideGoal(ball.getPosition())) {
+                    int scoringTeamIndex = ((goalOutsideTeam == teams[0]) ? 1 : 0);
+                    goals[scoringTeamIndex]++;
+                    nextOverTimeDuration += 1;
                     setNextSituation(new NextSituation(createKickOffSituation(goalOutsideTeam), 4, true));
                 } else {
                     if (goalOutsideTeam != null) {
@@ -197,6 +201,9 @@ public class Game implements GameLoopListener {
                             Vector3f cornerKickPosition = getCornerKickPosition(ball.getPosition());
                             setNextSituation(new NextSituation(new CornerKickSituation(cornerKickTeam, cornerKickPosition), 2, true));
                         } else {
+                            // Testing: Our team always has goal kick
+                            goalOutsideTeam = teams[0];
+
                             setNextSituation(new NextSituation(new GoalKickSituation(goalOutsideTeam), 2, true));
                         }
                     } else {
