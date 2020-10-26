@@ -215,9 +215,7 @@ public class PlayerObject extends PhysicsObject {
         setAnimation(new PlayerAnimation("collapse", (1.1f * remainingFallingDuration), LoopMode.DontLoop));
     }
 
-    public void goalkeeperJump(Vector3f targetPosition, float jumpDuration) {
-        isGoalkeeperJumping = true;
-
+    public GoalkeeperJump calculateGoalkeeperJump(Vector3f targetPosition, float jumpDuration) {
         // y = ax²+bx+c
         // y' = 2ax+b
         // y'' = 2a = -gravity
@@ -271,22 +269,30 @@ public class PlayerObject extends PhysicsObject {
         float B = (-2 * A * jumpDuration);
 
         float initialVelocityZ = Math.signum(distanceZ) * B;
-        goalkeeperJumpSlowFactorZ = FastMath.abs(2 * A);
+        float goalkeeperJumpSlowFactorZ = FastMath.abs(2 * A);
 
         Vector3f initialVelocity = new Vector3f(
             0,
             initialVelocityY,
             initialVelocityZ
         );
-        velocity.set(initialVelocity);
 
         Vector3f distanceToTarget_XYZ = targetPosition.subtract(position);
         Vector2f directionToTarget_ZY = new Vector2f(distanceToTarget_XYZ.getZ(), distanceToTarget_XYZ.getY()).normalizeLocal();
         float jumpAngle = -1 * game.getHalfTimeSideFactor() * directionToTarget_ZY.angleBetween(MathUtil.UNIT_2D_Y);
+        Quaternion rotation = new Quaternion();
         rotation.lookAt(new Vector3f(game.getHalfTimeSideFactor() * team.getSide(), 0, 0), Vector3f.UNIT_Y);
         rotation.multLocal(new Quaternion().fromAngleAxis(jumpAngle, Vector3f.UNIT_Z));
 
-        setAnimation(new PlayerAnimation("goalkeeper_jump", jumpDuration, LoopMode.DontLoop));
+        return new GoalkeeperJump(initialVelocity, rotation, goalkeeperJumpSlowFactorZ, jumpDuration);
+    }
+
+    public void executeGoalkeeperJump(GoalkeeperJump goalkeeperJump) {
+        isGoalkeeperJumping = true;
+        velocity.set(goalkeeperJump.getInitialVelocity());
+        rotation.set(goalkeeperJump.getRotation());
+        goalkeeperJumpSlowFactorZ = goalkeeperJump.getGoalkeeperJumpSlowFactorZ();
+        setAnimation(new PlayerAnimation("goalkeeper_jump", goalkeeperJump.getJumpDuration(), LoopMode.DontLoop));
     }
 
     public boolean onBallPickUp() {

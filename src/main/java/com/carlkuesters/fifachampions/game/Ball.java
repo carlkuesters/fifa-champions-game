@@ -45,20 +45,23 @@ public class Ball extends PhysicsObject {
         lastTouchedOffsidePlayers.clear();
         if (canTriggerOffside) {
             Team allyTeam = lastTouchedOwner.getTeam();
-            Team enemyTeam = game.getTeams()[(allyTeam == game.getTeams()[0]) ? 1 : 0];
-            float goalX = (game.getHalfTimeSideFactor() * allyTeam.getSide() * Game.FIELD_HALF_WIDTH);
-            float distanceToGoalPassingAlly = FastMath.abs(goalX - lastTouchedOwner.getPosition().getX());
-            float distanceToGoalSecondLastEnemy = enemyTeam.getPlayers().stream()
-                    .map(enemyPlayer -> FastMath.abs(goalX - enemyPlayer.getPosition().getX()))
-                    .sorted(Comparator.naturalOrder())
-                    .skip(1)
-                    .findFirst()
-                    .get();
-            for (PlayerObject allyPlayer : allyTeam.getPlayers()) {
-                if (allyPlayer != owner) {
-                    float distanceToGoalAlly = FastMath.abs(goalX - allyPlayer.getPosition().getX());
-                    if ((distanceToGoalAlly < distanceToGoalSecondLastEnemy) && (distanceToGoalAlly < distanceToGoalPassingAlly)) {
-                        lastTouchedOffsidePlayers.add(allyPlayer);
+            // Trigger offside only from already inside enemy side
+            if (Math.signum(position.getX()) == (game.getHalfTimeSideFactor() * allyTeam.getSide())) {
+                Team enemyTeam = game.getTeams()[(allyTeam == game.getTeams()[0]) ? 1 : 0];
+                float goalX = (game.getHalfTimeSideFactor() * allyTeam.getSide() * Game.FIELD_HALF_WIDTH);
+                float distanceToGoalPassingAlly = FastMath.abs(goalX - lastTouchedOwner.getPosition().getX());
+                float distanceToGoalSecondLastEnemy = enemyTeam.getPlayers().stream()
+                        .map(enemyPlayer -> FastMath.abs(goalX - enemyPlayer.getPosition().getX()))
+                        .sorted(Comparator.naturalOrder())
+                        .skip(1)
+                        .findFirst()
+                        .get();
+                for (PlayerObject allyPlayer : allyTeam.getPlayers()) {
+                    if (allyPlayer != owner) {
+                        float distanceToGoalAlly = FastMath.abs(goalX - allyPlayer.getPosition().getX());
+                        if ((distanceToGoalAlly < distanceToGoalSecondLastEnemy) && (distanceToGoalAlly < distanceToGoalPassingAlly)) {
+                            lastTouchedOffsidePlayers.add(allyPlayer);
+                        }
                     }
                 }
             }

@@ -177,9 +177,28 @@ public class Game implements GameLoopListener {
                             ballInGoalResult = ball.precomputeTransformUntil(result -> isInsideGoalRight(result.getPosition()));
                         }
                         if (ballInGoalResult != null) {
-                            Vector3f goalLinePosition = ballInGoalResult.getPosition().clone();
-                            goalLinePosition.setX(-1 * getHalfTimeSideFactor() * team.getSide() * FIELD_HALF_WIDTH);
-                            goalkeeper.goalkeeperJump(goalLinePosition, ballInGoalResult.getPassedTime());
+                            // TODO: Minimum time depending on player skill
+                            float reactionTime = 0.25f;
+                            if (ballInGoalResult.getPassedTime() < 1) {
+                                Vector3f goalLinePosition = ballInGoalResult.getPosition().clone();
+                                goalLinePosition.setX(-1 * getHalfTimeSideFactor() * team.getSide() * FIELD_HALF_WIDTH);
+                                // TODO: Depending on player skill
+                                float maximumWrongPositionPrediction = 1.25f;
+                                float wrongPredictionY = (FastMath.nextRandomFloat() * maximumWrongPositionPrediction);
+                                float wrongPredictionZ = (FastMath.nextRandomFloat() * maximumWrongPositionPrediction);
+                                goalLinePosition.addLocal(0, wrongPredictionY, wrongPredictionZ);
+                                GoalkeeperJump goalkeeperJump = goalkeeper.calculateGoalkeeperJump(goalLinePosition, ballInGoalResult.getPassedTime());
+
+                                // TODO: Depending on player skill
+                                float maximumJumpStrength = 20;
+                                // Last effort jump at maximum jump strength for visual effect
+                                if (ballInGoalResult.getPassedTime() < reactionTime) {
+                                    goalkeeperJump.getInitialVelocity().normalizeLocal().multLocal(maximumJumpStrength);
+                                    goalkeeper.executeGoalkeeperJump(goalkeeperJump);
+                                } else if (goalkeeperJump.getInitialVelocity().lengthSquared() <= (maximumJumpStrength * maximumJumpStrength)) {
+                                    goalkeeper.executeGoalkeeperJump(goalkeeperJump);
+                                }
+                            }
                         }
                     }
                 }
@@ -189,6 +208,10 @@ public class Game implements GameLoopListener {
                     int scoringTeamIndex = ((goalOutsideTeam == teams[0]) ? 1 : 0);
                     goals[scoringTeamIndex]++;
                     nextOverTimeDuration += 1;
+
+                    // Testing: Our team always has kick off after goal
+                    goalOutsideTeam = teams[0];
+
                     setNextSituation(new NextSituation(createKickOffSituation(goalOutsideTeam), 4, true));
                 } else {
                     if (goalOutsideTeam != null) {
