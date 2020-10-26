@@ -39,6 +39,7 @@ public class Game implements GameLoopListener {
     private static final Vector3f CORNER_KICK_TOP_LEFT = new Vector3f(-1 * FIELD_HALF_WIDTH, 0, FIELD_HALF_HEIGHT);
     private static final Vector3f CORNER_KICK_BOTTOM_RIGHT = new Vector3f(FIELD_HALF_WIDTH, 0, -1 * FIELD_HALF_HEIGHT);
     private static final Vector3f CORNER_KICK_TOP_RIGHT = new Vector3f(FIELD_HALF_WIDTH, 0, FIELD_HALF_HEIGHT);
+    private boolean isTimeRunning;
     private float logicTime = 0;
     private int halfTime = 0;
     private float nextOverTimeDuration = 2;
@@ -59,26 +60,19 @@ public class Game implements GameLoopListener {
 
     @Override
     public void update(float tpf) {
-        logicTime += tpf;
-        if (gameTime < HALFTIME_DURATION) {
-            gameTime += tpf;
-            if (gameTime > HALFTIME_DURATION) {
-                gameOverTime = (gameTime - HALFTIME_DURATION);
-                gameTime = HALFTIME_DURATION;
-            }
-        } else if (halfTime < 1) {
-            gameOverTime += tpf;
-            if (gameOverTime > nextOverTimeDuration) {
-                halfTime++;
-                if (halfTime < 2) {
-                    Team kickOffTeam = teams[halfTime];
-
-                    // Testing: Our team always has kick off
-                    kickOffTeam = teams[0];
-
-                    setNextSituation(new NextSituation(createKickOffSituation(kickOffTeam), 4, false));
-                } else {
-                    // TODO: End game
+        if (isTimeRunning) {
+            logicTime += tpf;
+            if (gameTime < HALFTIME_DURATION) {
+                gameTime += tpf;
+                if (gameTime > HALFTIME_DURATION) {
+                    gameOverTime = (gameTime - HALFTIME_DURATION);
+                    gameTime = HALFTIME_DURATION;
+                }
+            } else {
+                gameOverTime += tpf;
+                if (gameOverTime > nextOverTimeDuration) {
+                    Situation halfTimeEndSituation = ((halfTime == 0) ? new HalftimeSituation() : new GameOverSituation());
+                    setNextSituation(new NextSituation(halfTimeEndSituation, 4, false));
                 }
             }
         }
@@ -256,11 +250,18 @@ public class Game implements GameLoopListener {
         setNextSituation(new NextSituation(new FreeKickSituation(startingPlayer, lastBallTouchPosition), 2, false));
     }
 
+    public void startSecondHalftime() {
+        halfTime = 1;
+        // Testing: Our team also has the second kick off
+        setSituation(createKickOffSituation(teams[0]));
+    }
+
     private void setNextSituation(NextSituation nextSituation) {
         this.nextSituation = nextSituation;
         if (nextSituation.isBallUnowned()) {
             ball.setOwner(null, false);
         }
+        isTimeRunning = false;
     }
 
     private void setSituation(Situation situation) {
@@ -274,6 +275,7 @@ public class Game implements GameLoopListener {
             BallSituation ballSituation = (BallSituation) situation;
             ballSituation.getStartingPlayer().setCanMove(true);
             situation = null;
+            isTimeRunning = true;
         }
     }
 
