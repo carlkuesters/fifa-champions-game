@@ -359,7 +359,7 @@ public class Main extends SimpleApplication {
         targetCameraLocation.addLocal(0, 20, 20);
         cam.setLocation(targetCameraLocation);
 
-        lblGoals.setText(game.getGoals()[0] + " : " + game.getGoals()[1] + " --- " + game.getGameTime() + " (+" + game.getGameOverTime() + ")");
+        lblGoals.setText(game.getGoals()[0] + " : " + game.getGoals()[1] + " --- " + game.getHalfTimePassedTime() + " (+" + game.getHalfTimePassedOverTime() + ")");
     }
 
     private void updateTransform(PhysicsObject physicsObject, Spatial spatial) {

@@ -42,9 +42,9 @@ public class Game implements GameLoopListener {
     private boolean isTimeRunning;
     private float logicTime = 0;
     private int halfTime = 0;
+    private float halfTimePassedTime = 0;
+    private float halfTimePassedOverTime;
     private float nextOverTimeDuration = 0;
-    private float gameTime = 0;
-    private float gameOverTime;
     private Team[] teams;
     private Ball ball = new Ball();
     private Vector3f lastBallPosition = new Vector3f();
@@ -63,15 +63,15 @@ public class Game implements GameLoopListener {
     public void update(float tpf) {
         if (isTimeRunning) {
             logicTime += tpf;
-            if (gameTime < HALFTIME_DURATION) {
-                gameTime += tpf;
-                if (gameTime > HALFTIME_DURATION) {
-                    gameOverTime = (gameTime - HALFTIME_DURATION);
-                    gameTime = HALFTIME_DURATION;
+            if (halfTimePassedTime < HALFTIME_DURATION) {
+                halfTimePassedTime += tpf;
+                if (halfTimePassedTime > HALFTIME_DURATION) {
+                    halfTimePassedOverTime = (halfTimePassedTime - HALFTIME_DURATION);
+                    halfTimePassedTime = HALFTIME_DURATION;
                 }
             } else {
-                gameOverTime += tpf;
-                if (gameOverTime > nextOverTimeDuration) {
+                halfTimePassedOverTime += tpf;
+                if (halfTimePassedOverTime > nextOverTimeDuration) {
                     Situation halfTimeEndSituation = ((halfTime == 0) ? new HalftimeSituation() : new GameOverSituation());
                     setNextSituation(new NextSituation(halfTimeEndSituation, 4, false));
                 }
@@ -282,6 +282,8 @@ public class Game implements GameLoopListener {
 
     public void startSecondHalftime() {
         halfTime = 1;
+        halfTimePassedTime = 0;
+        halfTimePassedOverTime = 0;
         // Testing: Our team also has the second kick off
         setSituation(createKickOffSituation(teams[0]));
     }
@@ -467,12 +469,12 @@ public class Game implements GameLoopListener {
         return logicTime;
     }
 
-    public float getGameTime() {
-        return gameTime;
+    public float getHalfTimePassedTime() {
+        return halfTimePassedTime;
     }
 
-    public float getGameOverTime() {
-        return gameOverTime;
+    public float getHalfTimePassedOverTime() {
+        return halfTimePassedOverTime;
     }
 
     public int getHalfTimeSideFactor() {
