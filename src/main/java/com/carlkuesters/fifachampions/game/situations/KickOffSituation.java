@@ -30,10 +30,7 @@ public class KickOffSituation extends BallSituation {
     }
 
     @Override
-    public Vector3f getPlayerDirection(PlayerObject playerObject) {
-        if (playerObject == startingPlayer) {
-            return new Vector3f(-1 * game.getHalfTimeSideFactor() * playerObject.getTeam().getSide(), 0, 0);
-        }
-        return super.getPlayerDirection(playerObject);
+    public Vector3f getStartingPlayerDirection() {
+        return new Vector3f(-1 * game.getHalfTimeSideFactor() * startingPlayer.getTeam().getSide(), 0, 0);
     }
 }

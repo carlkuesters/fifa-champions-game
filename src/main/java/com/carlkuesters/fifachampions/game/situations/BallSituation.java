@@ -20,9 +20,9 @@ public abstract class BallSituation extends Situation {
         for (Team team : game.getTeams()) {
             for (PlayerObject playerObject : team.getPlayers()) {
                 playerObject.setPosition(getPlayerPosition(playerObject));
-                playerObject.setDirection(getPlayerDirection(playerObject));
             }
         }
+        startingPlayer.setDirection(getStartingPlayerDirection());
         startingPlayer.setCanMove(false);
         game.selectPlayer(startingPlayer);
     }
@@ -33,8 +33,8 @@ public abstract class BallSituation extends Situation {
         return MathUtil.convertTo3D_XZ(playerObject.getTeam().getIdealLocation(playerObject));
     }
 
-    public Vector3f getPlayerDirection(PlayerObject playerObject) {
-        return game.getBall().getPosition().subtract(playerObject.getPosition()).setY(0).normalizeLocal();
+    public Vector3f getStartingPlayerDirection() {
+        return game.getBall().getPosition().subtract(startingPlayer.getPosition()).setY(0).normalizeLocal();
     }
 
     public PlayerObject getStartingPlayer() {

@@ -26,10 +26,7 @@ public class ThrowInSituation extends BallSituation {
     }
 
     @Override
-    public Vector3f getPlayerDirection(PlayerObject playerObject) {
-        if (playerObject == startingPlayer) {
-            return new Vector3f(0, 0, -1 * FastMath.sign(throwInPosition.getZ()));
-        }
-        return super.getPlayerDirection(playerObject);
+    public Vector3f getStartingPlayerDirection() {
+        return new Vector3f(0, 0, -1 * FastMath.sign(throwInPosition.getZ()));
     }
 }
