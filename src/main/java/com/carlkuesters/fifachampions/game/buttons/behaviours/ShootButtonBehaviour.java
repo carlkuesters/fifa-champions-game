@@ -1,16 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game.buttons.behaviours;
 
 import com.carlkuesters.fifachampions.game.PlayerAnimation;
+import com.carlkuesters.fifachampions.game.PlayerObject;
 
-/**
- *
- * @author Carl
- */
 public class ShootButtonBehaviour extends ChargedBallButtonBehaviour {
 
     @Override
@@ -23,10 +15,13 @@ public class ShootButtonBehaviour extends ChargedBallButtonBehaviour {
 
     @Override
     protected void onTrigger(float strength) {
-        if (controller.getPlayerObject().getGame().getBall().getPosition().getY() > 1) {
-            controller.getPlayerObject().header(strength);
+        PlayerObject playerObject = controller.getPlayerObject();
+        if (playerObject.getGame().getBall().getPosition().getY() > 1) {
+            playerObject.header(strength);
+            playerObject.setAnimation(new PlayerAnimation("header_end", 0.5f));
         } else {
-            controller.getPlayerObject().shoot(strength);
+            playerObject.shoot(strength);
+            playerObject.setAnimation(new PlayerAnimation("run_kick_end", 1));
         }
     }
 }

@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game.buttons;
 
+import com.carlkuesters.fifachampions.game.ControllerButtonBehaviour;
+import com.carlkuesters.fifachampions.game.Situation;
+import com.carlkuesters.fifachampions.game.buttons.behaviours.FreeKickShootButtonBehaviour;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ShootButtonBehaviour;
+import com.carlkuesters.fifachampions.game.situations.FreeKickSituation;
 
-/**
- *
- * @author Carl
- */
 public class ShootOrTackleButton extends DefaultBallActionButton {
 
     public ShootOrTackleButton() {
@@ -22,5 +17,19 @@ public class ShootOrTackleButton extends DefaultBallActionButton {
             shootButtonBehaviour,
             null
         );
+        freeKickShootButtonBehaviour = new FreeKickShootButtonBehaviour();
+    }
+    private FreeKickShootButtonBehaviour freeKickShootButtonBehaviour;
+
+    @Override
+    public ControllerButtonBehaviour getBehaviour() {
+        Situation situation = controller.getPlayerObject().getGame().getSituation();
+        if (situation instanceof FreeKickSituation) {
+            FreeKickSituation freeKickSituation = (FreeKickSituation) situation;
+            if (controller.getPlayerObject() == freeKickSituation.getStartingPlayer()) {
+                return freeKickShootButtonBehaviour;
+            }
+        }
+        return super.getBehaviour();
     }
 }

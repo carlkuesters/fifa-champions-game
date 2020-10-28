@@ -9,8 +9,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.util.TempVars;
 import com.carlkuesters.fifachampions.game.cooldowns.SwitchToPlayerCooldown;
 
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Game implements GameLoopListener {
 
@@ -56,6 +55,7 @@ public class Game implements GameLoopListener {
     private int[] goals = new int[2];
     private CameraPerspective cameraPerspective;
     private float cameraPerspectiveRemainingNonSituationDuration;
+    private LinkedList<EnqueuedAction> enqueuedActions = new LinkedList<>();
 
     public void start() {
         setSituation(createKickOffSituation(teams[0]));
@@ -256,6 +256,8 @@ public class Game implements GameLoopListener {
                 }
             }
         }
+
+        checkEnqueuedActions(tpf);
     }
 
     private void updatePlayerObject(PlayerObject playerObject, float tpf) {
@@ -474,6 +476,25 @@ public class Game implements GameLoopListener {
         return (position.getY() < GOAL_HEIGHT)
             && (position.getZ() > GOAL_Z_BOTTOM)
             && (position.getZ() < GOAL_Z_TOP);
+    }
+
+    public void enqueue(EnqueuedAction enqueuedAction) {
+        enqueuedActions.add(enqueuedAction);
+    }
+
+    private void checkEnqueuedActions(float tpf) {
+        if (enqueuedActions.size() > 0) {
+            LinkedList<EnqueuedAction> currentEnqueuedActions = new LinkedList<>(enqueuedActions);
+            for (EnqueuedAction enqueuedAction : currentEnqueuedActions) {
+                float remainingDelay = (enqueuedAction.getRemainingDelay() - tpf);
+                if (remainingDelay > 0) {
+                    enqueuedAction.setRemainingDelay(remainingDelay);
+                } else {
+                    enqueuedAction.getRunnable().run();
+                    enqueuedActions.remove(enqueuedAction);
+                }
+            }
+        }
     }
 
     public float getLogicTime() {

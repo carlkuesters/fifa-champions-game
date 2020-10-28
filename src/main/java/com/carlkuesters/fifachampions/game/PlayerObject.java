@@ -143,7 +143,6 @@ public class PlayerObject extends PhysicsObject {
         float effectiveSlope = (2 + (11 * strength));
         Vector3f ballVelocity = getDirection().mult(effectiveStrength).addLocal(0, effectiveSlope, 0);
         accelerateBall(ballVelocity, true);
-        setAnimation(new PlayerAnimation("run_kick_end", 1));
     }
 
     public void header(float strength) {
@@ -151,7 +150,6 @@ public class PlayerObject extends PhysicsObject {
         float effectiveStrength = (14 + (9 * strength));
         Vector3f ballVelocity = getDirection().mult(effectiveStrength);
         accelerateBall(ballVelocity, true);
-        setAnimation(new PlayerAnimation("header_end", 0.5f));
     }
 
     public void flank(float strength) {
