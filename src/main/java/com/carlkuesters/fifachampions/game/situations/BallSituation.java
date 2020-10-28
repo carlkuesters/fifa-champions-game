@@ -5,12 +5,10 @@ import com.jme3.math.Vector3f;
 
 public abstract class BallSituation extends Situation {
 
-    public BallSituation(PlayerObject startingPlayer, boolean isFromGroundOrHands) {
+    public BallSituation(PlayerObject startingPlayer) {
         this.startingPlayer = startingPlayer;
-        this.isFromGroundOrHands = isFromGroundOrHands;
     }
     protected PlayerObject startingPlayer;
-    private boolean isFromGroundOrHands;
 
     @Override
     public void start() {
@@ -50,9 +48,5 @@ public abstract class BallSituation extends Situation {
 
     public PlayerObject getStartingPlayer() {
         return startingPlayer;
-    }
-
-    public boolean isFromGroundOrHands() {
-        return isFromGroundOrHands;
     }
 }

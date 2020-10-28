@@ -7,7 +7,7 @@ import com.carlkuesters.fifachampions.game.PlayerObject;
 public class ThrowInSituation extends BallSituation {
     
     public ThrowInSituation(PlayerObject startingPlayer, Vector3f throwInPosition) {
-        super(startingPlayer, false);
+        super(startingPlayer);
         this.throwInPosition = throwInPosition;
     }
     private Vector3f throwInPosition;

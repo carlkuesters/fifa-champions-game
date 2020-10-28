@@ -8,7 +8,7 @@ import com.carlkuesters.fifachampions.game.Team;
 public class GoalKickSituation extends BallSituation {
     
     public GoalKickSituation(Team team) {
-        super(team.getGoalkeeper(), true);
+        super(team.getGoalkeeper());
         this.team = team;
     }
     private Team team;

@@ -3,22 +3,16 @@ package com.carlkuesters.fifachampions.game.situations;
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 
-public class FreeKickSituation extends BallSituation {
+public abstract class FreeKickSituation extends BallSituation {
     
     public FreeKickSituation(PlayerObject startingPlayer, Vector3f ballPosition) {
-        super(startingPlayer, true);
+        super(startingPlayer);
         this.startingPlayer = startingPlayer;
         this.ballPosition = ballPosition.clone();
     }
     private static final float MINIMUM_DISTANCE_TO_BALL = 10;
-    private PlayerObject startingPlayer;
-    private Vector3f ballPosition;
-
-    @Override
-    public void start() {
-        super.start();
-        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 8), 2);
-    }
+    protected PlayerObject startingPlayer;
+    protected Vector3f ballPosition;
 
     @Override
     public Vector3f getBallPosition() {
@@ -29,7 +23,7 @@ public class FreeKickSituation extends BallSituation {
     public Vector3f getPlayerPosition(PlayerObject playerObject) {
         if (playerObject == startingPlayer) {
             Vector3f directionToOpponentGoal = getCenterOpponentGoal().subtractLocal(ballPosition).normalizeLocal();
-            return ballPosition.subtract(directionToOpponentGoal.multLocal(0.5f));
+            return getStartingPlayerPosition(directionToOpponentGoal);
         }
         Vector3f playerPosition = super.getPlayerPosition(playerObject);
         Vector3f distanceToBall = ballPosition.subtract(playerPosition);
@@ -38,4 +32,6 @@ public class FreeKickSituation extends BallSituation {
         }
         return playerPosition;
     }
+
+    protected abstract Vector3f getStartingPlayerPosition(Vector3f directionToOpponentGoal);
 }

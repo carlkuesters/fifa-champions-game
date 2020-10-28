@@ -1,28 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game.buttons;
 
 import com.carlkuesters.fifachampions.game.buttons.behaviours.GoalkeeperPressureButtonBehaviour;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.PassInRunButtonBehaviour;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ThrowInInRunButtonBehaviour;
+import com.carlkuesters.fifachampions.game.situations.CornerKickSituation;
+import com.carlkuesters.fifachampions.game.situations.FarFreeKickSituation;
+import com.carlkuesters.fifachampions.game.situations.KickOffSituation;
+import com.carlkuesters.fifachampions.game.situations.ThrowInSituation;
 
-/**
- *
- * @author Carl
- */
 public class PassInRunOrGoalkeeperPressureButton extends DefaultBallActionButton {
 
     public PassInRunOrGoalkeeperPressureButton() {
+        PassInRunButtonBehaviour passInRunButtonBehaviour = new PassInRunButtonBehaviour();
         GoalkeeperPressureButtonBehaviour goalkeeperPressureButtonBehaviour = new GoalkeeperPressureButtonBehaviour();
-        setBehaviours(
-            new PassInRunButtonBehaviour(),
-            new ThrowInInRunButtonBehaviour(),
+        setNoSituationBehaviours(
             goalkeeperPressureButtonBehaviour,
+            passInRunButtonBehaviour,
             goalkeeperPressureButtonBehaviour,
             goalkeeperPressureButtonBehaviour
         );
+        setBehaviourWithOwnedBall(KickOffSituation.class, passInRunButtonBehaviour);
+        setBehaviourWithOwnedBall(FarFreeKickSituation.class, passInRunButtonBehaviour);
+        setBehaviourWithOwnedBall(CornerKickSituation.class, passInRunButtonBehaviour);
+        setBehaviourWithOwnedBall(ThrowInSituation.class, new ThrowInInRunButtonBehaviour());
     }
 }

@@ -22,6 +22,7 @@ public class PlayerObject extends PhysicsObject {
     private Vector3f lastWalkTurnedPosition = new Vector3f();
     private boolean canMove = true;
     private float remainingFreezeTime;
+    private Float forcedSpeed;
     private boolean isSprinting;
     private boolean isPressuring;
     private boolean isStraddling;
@@ -39,15 +40,16 @@ public class PlayerObject extends PhysicsObject {
             }
         }
         if (canMove && (remainingFreezeTime == 0)) {
+            Vector2f effectiveTargetLocation = targetLocation;
             float oldTargetDistanceSquared = Float.MAX_VALUE;
             if ((remainingFallingDuration == 0) && (!isGoalkeeperJumping)) {
-                float speed = (isSprinting ? 10 : 6);
+                float speed = ((forcedSpeed != null) ? forcedSpeed : (isSprinting ? 10 : 6));
                 boolean wantsToMove = true;
                 if (isPressuring) {
-                    targetLocation = MathUtil.convertTo2D_XZ(game.getBall().getPosition());
+                    effectiveTargetLocation = MathUtil.convertTo2D_XZ(game.getBall().getPosition());
                 }
-                if (targetLocation != null) {
-                    Vector2f targetDistance = targetLocation.subtract(position.getX(), position.getZ());
+                if (effectiveTargetLocation != null) {
+                    Vector2f targetDistance = effectiveTargetLocation.subtract(position.getX(), position.getZ());
                     oldTargetDistanceSquared = targetDistance.lengthSquared();
                     targetWalkDirection.set(targetDistance).normalizeLocal();
                     wantsToMove = (oldTargetDistanceSquared > MathUtil.EPSILON_SQUARED);
@@ -77,10 +79,10 @@ public class PlayerObject extends PhysicsObject {
                     setAnimation(null);
                 }
             } else {
-                if (targetLocation != null) {
-                    float newTargetDistanceSquared = targetLocation.subtract(position.getX(), position.getZ()).lengthSquared();
+                if (effectiveTargetLocation != null) {
+                    float newTargetDistanceSquared = effectiveTargetLocation.subtract(position.getX(), position.getZ()).lengthSquared();
                     if ((newTargetDistanceSquared - oldTargetDistanceSquared) > -1 * MathUtil.EPSILON) {
-                        position.set(targetLocation.getX(), 0, targetLocation.getY());
+                        position.set(effectiveTargetLocation.getX(), 0, effectiveTargetLocation.getY());
                     }
                 }
                 float distanceToLastTurnedPosition = this.position.distanceSquared(lastWalkTurnedPosition);
@@ -341,6 +343,10 @@ public class PlayerObject extends PhysicsObject {
 
     public Vector2f getTargetWalkDirection() {
         return targetWalkDirection;
+    }
+
+    public void setForcedSpeed(Float forcedSpeed) {
+        this.forcedSpeed = forcedSpeed;
     }
 
     public void setIsSprinting(boolean isSprinting) {

@@ -9,7 +9,7 @@ import com.jme3.math.Vector3f;
 public class KickOffSituation extends BallSituation {
     
     public KickOffSituation(PlayerObject startingPlayer) {
-        super(startingPlayer, true);
+        super(startingPlayer);
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.carlkuesters.fifachampions.game.Team;
 public class CornerKickSituation extends BallSituation {
 
     public CornerKickSituation(Team team, Vector3f ballPosition) {
-        super(getStartingPlayer(team), true);
+        super(getStartingPlayer(team));
         this.ballPosition = ballPosition.clone();
     }
     private Vector3f ballPosition;

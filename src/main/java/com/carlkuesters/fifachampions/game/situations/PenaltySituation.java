@@ -9,7 +9,7 @@ import com.carlkuesters.fifachampions.game.Team;
 public class PenaltySituation extends BallSituation {
 
     public PenaltySituation(Team team) {
-        super(getStartingPlayer(team), true);
+        super(getStartingPlayer(team));
         this.team = team;
     }
     private Team team;

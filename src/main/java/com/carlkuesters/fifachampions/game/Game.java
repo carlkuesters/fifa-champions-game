@@ -122,7 +122,7 @@ public class Game implements GameLoopListener {
                                         if (penaltyAreaTeam == straddler.getTeam()) {
                                             setNextSituation(new NextSituation(new PenaltySituation(playerNearStraddler.getTeam()), 2, true));
                                         } else {
-                                            setNextSituation(new NextSituation(new FreeKickSituation(playerNearStraddler, foulPosition), 2, true));
+                                            setNextSituation(new NextSituation(new NearFreeKickSituation(playerNearStraddler, foulPosition), 2, true));
                                         }
                                     }
                                 }
@@ -289,7 +289,7 @@ public class Game implements GameLoopListener {
         Team freeKickTeam = ((offsidePlayerObject.getTeam() == teams[0]) ? teams[1] : teams[0]);
         // TODO: Properly choosing a starting player (based on position?)
         PlayerObject startingPlayer = freeKickTeam.getPlayers().get(freeKickTeam.getPlayers().size() - 1);
-        setNextSituation(new NextSituation(new FreeKickSituation(startingPlayer, lastBallTouchPosition), 2, false));
+        setNextSituation(new NextSituation(new FarFreeKickSituation(startingPlayer, lastBallTouchPosition), 2, false));
     }
 
     public void startSecondHalftime() {

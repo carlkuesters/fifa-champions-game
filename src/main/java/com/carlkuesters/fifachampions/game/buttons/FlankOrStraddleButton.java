@@ -1,27 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game.buttons;
 
 import com.carlkuesters.fifachampions.game.buttons.behaviours.FlankButtonBehaviour;
+import com.carlkuesters.fifachampions.game.buttons.behaviours.GoalKickFlankButtonBehaviour;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.StraddleButtonBehaviour;
+import com.carlkuesters.fifachampions.game.situations.CornerKickSituation;
+import com.carlkuesters.fifachampions.game.situations.FarFreeKickSituation;
+import com.carlkuesters.fifachampions.game.situations.GoalKickSituation;
 
-/**
- *
- * @author Carl
- */
 public class FlankOrStraddleButton extends DefaultBallActionButton {
 
     public FlankOrStraddleButton() {
+        FlankButtonBehaviour flankButtonBehaviour = new FlankButtonBehaviour();
         StraddleButtonBehaviour straddleButtonBehaviour = new StraddleButtonBehaviour();
-        setBehaviours(
-            new FlankButtonBehaviour(),
-            null,
+        setNoSituationBehaviours(
             straddleButtonBehaviour,
+            flankButtonBehaviour,
             straddleButtonBehaviour,
             straddleButtonBehaviour
         );
+        setBehaviourWithOwnedBall(CornerKickSituation.class, flankButtonBehaviour);
+        setBehaviourWithOwnedBall(GoalKickSituation.class, new GoalKickFlankButtonBehaviour());
+        setBehaviourWithOwnedBall(FarFreeKickSituation.class, flankButtonBehaviour);
     }
 }
