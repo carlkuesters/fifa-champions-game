@@ -15,6 +15,12 @@ public class PenaltySituation extends BallSituation {
     private Team team;
     private Vector3f ballPosition;
 
+    @Override
+    public void start() {
+        super.start();
+        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(2.5f, 6), 2);
+    }
+
     // TODO: Properly choosing a starting player (based on position?)
     private static PlayerObject getStartingPlayer(Team team) {
         return team.getPlayers().get(team.getPlayers().size() - 1);

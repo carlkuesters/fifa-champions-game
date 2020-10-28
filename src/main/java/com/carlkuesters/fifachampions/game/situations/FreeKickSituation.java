@@ -1,7 +1,6 @@
 package com.carlkuesters.fifachampions.game.situations;
 
 import com.jme3.math.Vector3f;
-import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 
 public class FreeKickSituation extends BallSituation {
@@ -16,6 +15,12 @@ public class FreeKickSituation extends BallSituation {
     private Vector3f ballPosition;
 
     @Override
+    public void start() {
+        super.start();
+        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 8), 2);
+    }
+
+    @Override
     public Vector3f getBallPosition() {
         return ballPosition;
     }
@@ -23,9 +28,8 @@ public class FreeKickSituation extends BallSituation {
     @Override
     public Vector3f getPlayerPosition(PlayerObject playerObject) {
         if (playerObject == startingPlayer) {
-            Vector3f centerOpponentGoal = new Vector3f(game.getHalfTimeSideFactor() * startingPlayer.getTeam().getSide() * Game.FIELD_HALF_WIDTH, 0, 0);
-            Vector3f directionToOpponentGoal = centerOpponentGoal.subtract(ballPosition).normalizeLocal();
-            return ballPosition.subtract(directionToOpponentGoal.mult(0.5f));
+            Vector3f directionToOpponentGoal = getCenterOpponentGoal().subtractLocal(ballPosition).normalizeLocal();
+            return ballPosition.subtract(directionToOpponentGoal.multLocal(0.5f));
         }
         Vector3f playerPosition = super.getPlayerPosition(playerObject);
         Vector3f distanceToBall = ballPosition.subtract(playerPosition);

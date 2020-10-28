@@ -54,6 +54,8 @@ public class Game implements GameLoopListener {
     private NextSituation nextSituation;
     private Situation situation;
     private int[] goals = new int[2];
+    private CameraPerspective cameraPerspective;
+    private float cameraPerspectiveRemainingNonSituationDuration;
 
     public void start() {
         setSituation(createKickOffSituation(teams[0]));
@@ -150,6 +152,7 @@ public class Game implements GameLoopListener {
                         if (ball.getOwner() == null) {
                             if (cooldownManager.isNotOnCooldown(new UnownedBallPickupCooldown(playerNearBall))) {
                                 ball.setOwner(playerNearBall, true);
+                                cameraPerspective = null;
                             }
                         } else {
                             FightCooldown fightCooldown = new FightCooldown(ball.getOwner(), playerNearBall);
@@ -245,6 +248,13 @@ public class Game implements GameLoopListener {
                 }
             }
             didBallEnterFieldAfterSituation = (outSide == null);
+
+            if (cameraPerspective != null) {
+                cameraPerspectiveRemainingNonSituationDuration -= tpf;
+                if (cameraPerspectiveRemainingNonSituationDuration <= 0) {
+                    cameraPerspective = null;
+                }
+            }
         }
     }
 
@@ -294,6 +304,7 @@ public class Game implements GameLoopListener {
             ball.setOwner(null, false);
         }
         isTimeRunning = false;
+        cameraPerspective = null;
     }
 
     private void setSituation(Situation situation) {
@@ -511,5 +522,14 @@ public class Game implements GameLoopListener {
 
     public int[] getGoals() {
         return goals;
+    }
+
+    public void setCameraPerspective(CameraPerspective cameraPerspective, float maximumNonSituationDuration) {
+        this.cameraPerspective = cameraPerspective;
+        this.cameraPerspectiveRemainingNonSituationDuration = maximumNonSituationDuration;
+    }
+
+    public CameraPerspective getCameraPerspective() {
+        return cameraPerspective;
     }
 }

@@ -219,7 +219,6 @@ public class Main extends SimpleApplication {
 
         cam.setFrustumPerspective(45, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000);
         cam.setLocation(new Vector3f(0, 100, 0));
-        cam.lookAtDirection(new Vector3f(0, -1, -1.25f), Vector3f.UNIT_Y);
         flyCam.setMoveSpeed(100);
         flyCam.setEnabled(false);
 
@@ -355,9 +354,16 @@ public class Main extends SimpleApplication {
             ballGroundIndicator.setCullHint(Spatial.CullHint.Always);
         }
 
-        targetCameraLocation.set(0.8f * game.getBall().getPosition().getX(), 0, 0.5f * (game.getBall().getPosition().getZ() + 25));
-        targetCameraLocation.addLocal(0, 20, 20);
-        cam.setLocation(targetCameraLocation);
+        CameraPerspective cameraPerspective = game.getCameraPerspective();
+        if (cameraPerspective != null) {
+            cam.setLocation(cameraPerspective.getPosition());
+            cam.lookAtDirection(cameraPerspective.getDirection(), Vector3f.UNIT_Y);
+        } else {
+            targetCameraLocation.set(0.8f * game.getBall().getPosition().getX(), 0, 0.5f * (game.getBall().getPosition().getZ() + 25));
+            targetCameraLocation.addLocal(0, 20, 20);
+            cam.setLocation(targetCameraLocation);
+            cam.lookAtDirection(new Vector3f(0, -1, -1.25f), Vector3f.UNIT_Y);
+        }
 
         lblGoals.setText(game.getGoals()[0] + " : " + game.getGoals()[1] + " --- " + game.getHalfTimePassedTime() + " (+" + game.getHalfTimePassedOverTime() + ")");
     }
