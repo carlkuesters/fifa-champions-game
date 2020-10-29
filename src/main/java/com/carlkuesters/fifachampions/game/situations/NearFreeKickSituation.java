@@ -1,9 +1,11 @@
 package com.carlkuesters.fifachampions.game.situations;
 
+import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.NearFreeKickShootButtonBehaviour;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 
 public class NearFreeKickSituation extends FreeKickSituation {
@@ -11,11 +13,26 @@ public class NearFreeKickSituation extends FreeKickSituation {
     public NearFreeKickSituation(PlayerObject startingPlayer, Vector3f ballPosition) {
         super(startingPlayer, ballPosition);
     }
+    private Vector3f targetInGoalPosition;
+    private Vector2f targetCursorDirection = new Vector2f();
 
     @Override
     public void start() {
         super.start();
+        targetInGoalPosition = new Vector3f(game.getHalfTimeSideFactor() * startingPlayer.getTeam().getSide() * Game.FIELD_HALF_WIDTH, Game.GOAL_HEIGHT / 2, 0);
         game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(4, 14), 2);
+    }
+
+    @Override
+    public void update(float tpf) {
+        super.update(tpf);
+        float maximumMovedCursorDistance = (tpf * (0.5f * (Game.GOAL_Z_TOP - Game.GOAL_Z_BOTTOM)));
+        float movedCursorDistanceY = (-1 * targetCursorDirection.getY() * maximumMovedCursorDistance);
+        float movedCursorDistanceZ = (targetCursorDirection.getX() * maximumMovedCursorDistance);
+        float newTargetInGoalPositionY = Math.max(0, Math.min(targetInGoalPosition.getY() + movedCursorDistanceY, Game.GOAL_HEIGHT));
+        float newTargetInGoalPositionZ = Math.max(Game.GOAL_Z_BOTTOM, Math.min(targetInGoalPosition.getZ() + movedCursorDistanceZ, Game.GOAL_Z_TOP));
+        targetInGoalPosition.setY(newTargetInGoalPositionY);
+        targetInGoalPosition.setZ(newTargetInGoalPositionZ);
     }
 
     @Override
@@ -24,5 +41,13 @@ public class NearFreeKickSituation extends FreeKickSituation {
         float approachAngle = (1 + ((true ? -1 : 1) * 0.25f)) * FastMath.PI;
         Vector3f approachDirection = new Quaternion().fromAngleAxis(approachAngle, Vector3f.UNIT_Y).mult(directionToOpponentGoal);
         return ballPosition.add(approachDirection.multLocal(NearFreeKickShootButtonBehaviour.APPROACH_DURATION * NearFreeKickShootButtonBehaviour.APPROACH_SPEED));
+    }
+
+    public void setTargetCursorDirection(Vector2f targetCursorDirection) {
+        this.targetCursorDirection.set(targetCursorDirection);
+    }
+
+    public Vector3f getTargetInGoalPosition() {
+        return targetInGoalPosition;
     }
 }

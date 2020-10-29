@@ -1,6 +1,7 @@
 package com.carlkuesters.fifachampions;
 
 import com.carlkuesters.fifachampions.game.*;
+import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.SimpleApplication;
@@ -58,6 +59,7 @@ public class Main extends SimpleApplication {
     private HashMap<PlayerObject, Node> playerVisuals = new HashMap<>();
     private HashMap<Controller, Spatial> controllerVisuals = new HashMap<>();
     private Node ballGroundIndicator;
+    private Node targetInGoalIndicator;
     private Vector3f targetCameraLocation = new Vector3f();
     private Spatial ballModel;
     private Controller controller1;
@@ -208,14 +210,29 @@ public class Main extends SimpleApplication {
         ballGroundIndicatorGeometry.setLocalTranslation((ballGroundIndicatorSize / -2), groundHeight, (ballGroundIndicatorSize / 2));
         ballGroundIndicatorGeometry.rotate(JMonkeyUtil.getQuaternion_X(-90));
         Material materialBallGroundIndicator = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture texture = loadTexture("textures/ball_ground_indicator.png");
-        materialBallGroundIndicator.setTexture("ColorMap", texture);
+        materialBallGroundIndicator.setTexture("ColorMap", loadTexture("textures/ball_ground_indicator.png"));
         materialBallGroundIndicator.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         materialBallGroundIndicator.getAdditionalRenderState().setDepthTest(false);
         ballGroundIndicatorGeometry.setMaterial(materialBallGroundIndicator);
+        ballGroundIndicatorGeometry.setQueueBucket(RenderQueue.Bucket.Transparent);
         ballGroundIndicator = new Node();
         ballGroundIndicator.attachChild(ballGroundIndicatorGeometry);
         rootNode.attachChild(ballGroundIndicator);
+
+        float targetInGoalIndicatorSize = 1.5f;
+        Geometry targetInGoalIndicatorGeometry = new Geometry(null, new Quad(targetInGoalIndicatorSize, targetInGoalIndicatorSize));
+        targetInGoalIndicatorGeometry.setLocalTranslation(0, (targetInGoalIndicatorSize / -4), (targetInGoalIndicatorSize / -2));
+        targetInGoalIndicatorGeometry.rotate(JMonkeyUtil.getQuaternion_Y(-90));
+        Material materialTargetInGoalIndicator = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        materialTargetInGoalIndicator.setTexture("ColorMap", loadTexture("textures/target_in_goal_indicator.png"));
+        materialTargetInGoalIndicator.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        materialTargetInGoalIndicator.getAdditionalRenderState().setDepthTest(false);
+        materialTargetInGoalIndicator.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
+        targetInGoalIndicatorGeometry.setMaterial(materialTargetInGoalIndicator);
+        targetInGoalIndicatorGeometry.setQueueBucket(RenderQueue.Bucket.Translucent);
+        targetInGoalIndicator = new Node();
+        targetInGoalIndicator.attachChild(targetInGoalIndicatorGeometry);
+        rootNode.attachChild(targetInGoalIndicator);
 
         cam.setFrustumPerspective(45, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000);
         cam.setLocation(new Vector3f(0, 100, 0));
@@ -352,6 +369,14 @@ public class Main extends SimpleApplication {
             ballGroundIndicator.setCullHint(Spatial.CullHint.Inherit);
         } else {
             ballGroundIndicator.setCullHint(Spatial.CullHint.Always);
+        }
+
+        if (game.getSituation() instanceof NearFreeKickSituation) {
+            NearFreeKickSituation nearFreeKickSituation = (NearFreeKickSituation) game.getSituation();
+            targetInGoalIndicator.setLocalTranslation(nearFreeKickSituation.getTargetInGoalPosition());
+            targetInGoalIndicator.setCullHint(Spatial.CullHint.Inherit);
+        } else {
+            targetInGoalIndicator.setCullHint(Spatial.CullHint.Always);
         }
 
         CameraPerspective cameraPerspective = game.getCameraPerspective();

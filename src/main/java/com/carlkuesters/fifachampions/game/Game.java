@@ -91,6 +91,8 @@ public class Game implements GameLoopListener {
         if (situation == null) {
             lastBallPosition.set(ball.getPosition());
             ball.update(tpf);
+        } else {
+            situation.update(tpf);
         }
         for (Team team : teams) {
             for (PlayerObject playerObject : team.getPlayers()) {
@@ -122,7 +124,12 @@ public class Game implements GameLoopListener {
                                         if (penaltyAreaTeam == straddler.getTeam()) {
                                             setNextSituation(new NextSituation(new PenaltySituation(playerNearStraddler.getTeam()), 2, true));
                                         } else {
-                                            setNextSituation(new NextSituation(new NearFreeKickSituation(playerNearStraddler, foulPosition), 2, true));
+                                            float distanceToEnemyGoalLine = FastMath.abs(foulPosition.getX() - (-1 * getHalfTimeSideFactor() * straddler.getTeam().getSide() * FIELD_HALF_WIDTH));
+                                            if (distanceToEnemyGoalLine < 30) {
+                                                setNextSituation(new NextSituation(new NearFreeKickSituation(playerNearStraddler, foulPosition), 2, true));
+                                            } else {
+                                                setNextSituation(new NextSituation(new FarFreeKickSituation(playerNearStraddler, foulPosition), 2, true));
+                                            }
                                         }
                                     }
                                 }
@@ -263,7 +270,10 @@ public class Game implements GameLoopListener {
     private void updatePlayerObject(PlayerObject playerObject, float tpf) {
         Controller controller = playerObject.getController();
         if (controller != null) {
-            if (!controller.isChargingBallButton()) {
+            if (situation instanceof NearFreeKickSituation) {
+                NearFreeKickSituation nearFreeKickSituation = (NearFreeKickSituation) situation;
+                nearFreeKickSituation.setTargetCursorDirection(controller.getTargetDirection());
+            } else  if (!controller.isChargingBallButton()) {
                 playerObject.setTargetWalkDirection(controller.getTargetDirection());
             }
         } else if (!playerObject.isGoalkeeperJumping()) {
