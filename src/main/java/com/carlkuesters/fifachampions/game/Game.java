@@ -34,6 +34,7 @@ public class Game implements GameLoopListener {
     public static final float GOAL_HEIGHT = 3.05f;
     public static final float GOAL_Z_BOTTOM = -4.5f;
     public static final float GOAL_Z_TOP = 3.9f;
+    public static final float MAXIMUM_NEAR_FREE_KICK_DISTANCE = 30;
     private static final Vector3f CORNER_KICK_BOTTOM_LEFT = new Vector3f(-1 * FIELD_HALF_WIDTH, 0, -1 * FIELD_HALF_HEIGHT);
     private static final Vector3f CORNER_KICK_TOP_LEFT = new Vector3f(-1 * FIELD_HALF_WIDTH, 0, FIELD_HALF_HEIGHT);
     private static final Vector3f CORNER_KICK_BOTTOM_RIGHT = new Vector3f(FIELD_HALF_WIDTH, 0, -1 * FIELD_HALF_HEIGHT);
@@ -63,8 +64,8 @@ public class Game implements GameLoopListener {
 
     @Override
     public void update(float tpf) {
+        logicTime += tpf;
         if (isTimeRunning) {
-            logicTime += tpf;
             if (halfTimePassedTime < HALFTIME_DURATION) {
                 halfTimePassedTime += tpf;
                 if (halfTimePassedTime > HALFTIME_DURATION) {
@@ -124,8 +125,7 @@ public class Game implements GameLoopListener {
                                         if (penaltyAreaTeam == straddler.getTeam()) {
                                             setNextSituation(new NextSituation(new PenaltySituation(playerNearStraddler.getTeam()), 2, true));
                                         } else {
-                                            float distanceToEnemyGoalLine = FastMath.abs(foulPosition.getX() - (-1 * getHalfTimeSideFactor() * straddler.getTeam().getSide() * FIELD_HALF_WIDTH));
-                                            if (distanceToEnemyGoalLine < 30) {
+                                            if (getDistanceToGoalLine(foulPosition, straddler.getTeam()) <= MAXIMUM_NEAR_FREE_KICK_DISTANCE) {
                                                 setNextSituation(new NextSituation(new NearFreeKickSituation(playerNearStraddler, foulPosition), 2, true));
                                             } else {
                                                 setNextSituation(new NextSituation(new FarFreeKickSituation(playerNearStraddler, foulPosition), 2, true));
@@ -193,11 +193,11 @@ public class Game implements GameLoopListener {
                                 Vector3f goalLinePosition = ballInGoalResult.getPosition().clone();
                                 goalLinePosition.setX(-1 * getHalfTimeSideFactor() * team.getSide() * FIELD_HALF_WIDTH);
                                 // TODO: Depending on player skill
-                                float maximumWrongPositionPrediction = 1.25f;
+                                float maximumWrongPositionPrediction = 1;
                                 float wrongPredictionY = (FastMath.nextRandomFloat() * maximumWrongPositionPrediction);
                                 float wrongPredictionZ = (FastMath.nextRandomFloat() * maximumWrongPositionPrediction);
                                 goalLinePosition.addLocal(0, wrongPredictionY, wrongPredictionZ);
-                                GoalkeeperJump goalkeeperJump = goalkeeper.calculateGoalkeeperJump(goalLinePosition, ballInGoalResult.getPassedTime());
+                                GoalkeeperJump goalkeeperJump = goalkeeper.getGoalkeeperJump(goalLinePosition, ballInGoalResult.getPassedTime());
 
                                 // TODO: Depending on player skill
                                 float maximumJumpStrength = 20;
@@ -486,6 +486,10 @@ public class Game implements GameLoopListener {
         return (position.getY() < GOAL_HEIGHT)
             && (position.getZ() > GOAL_Z_BOTTOM)
             && (position.getZ() < GOAL_Z_TOP);
+    }
+
+    public float getDistanceToGoalLine(Vector3f position, Team goalTeam) {
+        return FastMath.abs(position.getX() - (-1 * getHalfTimeSideFactor() * goalTeam.getSide() * FIELD_HALF_WIDTH));
     }
 
     public void enqueue(EnqueuedAction enqueuedAction) {

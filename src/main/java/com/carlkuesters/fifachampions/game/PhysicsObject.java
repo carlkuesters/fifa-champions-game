@@ -1,16 +1,21 @@
 package com.carlkuesters.fifachampions.game;
 
+import com.carlkuesters.fifachampions.game.math.Parabole;
+import com.carlkuesters.fifachampions.game.math.ParaboleUtil;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.util.TempVars;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 public class PhysicsObject extends GameObject {
 
     private static final float PRECOMPUTE_TIME_PER_FRAME = (1f / 60);
-    protected final float gravitation = 9.81f;
+    protected float gravitation = 9.81f;
+    protected float frictionXZ_Ground = 4;
+    protected float frictionXZ_Air = 3;
     protected float bouncinessGround = 0;
     protected float bouncinessWalls = 0;
     private Vector3f tmpPrecomputedPosition = new Vector3f();
@@ -48,14 +53,34 @@ public class PhysicsObject extends GameObject {
     }
 
     protected void updateTransform(Vector3f position, Quaternion rotation, Vector3f velocity, float tpf) {
-        velocity.setY(velocity.getY() - (gravitation * tpf));
         tmpNewPosition.set(position);
         tmpNewPosition.addLocal(velocity.mult(tpf));
         tryMoveToPosition(position, velocity, tmpNewPosition);
-        if (position.getY() < 0) {
+        if (position.getY() > 0) {
+            velocity.setY(velocity.getY() - (gravitation * tpf));
+        } else if (position.getY() < 0) {
             position.setY(0);
             velocity.setY(-1 * bouncinessGround * velocity.getY());
         }
+        if (isAffectedByFrictionXZ()) {
+            float frictionXZ = ((position.getY() > 0) ? frictionXZ_Air : frictionXZ_Ground);
+            float velocityToSubtractX = (Math.signum(velocity.getX()) * frictionXZ * tpf);
+            float velocityToSubtractZ = (Math.signum(velocity.getZ()) * frictionXZ * tpf);
+            if (FastMath.abs(velocityToSubtractX) < FastMath.abs(velocity.getX())) {
+                velocity.setX(velocity.getX() - velocityToSubtractX);
+            } else {
+                velocity.setX(0);
+            }
+            if (FastMath.abs(velocityToSubtractZ) < FastMath.abs(velocity.getZ())) {
+                velocity.setZ(velocity.getZ() - velocityToSubtractZ);
+            } else {
+                velocity.setZ(0);
+            }
+        }
+    }
+
+    protected boolean isAffectedByFrictionXZ() {
+        return true;
     }
 
     public void tryMoveToPosition(Vector3f position, Vector3f velocity, Vector3f targetPosition) {
@@ -109,18 +134,6 @@ public class PhysicsObject extends GameObject {
         }
     }
 
-    protected void slowDown(Vector3f velocity, float strength, int axis, float tpf) {
-        float currentValue = velocity.get(axis);
-        float currentValueAbsolute = FastMath.abs(currentValue);
-        float amountToSubtractAbsolute = (strength * tpf);
-        float amountToSubtract = Math.signum(currentValue) * amountToSubtractAbsolute;
-        if (amountToSubtractAbsolute < currentValueAbsolute) {
-            velocity.set(axis, currentValue - amountToSubtract);
-        } else {
-            velocity.set(axis, 0);
-        }
-    }
-
     public void setPosition(Vector3f position) {
         this.position.set(position);
     }
@@ -160,5 +173,50 @@ public class PhysicsObject extends GameObject {
 
     public Vector3f getVelocity() {
         return velocity;
+    }
+
+    public Vector3f getInitialVelocity_ByTargetVelocityX(Vector3f targetPosition, float targetVelocityX) {
+        float paraboleAirFrictionFactorX = Math.signum(targetPosition.getX() - position.getX());
+        Parabole paraboleX = getParabole_SlowFactor_ByTargetVelocity(position.getX(), targetPosition.getX(), targetVelocityX, paraboleAirFrictionFactorX * frictionXZ_Air);
+        float initialVelocityX = paraboleX.getFirstDerivative(0);
+        float duration = paraboleX.getCalculatedValue("x2");
+        Parabole paraboleY = getParabole_SlowFactor_ByDuration(position.getY(), targetPosition.getY(), duration, gravitation);
+        float initialVelocityY = paraboleY.getFirstDerivative(0);
+        float paraboleAirFrictionFactorZ = Math.signum(targetPosition.getZ() - position.getZ());
+        Parabole paraboleZ = getParabole_SlowFactor_ByDuration(position.getZ(), targetPosition.getZ(), duration, paraboleAirFrictionFactorZ * frictionXZ_Air);
+        float initialVelocityZ = paraboleZ.getFirstDerivative(0);
+
+        return new Vector3f(initialVelocityX, initialVelocityY, initialVelocityZ);
+    }
+
+    public static Parabole getParabole_SlowFactor_ByDuration(float currentValue, float targetValue, float duration, float slowFactor) {
+        float x1 = 0;
+        float y1 = currentValue;
+        float x2 = duration;
+        float y2 = targetValue;
+        float a = (slowFactor / -2);
+
+        return ParaboleUtil.getParabole_X1_Y1_X2_Y2_A(x1, y1, x2, y2, a);
+    }
+
+    public static Parabole getParabole_SlowFactor_ByTargetVelocity(float currentValue, float targetValue, float targetVelocity, float slowFactor) {
+        float x1 = 0;
+        float y1 = currentValue;
+        float y2 = targetValue;
+        float firstDerivativeX2 = targetVelocity;
+        float a = (slowFactor / -2);
+
+        List<Parabole> paraboles = ParaboleUtil.getParaboles_X1_Y1_Y2_FDX2_A(x1, y1, y2, firstDerivativeX2, a);
+        return ParaboleUtil.getQuadraticFormulaResult(paraboles, true);
+    }
+
+    public static Parabole getParabole_PerfectStop(float currentValue, float targetValue, float flyDuration) {
+        float x1 = 0;
+        float y1 = currentValue;
+        float x2 = flyDuration;
+        float y2 = targetValue;
+        float firstDerivativeX2 = 0;
+
+        return ParaboleUtil.getParabole_X1_Y1_X2_Y2_FDX2(x1, y1, x2, y2, firstDerivativeX2);
     }
 }

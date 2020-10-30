@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions.game;
 
+import com.carlkuesters.fifachampions.game.math.Parabole;
 import com.jme3.animation.LoopMode;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -28,7 +29,6 @@ public class PlayerObject extends PhysicsObject {
     private boolean isStraddling;
     private float remainingFallingDuration;
     private boolean isGoalkeeperJumping;
-    private float goalkeeperJumpSlowFactorZ;
     private PlayerAnimation animation;
 
     @Override
@@ -72,7 +72,6 @@ public class PlayerObject extends PhysicsObject {
                     setAnimation(null);
                 }
             } else if (isGoalkeeperJumping) {
-                slowDown(velocity, goalkeeperJumpSlowFactorZ, 2, tpf);
                 if (velocity.lengthSquared() <= 0) {
                     isGoalkeeperJumping = false;
                     setDirection(new Vector3f(game.getHalfTimeSideFactor() * team.getSide(), 0, 0));
@@ -98,6 +97,11 @@ public class PlayerObject extends PhysicsObject {
                 animation = null;
             }
         }
+    }
+
+    @Override
+    protected boolean isAffectedByFrictionXZ() {
+        return isGoalkeeperJumping;
     }
 
     public void passDirect(float strength) {
@@ -139,11 +143,15 @@ public class PlayerObject extends PhysicsObject {
     }
 
     public void shoot(float strength) {
-        game.continueFromBallSituation();
         turnIntoControllerTargetDirection();
         float effectiveStrength = (18 + (11 * strength));
         float effectiveSlope = (2 + (11 * strength));
         Vector3f ballVelocity = getDirection().mult(effectiveStrength).addLocal(0, effectiveSlope, 0);
+        shoot(ballVelocity);
+    }
+
+    public void shoot(Vector3f ballVelocity) {
+        game.continueFromBallSituation();
         accelerateBall(ballVelocity, true);
     }
 
@@ -215,67 +223,13 @@ public class PlayerObject extends PhysicsObject {
         setAnimation(new PlayerAnimation("collapse", (1.1f * remainingFallingDuration), LoopMode.DontLoop));
     }
 
-    public GoalkeeperJump calculateGoalkeeperJump(Vector3f targetPosition, float jumpDuration) {
-        // y = ax²+bx+c
-        // y' = 2ax+b
-        // y'' = 2a = -gravity
-        // ----------
-        // y1=a(x1)²+bx1+c <=> c=y1-a(x1)²-bx1
-        // y2=a(x2)²+bx2+c <=> c=y2-a(x2)²-bx2
-        // ----------
-        // => y1-a(x1)²-bx1 = y2-a(x2)²-bx2
-        // <=> y1-a(x1)²-y2+a(x2)² = b(x1-x2)
-        // <=> b={y1-a(x1)²-y2+a(x2)²}/(x1-x2)
-        // with x1=0
-        // <=> b={y1-y2+a(x2)²}/-x2
-        // ----------
-        // => initialVelocity.y = y'(x1) = 2ax1+b
-        // with x1=0
-        // => initialVelocity.y = b
-        // ----------
-        float y1 = position.getY();
-        float x2 = jumpDuration;
-        float y2 = targetPosition.getY();
-
-        float a = ((-1 * gravitation) / 2);
-        float b = (y1 - y2 + (a * x2 * x2)) / (-1 * x2);
-
-        float initialVelocityY = b;
-
-        // y = Ax²+Bx+C
-        // y' = 2Ax+B
-        // y'' = 2A = slowFactor
-        // ----------
-        // y(0) = 0
-        // A*0 + B*0 + C = 0
-        // C = 0
-        // ----------
-        // y'(jumpDuration) = 0
-        // 2A*jumpDuration + B = 0
-        // B = -2A*jumpDuration
-        // ----------
-        // y(jumpDuration) = absoluteDistanceZ
-        // A*(jumpDuration^2) + B*jumpDuration + C = absoluteDistanceZ
-        // A*(jumpDuration^2) + B*jumpDuration = absoluteDistanceZ
-        // A*(jumpDuration^2) + (-2A*jumpDuration)*jumpDuration = absoluteDistanceZ
-        // A*(jumpDuration^2) - 2A*(jumpDuration^2) = absoluteDistanceZ
-        // -A*(jumpDuration^2) = absoluteDistanceZ
-        // A = -absoluteDistanceZ / jumpDuration^2
-        // ----------
-        // => initialVelocity.z = y'(0) = 2A*0 + B = B
-        float distanceZ = (targetPosition.getZ() - position.getZ());
-        float absoluteDistanceZ = FastMath.abs(distanceZ);
-        float A = ((-1 * absoluteDistanceZ) / (jumpDuration * jumpDuration));
-        float B = (-2 * A * jumpDuration);
-
-        float initialVelocityZ = Math.signum(distanceZ) * B;
-        float goalkeeperJumpSlowFactorZ = FastMath.abs(2 * A);
-
-        Vector3f initialVelocity = new Vector3f(
-            0,
-            initialVelocityY,
-            initialVelocityZ
-        );
+    public GoalkeeperJump getGoalkeeperJump(Vector3f targetPosition, float jumpDuration) {
+        Parabole paraboleY = getParabole_SlowFactor_ByDuration(position.getY(), targetPosition.getY(), jumpDuration, gravitation);
+        float initialVelocityY = paraboleY.getFirstDerivative(0);
+        Parabole paraboleZ = getParabole_PerfectStop(position.getZ(), targetPosition.getZ(), jumpDuration);
+        float initialVelocityZ = paraboleZ.getFirstDerivative(0);
+        float frictionXZ_Air = FastMath.abs(paraboleZ.getSecondDerivative());
+        Vector3f initialVelocity = new Vector3f(0, initialVelocityY, initialVelocityZ);
 
         Vector3f distanceToTarget_XYZ = targetPosition.subtract(position);
         Vector2f directionToTarget_ZY = new Vector2f(distanceToTarget_XYZ.getZ(), distanceToTarget_XYZ.getY()).normalizeLocal();
@@ -284,14 +238,14 @@ public class PlayerObject extends PhysicsObject {
         rotation.lookAt(new Vector3f(game.getHalfTimeSideFactor() * team.getSide(), 0, 0), Vector3f.UNIT_Y);
         rotation.multLocal(new Quaternion().fromAngleAxis(jumpAngle, Vector3f.UNIT_Z));
 
-        return new GoalkeeperJump(initialVelocity, rotation, goalkeeperJumpSlowFactorZ, jumpDuration);
+        return new GoalkeeperJump(initialVelocity, rotation, frictionXZ_Air, jumpDuration);
     }
 
     public void executeGoalkeeperJump(GoalkeeperJump goalkeeperJump) {
         isGoalkeeperJumping = true;
         velocity.set(goalkeeperJump.getInitialVelocity());
         rotation.set(goalkeeperJump.getRotation());
-        goalkeeperJumpSlowFactorZ = goalkeeperJump.getGoalkeeperJumpSlowFactorZ();
+        frictionXZ_Air = goalkeeperJump.getFrictionXZ_Air();
         setAnimation(new PlayerAnimation("goalkeeper_jump", goalkeeperJump.getJumpDuration(), LoopMode.DontLoop));
     }
 

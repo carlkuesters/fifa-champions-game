@@ -10,6 +10,6 @@ import lombok.Getter;
 public class GoalkeeperJump {
     private Vector3f initialVelocity;
     private Quaternion rotation;
-    private float goalkeeperJumpSlowFactorZ;
+    private float frictionXZ_Air;
     private float jumpDuration;
 }

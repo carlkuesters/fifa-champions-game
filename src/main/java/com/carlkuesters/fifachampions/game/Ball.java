@@ -27,15 +27,17 @@ public class Ball extends PhysicsObject {
         if (owner != null) {
             placeInFrontOfOwner(position, velocity);
             velocity.set(position.subtract(lastPosition)).divideLocal(tpf);
-        } else {
-            float slowDownStrength = ((position.getY() > 0) ? 3 : 4);
-            slowDown(velocity, slowDownStrength, tpf);
         }
         Vector3f movedDistance = position.subtract(lastPosition);
         Vector3f rotationAxis = new Quaternion().fromAngleAxis(-1 * FastMath.HALF_PI, movedDistance).mult(Vector3f.UNIT_Y).normalizeLocal();
         rotationProgressInRadians += (movedDistance.length() * 2);
         Quaternion moveRotation = new Quaternion().fromAngleAxis(rotationProgressInRadians, rotationAxis);
         setDirection(moveRotation.mult(Vector3f.UNIT_Y));
+    }
+
+    @Override
+    protected boolean isAffectedByFrictionXZ() {
+        return (owner == null);
     }
 
     public void accelerate(Vector3f velocity, boolean canTriggerOffside) {
