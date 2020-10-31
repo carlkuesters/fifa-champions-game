@@ -362,7 +362,7 @@ public class Main extends SimpleApplication {
 
         PhysicsPrecomputationResult ballOnGroundResult = null;
         if ((game.getSituation() == null) && (game.getNextSituation() == null)) {
-            ballOnGroundResult = game.getBall().precomputeTransformUntil(result -> result.getPosition().getY() <= 0);
+            ballOnGroundResult = game.getBall().precomputeTransformUntil(result -> result.getPosition().getY() < 0.2f);
         }
         if ((ballOnGroundResult != null) && (ballOnGroundResult.getPassedTime() > 0)) {
             ballGroundIndicator.setLocalTranslation(ballOnGroundResult.getPosition());

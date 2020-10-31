@@ -107,7 +107,7 @@ public class Game implements GameLoopListener {
         for (Team team : teams) {
             for (PlayerObject straddler : team.getPlayers()) {
                 if (straddler.isStraddling()) {
-                    LinkedList<PlayerObject> playersNearStraddler = getNearPlayers(straddler.getPosition(), 1, 1);
+                    LinkedList<PlayerObject> playersNearStraddler = getNearPlayers(straddler.getPosition(), 1, 0.5f);
                     for (PlayerObject playerNearStraddler : playersNearStraddler) {
                         if (playerNearStraddler != straddler) {
                             if (!playerNearStraddler.isFalling()) {
@@ -152,7 +152,7 @@ public class Game implements GameLoopListener {
             OutSide outSide = getOutside(ball.getPosition());
             if (outSide == null) {
                 // Fight around ball
-                LinkedList<PlayerObject> playersNearBall = getNearPlayers(ball.getPosition(), 1, 2.5f);
+                LinkedList<PlayerObject> playersNearBall = getNearPlayers(ball.getPosition(), 1, 2);
                 Collections.shuffle(playersNearBall);
                 for (PlayerObject playerNearBall : playersNearBall) {
                     if (playerNearBall != ball.getOwner()) {
