@@ -14,18 +14,16 @@ public class NearFreeKickSituation extends FreeKickSituation {
     public NearFreeKickSituation(PlayerObject startingPlayer, Vector3f ballPosition) {
         super(startingPlayer, ballPosition);
     }
+    private float optimalShootStrength;
     private Vector3f targetInGoalPosition;
     private Vector2f targetCursorDirection = new Vector2f();
-    private float optimalBallVelocityLength;
 
     @Override
     public void start() {
         super.start();
         Team opponentTeam = game.getTeams()[(startingPlayer.getTeam().getSide() == 1) ? 1 : 0];
         float nearFreeKickProximity = (game.getDistanceToGoalLine(ballPosition, opponentTeam) / (Game.FIELD_HALF_WIDTH - Game.MAXIMUM_NEAR_FREE_KICK_DISTANCE));
-        // TODO: Player dependent
-        float maximumShootStrength = 29;
-        optimalBallVelocityLength = ((1 + nearFreeKickProximity) * (maximumShootStrength / 3));
+        optimalShootStrength = ((1 + nearFreeKickProximity) / 3);
         targetInGoalPosition = new Vector3f(game.getHalfTimeSideFactor() * startingPlayer.getTeam().getSide() * Game.FIELD_HALF_WIDTH, Game.GOAL_HEIGHT / 2, 0);
         game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(4, 14), 2);
     }
@@ -50,15 +48,15 @@ public class NearFreeKickSituation extends FreeKickSituation {
         return ballPosition.add(approachDirection.multLocal(NearFreeKickShootButtonBehaviour.APPROACH_DURATION * NearFreeKickShootButtonBehaviour.APPROACH_SPEED));
     }
 
+    public float getOptimalShootStrength() {
+        return optimalShootStrength;
+    }
+
     public void setTargetCursorDirection(Vector2f targetCursorDirection) {
         this.targetCursorDirection.set(targetCursorDirection);
     }
 
     public Vector3f getTargetInGoalPosition() {
         return targetInGoalPosition;
-    }
-
-    public float getOptimalBallVelocityLength() {
-        return optimalBallVelocityLength;
     }
 }
