@@ -21,7 +21,7 @@ public class NearFreeKickShootButtonBehaviour extends ApproachShootButtonBehavio
                 .getX();
         Vector3f optimalBallVelocity = ball.getInitialVelocity_ByTargetVelocityX(nearFreeKickSituation.getTargetInGoalPosition(), optimalBallVelocityX);
         float actualVelocityFactor = FastMath.pow(2, strength - optimalStrength);
-        Vector3f actualBallVelocity = optimalBallVelocity.normalize().multLocal(actualVelocityFactor * maximumShootVelocity);
+        Vector3f actualBallVelocity = optimalBallVelocity.normalize().multLocal(actualVelocityFactor * optimalBallVelocity.length());
         playerObject.shoot(actualBallVelocity);
     }
 }

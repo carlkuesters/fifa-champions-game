@@ -49,7 +49,7 @@ public abstract class ChargedButtonBehaviour extends ControllerButtonBehaviour i
     @Override
     public void trigger() {
         super.trigger();
-        float strength = (chargedDuration / maxChargedDuration);
+        float strength = getCurrentChargeStrength();
         checkAndExecuteTrigger(strength);
     }
 
@@ -75,5 +75,9 @@ public abstract class ChargedButtonBehaviour extends ControllerButtonBehaviour i
 
     public boolean isCharging() {
         return isCharging;
+    }
+
+    public float getCurrentChargeStrength() {
+        return (chargedDuration / maxChargedDuration);
     }
 }

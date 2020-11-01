@@ -1,6 +1,7 @@
 package com.carlkuesters.fifachampions;
 
 import com.carlkuesters.fifachampions.game.*;
+import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
@@ -33,6 +34,7 @@ import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.simsilica.lemur.*;
+import com.simsilica.lemur.component.IconComponent;
 import com.simsilica.lemur.style.BaseStyles;
 
 import java.util.HashMap;
@@ -64,6 +66,12 @@ public class Main extends SimpleApplication {
     private Spatial ballModel;
     private Controller controller1;
     private Label lblGoals;
+    private Container playerContainer;
+    private Label optimalStrengthIndicator;
+    private ProgressBar pbrStrength;
+    private float displayedStrength;
+    private float remainingDisplayedStrengthDuration;
+    private PlayerObject displayedStrengthPlayerObject;
 
     @Override
     public void simpleInitApp() {
@@ -241,6 +249,8 @@ public class Main extends SimpleApplication {
 
         inputManager.addRawInputListener(new JoystickEventListener());
 
+        setDisplayStatView(false);
+
         GuiGlobals.initialize(this);
         BaseStyles.loadGlassStyle();
         GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
@@ -250,6 +260,19 @@ public class Main extends SimpleApplication {
         lblGoals = new Label("");
         scoreContainer.addChild(lblGoals);
         guiNode.attachChild(scoreContainer);
+
+        optimalStrengthIndicator = new Label("");
+        optimalStrengthIndicator.setBackground(new IconComponent("textures/optimal_strength_indicator.png"));
+        optimalStrengthIndicator.setLocalTranslation(new Vector3f(0, 70, 2));
+        optimalStrengthIndicator.setLocalScale(0.085f);
+        guiNode.attachChild(optimalStrengthIndicator);
+
+        playerContainer = new Container();
+        playerContainer.setLocalTranslation(20, 61, 0);
+        playerContainer.setPreferredSize(new Vector3f(200, 20, 1));
+        pbrStrength = new ProgressBar();
+        playerContainer.addChild(pbrStrength);
+        guiNode.attachChild(playerContainer);
     }
 
     private Material createTextureMaterial(String diffusePath, String normalPath, String specularPath) {
@@ -375,8 +398,33 @@ public class Main extends SimpleApplication {
             NearFreeKickSituation nearFreeKickSituation = (NearFreeKickSituation) game.getSituation();
             targetInGoalIndicator.setLocalTranslation(nearFreeKickSituation.getTargetInGoalPosition());
             targetInGoalIndicator.setCullHint(Spatial.CullHint.Inherit);
+
+            float optimalStrengthIndicatorX = 11 + (nearFreeKickSituation.getOptimalShootStrength() * 195);
+            optimalStrengthIndicator.setLocalTranslation(optimalStrengthIndicator.getLocalTranslation().setX(optimalStrengthIndicatorX));
+            optimalStrengthIndicator.setCullHint(Spatial.CullHint.Inherit);
         } else {
             targetInGoalIndicator.setCullHint(Spatial.CullHint.Always);
+            optimalStrengthIndicator.setCullHint(Spatial.CullHint.Always);
+        }
+
+        if (controller1.getPlayerObject() != null) {
+            ChargedButtonBehaviour chargingButtonBehaviour = controller1.getChargingButtonBehaviour();
+            if (chargingButtonBehaviour != null) {
+                displayedStrength = chargingButtonBehaviour.getCurrentChargeStrength();
+                remainingDisplayedStrengthDuration = 2;
+                displayedStrengthPlayerObject = controller1.getPlayerObject();
+            } else if (remainingDisplayedStrengthDuration > 0) {
+                remainingDisplayedStrengthDuration -= tpf;
+                if ((remainingDisplayedStrengthDuration <= 0) || (controller1.getPlayerObject() != displayedStrengthPlayerObject)) {
+                    displayedStrength = 0;
+                    remainingDisplayedStrengthDuration = 0;
+                    displayedStrengthPlayerObject = null;
+                }
+            }
+            pbrStrength.setProgressPercent(displayedStrength);
+            playerContainer.setCullHint(Spatial.CullHint.Inherit);
+        } else {
+            playerContainer.setCullHint(Spatial.CullHint.Always);
         }
 
         CameraPerspective cameraPerspective = game.getCameraPerspective();

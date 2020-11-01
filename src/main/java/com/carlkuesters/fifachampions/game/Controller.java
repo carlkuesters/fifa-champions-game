@@ -1,19 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions.game;
 
-import com.jme3.math.Vector2f;
 import com.carlkuesters.fifachampions.game.buttons.*;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedBallButtonBehaviour;
+import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
+import com.jme3.math.Vector2f;
+
 import java.util.HashMap;
 
-/**
- *
- * @author Carl
- */
 public class Controller implements GameLoopListener {
 
     public Controller() {
@@ -130,5 +123,18 @@ public class Controller implements GameLoopListener {
             }
         }
         return false;
+    }
+
+    public ChargedButtonBehaviour getChargingButtonBehaviour() {
+        for (ControllerButton button : buttons.values()) {
+            ControllerButtonBehaviour buttonBehaviour = button.getBehaviour();
+            if (buttonBehaviour instanceof ChargedButtonBehaviour) {
+                ChargedButtonBehaviour chargedButtonBehaviour = (ChargedButtonBehaviour) buttonBehaviour;
+                if (chargedButtonBehaviour.isCharging()) {
+                    return chargedButtonBehaviour;
+                }
+            }
+        }
+        return null;
     }
 }
