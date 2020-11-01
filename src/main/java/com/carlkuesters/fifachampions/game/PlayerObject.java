@@ -285,10 +285,14 @@ public class PlayerObject extends PhysicsObject {
     }
 
     public void setTargetLocation(Vector2f targetLocation) {
-        if (this.targetLocation == null) {
-            this.targetLocation = new Vector2f();
+        if (targetLocation == null) {
+            this.targetLocation = null;
+        } else {
+            if (this.targetLocation == null) {
+                this.targetLocation = new Vector2f();
+            }
+            this.targetLocation.set(targetLocation);
         }
-        this.targetLocation.set(targetLocation);
     }
 
     public void setTargetWalkDirection(Vector2f targetWalkDirection) {

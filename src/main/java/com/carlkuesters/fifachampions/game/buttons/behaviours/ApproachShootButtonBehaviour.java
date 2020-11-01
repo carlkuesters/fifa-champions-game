@@ -27,6 +27,7 @@ public abstract class ApproachShootButtonBehaviour<T extends BallSituation> exte
         playerObject.setAnimation(new PlayerAnimation("stand_kick", 2.41f));
         playerObject.getGame().enqueue(new EnqueuedAction(() -> {
             playerObject.setForcedSpeed(null);
+            playerObject.setTargetLocation(null);
             shoot(ballSituation, playerObject, strength);
         }, APPROACH_DURATION));
     }
