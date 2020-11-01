@@ -22,8 +22,7 @@ public abstract class FreeKickSituation extends BallSituation {
     @Override
     public Vector3f getPlayerPosition(PlayerObject playerObject) {
         if (playerObject == startingPlayer) {
-            Vector3f directionToOpponentGoal = getCenterOpponentGoal().subtractLocal(ballPosition).normalizeLocal();
-            return getStartingPlayerPosition(directionToOpponentGoal);
+            return getStartingPlayerPosition(getDirectionToOpponentGoal());
         }
         Vector3f playerPosition = super.getPlayerPosition(playerObject);
         Vector3f distanceToBall = ballPosition.subtract(playerPosition);

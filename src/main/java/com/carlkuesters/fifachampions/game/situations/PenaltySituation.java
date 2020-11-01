@@ -2,7 +2,6 @@ package com.carlkuesters.fifachampions.game.situations;
 
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.Game;
-import com.carlkuesters.fifachampions.game.Goalkeeper;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 import com.carlkuesters.fifachampions.game.Team;
 
@@ -14,11 +13,13 @@ public class PenaltySituation extends BallSituation {
     }
     private Team team;
     private Vector3f ballPosition;
+    private float targetShootDirection = 1;
+    private float targetGoalkeeperDirection = -1;
 
     @Override
     public void start() {
         super.start();
-        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(2.5f, 6), 2);
+        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 10), 2);
     }
 
     // TODO: Properly choosing a starting player (based on position?)
@@ -35,17 +36,24 @@ public class PenaltySituation extends BallSituation {
     @Override
     public Vector3f getPlayerPosition(PlayerObject playerObject) {
         if (playerObject == startingPlayer) {
-            Vector3f centerOpponentGoal = new Vector3f(game.getHalfTimeSideFactor() * startingPlayer.getTeam().getSide() * Game.FIELD_HALF_WIDTH, 0, 0);
-            Vector3f directionToOpponentGoal = centerOpponentGoal.subtract(ballPosition).normalizeLocal();
-            return ballPosition.subtract(directionToOpponentGoal.mult(0.5f));
+            return getBallApproachPosition(getDirectionToOpponentGoal());
         }
-        Vector3f playerPosition = super.getPlayerPosition(playerObject);
-        if (!(playerObject.getPlayer() instanceof Goalkeeper)) {
-            float maximumAbsoluteX = (Game.FIELD_HALF_WIDTH - Game.PENALTY_AREA_WIDTH);
-            // Move just a little bit away from the penalty area, so the players are not directly on the line
-            maximumAbsoluteX -= 0.25f;
-            playerPosition.setX(Math.max(-1 * maximumAbsoluteX, Math.min(playerPosition.getX(), maximumAbsoluteX)));
-        }
-        return playerPosition;
+        return super.getPlayerPosition(playerObject);
+    }
+
+    public void setTargetShootDirection(float targetShootDirection) {
+        this.targetShootDirection = targetShootDirection;
+    }
+
+    public void setTargetGoalkeeperDirection(float targetGoalkeeperDirection) {
+        this.targetGoalkeeperDirection = targetGoalkeeperDirection;
+    }
+
+    public float getTargetShootDirection() {
+        return targetShootDirection;
+    }
+
+    public float getTargetGoalkeeperDirection() {
+        return targetGoalkeeperDirection;
     }
 }

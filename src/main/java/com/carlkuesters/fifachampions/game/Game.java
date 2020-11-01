@@ -179,13 +179,7 @@ public class Game implements GameLoopListener {
                 for (Team team : teams) {
                     PlayerObject goalkeeper = team.getGoalkeeper();
                     if (!goalkeeper.isGoalkeeperJumping()) {
-                        PhysicsPrecomputationResult ballInGoalResult;
-                        if (((halfTime == 0) && (team == teams[0]))
-                         || ((halfTime == 1) && (team == teams[1]))) {
-                            ballInGoalResult = ball.precomputeTransformUntil(result -> isInsideGoalLeft(result.getPosition()));
-                        } else {
-                            ballInGoalResult = ball.precomputeTransformUntil(result -> isInsideGoalRight(result.getPosition()));
-                        }
+                        PhysicsPrecomputationResult ballInGoalResult = precomputeBallTransformUntilInsideGoal(team);
                         if (ballInGoalResult != null) {
                             // TODO: Minimum time depending on player skill
                             float reactionTime = 0.25f;
@@ -300,6 +294,15 @@ public class Game implements GameLoopListener {
         // TODO: Properly choosing a starting player (based on position?)
         PlayerObject startingPlayer = freeKickTeam.getPlayers().get(freeKickTeam.getPlayers().size() - 1);
         setNextSituation(new NextSituation(new FarFreeKickSituation(startingPlayer, lastBallTouchPosition), 2, false));
+    }
+
+    public PhysicsPrecomputationResult precomputeBallTransformUntilInsideGoal(Team goalTeam) {
+        if (((halfTime == 0) && (goalTeam == teams[0]))
+         || ((halfTime == 1) && (goalTeam == teams[1]))) {
+            return ball.precomputeTransformUntil(result -> isInsideGoalLeft(result.getPosition()));
+        } else {
+            return ball.precomputeTransformUntil(result -> isInsideGoalRight(result.getPosition()));
+        }
     }
 
     public void startSecondHalftime() {
