@@ -4,7 +4,7 @@ import com.carlkuesters.fifachampions.game.*;
 
 public abstract class ChargedButtonBehaviour extends ControllerButtonBehaviour implements GameLoopListener {
 
-    protected final float maxChargedDuration = 1;
+    protected float maxChargedDuration = 1;
     private float chargedDuration;
     private boolean isCharging;
     private float lastChargeTime;
@@ -78,6 +78,6 @@ public abstract class ChargedButtonBehaviour extends ControllerButtonBehaviour i
     }
 
     public float getCurrentChargeStrength() {
-        return (chargedDuration / maxChargedDuration);
+        return ((maxChargedDuration > 0) ? (chargedDuration / maxChargedDuration) : 1);
     }
 }

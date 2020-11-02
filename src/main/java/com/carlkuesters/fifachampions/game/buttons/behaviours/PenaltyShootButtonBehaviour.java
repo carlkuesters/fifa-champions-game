@@ -6,6 +6,10 @@ import com.jme3.math.Vector3f;
 
 public class PenaltyShootButtonBehaviour extends ApproachShootButtonBehaviour<PenaltySituation> {
 
+    public PenaltyShootButtonBehaviour() {
+        maxChargedDuration = 0;
+    }
+
     @Override
     protected void shoot(PenaltySituation penaltySituation, PlayerObject playerObject, float strength) {
         Game game = playerObject.getGame();
