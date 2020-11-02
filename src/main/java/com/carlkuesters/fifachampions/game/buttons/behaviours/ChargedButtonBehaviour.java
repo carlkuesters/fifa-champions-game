@@ -13,10 +13,10 @@ public abstract class ChargedButtonBehaviour extends ControllerButtonBehaviour i
 
     @Override
     public void onPressed(boolean isPressed) {
-        this.isCharging = isPressed;
-        if (!isPressed) {
+        if (isCharging && (!isPressed)) {
             isTriggered = true;
         }
+        isCharging = isPressed;
     }
 
     @Override

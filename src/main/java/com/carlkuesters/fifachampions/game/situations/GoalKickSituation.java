@@ -7,27 +7,29 @@ import com.carlkuesters.fifachampions.game.Team;
 
 public class GoalKickSituation extends BallSituation {
     
-    public GoalKickSituation(Team team) {
+    public GoalKickSituation(Team team, float horizontalPosition) {
         super(team.getGoalkeeper());
         this.team = team;
+        this.horizontalPosition = horizontalPosition;
     }
     private Team team;
+    private float horizontalPosition;
 
     @Override
     public void start() {
         super.start();
-        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(2.5f, 5.5f), 1);
+        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 11), 1);
     }
 
     @Override
     public Vector3f getBallPosition() {
-        return new Vector3f((-1 * game.getHalfTimeSideFactor() * team.getSide()) * (Game.FIELD_HALF_WIDTH - 5), 0, 0);
+        return new Vector3f((-1 * game.getHalfTimeSideFactor() * team.getSide()) * (Game.FIELD_HALF_WIDTH - 6.05f), 0, horizontalPosition * 8.75f);
     }
 
     @Override
     public Vector3f getPlayerPosition(PlayerObject playerObject) {
         if (playerObject == startingPlayer) {
-            return new Vector3f((-1 * game.getHalfTimeSideFactor() * team.getSide()) * (Game.FIELD_HALF_WIDTH - 4.5f), 0, 0);
+            return getBallApproachPosition(getDirectionToOpponentGoal());
         }
         return super.getPlayerPosition(playerObject);
     }

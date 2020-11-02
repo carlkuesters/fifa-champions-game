@@ -231,7 +231,8 @@ public class Game implements GameLoopListener {
                             // Testing: Our team always has goal kick
                             goalOutsideTeam = teams[0];
 
-                            setNextSituation(new NextSituation(new GoalKickSituation(goalOutsideTeam), 2, true));
+                            float horizontalPosition = Math.signum(ball.getPosition().getZ());
+                            setNextSituation(new NextSituation(new GoalKickSituation(goalOutsideTeam, horizontalPosition), 2, true));
                         }
                     } else {
                         Team throwInTeam = ((ball.getLastTouchedOwner().getTeam() == teams[0]) ? teams[1] : teams[0]);
