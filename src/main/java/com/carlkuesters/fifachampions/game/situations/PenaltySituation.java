@@ -13,8 +13,8 @@ public class PenaltySituation extends BallSituation {
     }
     private Team team;
     private Vector3f ballPosition;
-    private float targetShootDirection = 1;
-    private float targetGoalkeeperDirection = -1;
+    private float targetShootDirection;
+    private float targetGoalkeeperDirection;
 
     @Override
     public void start() {
@@ -39,6 +39,11 @@ public class PenaltySituation extends BallSituation {
             return getBallApproachPosition(getDirectionToOpponentGoal());
         }
         return super.getPlayerPosition(playerObject);
+    }
+
+    public PlayerObject getGoalkeeper() {
+        Team goalTeam = game.getTeams()[(startingPlayer.getTeam() == game.getTeams()[0]) ? 1 : 0];
+        return goalTeam.getGoalkeeper();
     }
 
     public void setTargetShootDirection(float targetShootDirection) {
