@@ -206,7 +206,7 @@ public class Game implements GameLoopListener {
                         }
                     }
                 }
-            } else if (didBallEnterFieldAfterSituation) {
+            } else if (isBallEligibleToGoingOutside(outSide)) {
                 Team goalOutsideTeam = getGoalOutsideTeam(outSide);
                 if (isInsideGoal(ball.getPosition())) {
                     int scoringTeamIndex = ((goalOutsideTeam == teams[0]) ? 1 : 0);
@@ -242,7 +242,7 @@ public class Game implements GameLoopListener {
 
                         // TODO: Properly choosing a starting player (based on position?)
                         PlayerObject throwInPlayer = throwInTeam.getPlayers().get(throwInTeam.getPlayers().size() - 1);
-                        Vector3f throwInPosition = lastBallPosition.clone().setY(0);
+                        Vector3f throwInPosition = lastBallPosition.clone().setY(0).setZ(Math.signum(lastBallPosition.getZ()) * FIELD_HALF_HEIGHT);
                         // Go a bit out of field to throw in
                         throwInPosition.addLocal(0, 0, Math.signum(throwInPosition.getZ()));
                         setNextSituation(new NextSituation(new ThrowInSituation(throwInPlayer, throwInPosition), 2, true));
@@ -298,6 +298,15 @@ public class Game implements GameLoopListener {
     private KickOffSituation createKickOffSituation(Team startingTeam) {
         PlayerObject startingPlayer = startingTeam.getPlayers().get(startingTeam.getPlayers().size() - 1);        
         return new KickOffSituation(startingPlayer);
+    }
+
+    private boolean isBallEligibleToGoingOutside(OutSide outSide) {
+        if (didBallEnterFieldAfterSituation) {
+            return true;
+        }
+        int axis = (((outSide == OutSide.LEFT) || (outSide == OutSide.RIGHT)) ? 0 : 2);
+        // Ball is moving away from center on said axis (e.g. throw-in from outside field away from the field)
+        return (Math.signum(ball.getPosition().get(axis)) == Math.signum(ball.getVelocity().get(axis)));
     }
 
     public void onOffside(PlayerObject offsidePlayerObject, Vector3f lastBallTouchPosition) {
