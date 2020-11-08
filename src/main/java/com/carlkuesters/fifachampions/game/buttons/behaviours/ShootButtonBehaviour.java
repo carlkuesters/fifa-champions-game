@@ -16,6 +16,7 @@ public class ShootButtonBehaviour extends ChargedBallButtonBehaviour {
     @Override
     protected void onTrigger(float strength) {
         PlayerObject playerObject = controller.getPlayerObject();
+        playerObject.turnIntoControllerTargetDirection();
         if (playerObject.getGame().getBall().getPosition().getY() > 1) {
             playerObject.header(strength);
             playerObject.setAnimation(new PlayerAnimation("header_end", 0.5f));

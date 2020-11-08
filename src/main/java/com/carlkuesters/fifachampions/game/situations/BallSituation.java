@@ -28,9 +28,10 @@ public abstract class BallSituation extends Situation {
         game.selectPlayer(startingPlayer);
     }
 
-    protected CameraPerspective getCameraPerspectiveTowardsEnemyGoal(float height, float distance) {
+    protected CameraPerspective getCameraPerspectiveTowardsEnemyGoal(float height, float distance, float angle) {
         Vector3f cameraPosition = getBallPosition().add(0, height, 0);
         Vector3f cameraDirection = getCenterOpponentGoal().clone().setY(Game.GOAL_HEIGHT / 2).subtractLocal(cameraPosition).normalizeLocal();
+        new Quaternion().fromAngleAxis(angle, Vector3f.UNIT_Y).multLocal(cameraDirection);
         cameraPosition.subtractLocal(cameraDirection.mult(distance));
         return new CameraPerspective(cameraPosition, cameraDirection);
     }

@@ -19,7 +19,7 @@ public class PenaltySituation extends BallSituation {
     @Override
     public void start() {
         super.start();
-        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 10), 2);
+        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 10, 0), 2);
     }
 
     // TODO: Properly choosing a starting player (based on position?)

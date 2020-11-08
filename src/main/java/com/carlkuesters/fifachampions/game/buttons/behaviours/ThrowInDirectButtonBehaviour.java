@@ -17,6 +17,7 @@ public class ThrowInDirectButtonBehaviour extends ChargedBallButtonBehaviour {
         float freezeTime = 0.5f;
         controller.getPlayerObject().setAnimation(new PlayerAnimation("throw_in_end", freezeTime));
         controller.getPlayerObject().freeze(freezeTime);
+        controller.getPlayerObject().turnIntoControllerTargetDirection();
         controller.getPlayerObject().throwInDirect(strength);
     }
 }

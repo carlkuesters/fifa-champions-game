@@ -265,7 +265,12 @@ public class Game implements GameLoopListener {
     private void updatePlayerObject(PlayerObject playerObject, float tpf) {
         Controller controller = playerObject.getController();
         if (controller != null) {
-            if (situation instanceof NearFreeKickSituation) {
+            if (situation instanceof GoalKickSituation) {
+                GoalKickSituation goalKickSituation = (GoalKickSituation) situation;
+                if (playerObject == goalKickSituation.getStartingPlayer()) {
+                    goalKickSituation.setTargetAngleDirection(-1 * controller.getTargetDirection().getX());
+                }
+            } else if (situation instanceof NearFreeKickSituation) {
                 NearFreeKickSituation nearFreeKickSituation = (NearFreeKickSituation) situation;
                 if (playerObject == nearFreeKickSituation.getStartingPlayer()) {
                     nearFreeKickSituation.setTargetCursorDirection(controller.getTargetDirection());
@@ -278,7 +283,7 @@ public class Game implements GameLoopListener {
                 } else if (playerObject == penaltySituation.getGoalkeeper()) {
                     penaltySituation.setTargetGoalkeeperDirection(targetDirection);
                 }
-            } else  if (!controller.isChargingBallButton()) {
+            } else if (!controller.isChargingBallButton()) {
                 playerObject.setTargetWalkDirection(controller.getTargetDirection());
             }
         } else if (!playerObject.isGoalkeeperJumping()) {

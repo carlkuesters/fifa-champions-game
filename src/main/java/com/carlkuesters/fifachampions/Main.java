@@ -322,7 +322,7 @@ public class Main extends SimpleApplication {
             float value = evt.getValue();
             if (axis == axis.getJoystick().getXAxis()) {
                 axisX = value;
-            } else if(axis == axis.getJoystick().getYAxis()) {
+            } else if (axis == axis.getJoystick().getYAxis()) {
                 axisY = value;
             }
             float x = 0;

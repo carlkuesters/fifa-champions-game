@@ -7,7 +7,7 @@ public class GoalKickFlankButtonBehaviour extends ApproachShootButtonBehaviour<G
 
     @Override
     protected void shoot(GoalKickSituation goalKickSituation, PlayerObject playerObject, float strength) {
-        // TODO: Consider camera rotation?
+        playerObject.setDirection(goalKickSituation.getTargetDirection());
         playerObject.flank(strength);
     }
 }

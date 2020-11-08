@@ -22,7 +22,7 @@ public class NearFreeKickSituation extends FreeKickSituation {
         float nearFreeKickProximity = (game.getDistanceToGoalLine(ballPosition, opponentTeam) / (Game.FIELD_HALF_WIDTH - Game.MAXIMUM_NEAR_FREE_KICK_DISTANCE));
         optimalShootStrength = ((1 + nearFreeKickProximity) / 3);
         targetInGoalPosition = new Vector3f(game.getHalfTimeSideFactor() * startingPlayer.getTeam().getSide() * Game.FIELD_HALF_WIDTH, Game.GOAL_HEIGHT / 2, 0);
-        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(4, 14), 2);
+        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(4, 14, 0), 2);
     }
 
     @Override
