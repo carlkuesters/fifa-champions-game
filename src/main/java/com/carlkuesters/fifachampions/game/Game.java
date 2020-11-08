@@ -187,7 +187,7 @@ public class Game implements GameLoopListener {
                                 Vector3f goalLinePosition = ballInGoalResult.getPosition().clone();
                                 goalLinePosition.setX(-1 * getHalfTimeSideFactor() * team.getSide() * FIELD_HALF_WIDTH);
                                 // TODO: Depending on player skill
-                                float maximumWrongPositionPrediction = 1;
+                                float maximumWrongPositionPrediction = 1.2f;
                                 float wrongPredictionY = (FastMath.nextRandomFloat() * maximumWrongPositionPrediction);
                                 float wrongPredictionZ = (FastMath.nextRandomFloat() * maximumWrongPositionPrediction);
                                 goalLinePosition.addLocal(0, wrongPredictionY, wrongPredictionZ);

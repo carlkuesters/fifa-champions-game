@@ -12,7 +12,7 @@ public class Controller implements GameLoopListener {
     public Controller() {
         registerButton(0, new FlankOrStraddleButton());
         registerButton(1, new PassDirectOrPressureButton());
-        registerButton(2, new ShootOrTackleButton());
+        registerButton(2, new ShootButton());
         registerButton(3, new PassInRunOrGoalkeeperPressureButton());
         registerButton(4, new SwitchPlayerButton());
         registerButton(7, new SprintButton());

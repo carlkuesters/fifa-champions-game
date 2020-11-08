@@ -5,9 +5,9 @@ import com.carlkuesters.fifachampions.game.buttons.behaviours.PenaltyShootButton
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ShootButtonBehaviour;
 import com.carlkuesters.fifachampions.game.situations.*;
 
-public class ShootOrTackleButton extends DefaultBallActionButton {
+public class ShootButton extends DefaultBallActionButton {
 
-    public ShootOrTackleButton() {
+    public ShootButton() {
         ShootButtonBehaviour shootButtonBehaviour = new ShootButtonBehaviour();
         setNoSituationBehaviours(
             shootButtonBehaviour,

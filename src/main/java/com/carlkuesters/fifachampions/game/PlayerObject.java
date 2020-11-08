@@ -46,7 +46,9 @@ public class PlayerObject extends PhysicsObject {
                 float speed = ((forcedSpeed != null) ? forcedSpeed : (isSprinting ? 10 : 6));
                 boolean wantsToMove = true;
                 if (isPressuring) {
-                    effectiveTargetLocation = MathUtil.convertTo2D_XZ(game.getBall().getPosition());
+                    Vector3f ballPosition = game.getBall().getPosition();
+                    Vector3f positionNearBall = ballPosition.add(position.subtract(ballPosition).normalizeLocal().multLocal(1.5f));
+                    effectiveTargetLocation = MathUtil.convertTo2D_XZ(positionNearBall);
                 }
                 if (effectiveTargetLocation != null) {
                     Vector2f targetDistance = effectiveTargetLocation.subtract(position.getX(), position.getZ());
