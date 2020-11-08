@@ -32,7 +32,7 @@ public class GoalKickSituation extends BallSituation {
 
     @Override
     public Vector3f getBallPosition() {
-        return new Vector3f((-1 * game.getHalfTimeSideFactor() * team.getSide()) * (Game.FIELD_HALF_WIDTH - 5.2f), 0, horizontalPosition * 8.75f);
+        return new Vector3f((-1 * game.getHalfTimeSideFactor() * team.getSide()) * (Game.FIELD_HALF_WIDTH - 5.24f), 0, horizontalPosition * 8.75f);
     }
 
     @Override
