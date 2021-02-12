@@ -49,7 +49,7 @@ public class PostFilterAppState extends BaseDisplayAppState {
     
     public void addFilter(Filter filter) {
         if(isInitialized()){
-            mainApplication.enqueueTask(() -> {
+            mainApplication.enqueue(() -> {
                 filterPostProcessor.addFilter(filter);
             });
         } else {
@@ -59,7 +59,7 @@ public class PostFilterAppState extends BaseDisplayAppState {
     
     public void removeFilter(Filter filter) {
         if (isInitialized()) {
-            mainApplication.enqueueTask(() -> {
+            mainApplication.enqueue(() -> {
                 filterPostProcessor.removeFilter(filter);
             });
         } else {
