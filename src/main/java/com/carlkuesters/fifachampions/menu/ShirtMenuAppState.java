@@ -9,15 +9,7 @@ public class ShirtMenuAppState extends MenuAppState {
 
     @Override
     protected void initMenu() {
-        int titleMarginTop = 70;
-        int titleWidth = 200;
-        Label lblTitle = new Label("Trikot");
-        lblTitle.setFontSize(32);
-        lblTitle.setLocalTranslation(new Vector3f((totalWidth / 2f) - (titleWidth / 2f), totalHeight - titleMarginTop, 0));
-        lblTitle.setPreferredSize(new Vector3f(titleWidth, 0, 0));
-        lblTitle.setTextHAlignment(HAlignment.Center);
-        guiNode.attachChild(lblTitle);
-
+        addTitle("Trikot");
         addSide(-1);
         addSide(1);
     }
@@ -41,18 +33,8 @@ public class ShirtMenuAppState extends MenuAppState {
 
         guiNode.attachChild(container);
 
-        MenuGroup menuGroup = new MenuGroup(this::backToTeamsMenu);
-        menuGroup.addElement(new MenuElement(container, this::openGameSettingsMenu));
+        MenuGroup menuGroup = new MenuGroup(() -> openMenu(TeamsMenuAppState.class));
+        menuGroup.addElement(new MenuElement(container, () -> openMenu(GameSettingsMenuAppState.class)));
         addMenuGroup(menuGroup);
-    }
-
-    private void backToTeamsMenu() {
-        close();
-        mainApplication.getStateManager().attach(new TeamsMenuAppState());
-    }
-
-    private void openGameSettingsMenu() {
-        close();
-        mainApplication.getStateManager().attach(new GameSettingsMenuAppState());
     }
 }

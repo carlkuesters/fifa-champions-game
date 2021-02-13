@@ -16,7 +16,7 @@ import com.jme3.post.*;
 public class PostFilterAppState extends BaseDisplayAppState {
 
     public PostFilterAppState(){
-        
+
     }
     private FilterPostProcessor filterPostProcessor;
     private LinkedList<Filter> queuedFilters = new LinkedList<>();
@@ -46,7 +46,7 @@ public class PostFilterAppState extends BaseDisplayAppState {
         super.cleanup();
         mainApplication.getViewPort().removeProcessor(filterPostProcessor);
     }
-    
+
     public void addFilter(Filter filter) {
         if(isInitialized()){
             mainApplication.enqueue(() -> {
@@ -56,7 +56,7 @@ public class PostFilterAppState extends BaseDisplayAppState {
             queuedFilters.add(filter);
         }
     }
-    
+
     public void removeFilter(Filter filter) {
         if (isInitialized()) {
             mainApplication.enqueue(() -> {

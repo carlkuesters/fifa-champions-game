@@ -3,13 +3,17 @@ package com.carlkuesters.fifachampions.menu;
 import com.carlkuesters.fifachampions.game.BaseDisplayAppState;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.simsilica.lemur.HAlignment;
+import com.simsilica.lemur.Label;
 
 import java.util.LinkedList;
 
 public abstract class MenuAppState extends BaseDisplayAppState {
 
     public MenuAppState() {
+        guiNode = new Node();
         menuGroups = new LinkedList<>();
         menuJoystickListener = new MenuJoystickListener(this::getMenuGroup);
     }
@@ -18,21 +22,29 @@ public abstract class MenuAppState extends BaseDisplayAppState {
     private MenuJoystickListener menuJoystickListener;
     protected int totalWidth;
     protected int totalHeight;
+    protected boolean autoEnabled;
 
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
         totalWidth = mainApplication.getContext().getSettings().getWidth();
         totalHeight = mainApplication.getContext().getSettings().getHeight();
-        if (guiNode == null) {
-            guiNode = new Node();
-            initMenu();
-        }
-        mainApplication.getGuiNode().attachChild(guiNode);
-        mainApplication.getInputManager().addRawInputListener(menuJoystickListener);
+        initMenu();
+        setEnabled(autoEnabled);
     }
 
     protected abstract void initMenu();
+
+    protected void addTitle(String title) {
+        int titleMarginTop = 70;
+        int titleWidth = 300;
+        Label lblTitle = new Label(title);
+        lblTitle.setFontSize(32);
+        lblTitle.setLocalTranslation(new Vector3f((totalWidth / 2f) - (titleWidth / 2f), totalHeight - titleMarginTop, 0));
+        lblTitle.setPreferredSize(new Vector3f(titleWidth, 0, 0));
+        lblTitle.setTextHAlignment(HAlignment.Center);
+        guiNode.attachChild(lblTitle);
+    }
 
     protected void addMenuGroup(MenuGroup menuGroup) {
         menuGroups.add(menuGroup);
@@ -43,14 +55,24 @@ public abstract class MenuAppState extends BaseDisplayAppState {
         return menuGroups.get(0);
     }
 
+    protected void openMenu(Class<? extends MenuAppState> menuAppStateClass) {
+        close();
+        getAppState(menuAppStateClass).setEnabled(true);
+    }
+
     protected void close() {
-        mainApplication.getStateManager().detach(this);
+        setEnabled(false);
     }
 
     @Override
-    public void cleanup() {
-        super.cleanup();
-        mainApplication.getGuiNode().detachChild(guiNode);
-        mainApplication.getInputManager().removeRawInputListener(menuJoystickListener);
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if (enabled) {
+            mainApplication.getGuiNode().attachChild(guiNode);
+            mainApplication.getInputManager().addRawInputListener(menuJoystickListener);
+        } else {
+            mainApplication.getGuiNode().detachChild(guiNode);
+            mainApplication.getInputManager().removeRawInputListener(menuJoystickListener);
+        }
     }
 }

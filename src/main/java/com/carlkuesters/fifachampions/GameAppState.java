@@ -10,7 +10,6 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
-import com.jme3.input.FlyByCamera;
 import com.jme3.input.JoystickAxis;
 import com.jme3.input.RawInputListener;
 import com.jme3.input.event.JoyAxisEvent;
@@ -19,8 +18,6 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -34,7 +31,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
-import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.texture.Texture;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.IconComponent;
@@ -46,8 +42,10 @@ public class GameAppState extends BaseDisplayAppState {
 
     private Game game;
 
+    private Node rootNode;
+    private Node guiNode;
     private HashMap<PlayerObject, Node> playerVisuals = new HashMap<>();
-    private HashMap<Controller, Spatial> controllerVisuals = new HashMap<>();
+    private HashMap<Controller, Node> controllerVisuals = new HashMap<>();
     private Node ballGroundIndicator;
     private Node targetInGoalIndicator;
     private Vector3f targetCameraLocation = new Vector3f();
@@ -60,11 +58,14 @@ public class GameAppState extends BaseDisplayAppState {
     private float displayedStrength;
     private float remainingDisplayedStrengthDuration;
     private PlayerObject displayedStrengthPlayerObject;
-    private IngameMenuAppState ingameMenuAppState = new IngameMenuAppState();
+    private JoystickEventListener joystickEventListener;
 
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
+        rootNode = new Node();
+        guiNode = new Node();
+
         Team team1 = generateTeam("Team1");
         Team team2 = generateTeam("Team2");
         game = new Game(new Team[]{team1, team2});
@@ -76,56 +77,7 @@ public class GameAppState extends BaseDisplayAppState {
         controller2.setContext(game, team2);
         game.start();
 
-        Node rootNode = mainApplication.getRootNode();
         AssetManager assetManager = mainApplication.getAssetManager();
-
-        AmbientLight ambient = new AmbientLight();
-        ambient.setColor(ColorRGBA.White);
-        rootNode.addLight(ambient);
-
-        DirectionalLight sun = new DirectionalLight();
-        sun.setDirection((new Vector3f(-1, -1, -1)).normalizeLocal());
-        sun.setColor(ColorRGBA.White);
-        rootNode.addLight(sun);
-
-        PostFilterAppState postFilterAppState = new PostFilterAppState();
-        DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(assetManager, 2048, 3);
-        shadowFilter.setLight(sun);
-        shadowFilter.setShadowIntensity(0.4f);
-        postFilterAppState.addFilter(shadowFilter);
-        stateManager.attach(postFilterAppState);
-
-        Spatial stadium = assetManager.loadModel("models/stadium/stadium.j3o");
-        stadium.move(12.765f, 0, -10.06f);
-        stadium.rotate(0, FastMath.HALF_PI, 0);
-        stadium.scale(1.1775f);
-        stadium.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        rootNode.attachChild(stadium);
-
-        /*Geometry fieldTestBounds = new Geometry("", new Box(Game.FIELD_HALF_WIDTH, Game.GOAL_HEIGHT / 2, Game.FIELD_HALF_HEIGHT));
-        fieldTestBounds.setLocalTranslation(0, (Game.GOAL_HEIGHT / 2), 0);
-        Material fieldMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        fieldMat.setBoolean("UseMaterialColors", true);
-        fieldMat.setColor("Ambient", ColorRGBA.Green);
-        fieldMat.setColor("Diffuse", ColorRGBA.Green);
-        fieldMat.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
-        fieldTestBounds.setMaterial(fieldMat);
-        rootNode.attachChild(fieldTestBounds);
-
-        for (int i = 0; i < 2; i++) {
-            Geometry goalTestBounds = new Geometry("", new Box(Game.GOAL_WIDTH / 2, Game.GOAL_HEIGHT / 2, (Game.GOAL_Z_TOP - Game.GOAL_Z_BOTTOM) / 2));
-            int side = ((i == 0) ? 1 : -1);
-            float x = (side * (Game.FIELD_HALF_WIDTH + (Game.GOAL_WIDTH / 2)));
-            float z = (Game.GOAL_Z_TOP - ((Game.GOAL_Z_TOP - Game.GOAL_Z_BOTTOM) / 2));
-            goalTestBounds.setLocalTranslation(x, (Game.GOAL_HEIGHT / 2), z);
-            Material goalMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-            goalMat.setBoolean("UseMaterialColors", true);
-            goalMat.setColor("Ambient", ColorRGBA.Blue);
-            goalMat.setColor("Diffuse", ColorRGBA.Blue);
-            goalMat.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
-            goalTestBounds.setMaterial(goalMat);
-            rootNode.attachChild(goalTestBounds);
-        }*/
 
         String teamColorName = "yellow";
         float playerModelOffsetForFeetsOnGround = 1.302f;
@@ -234,32 +186,32 @@ public class GameAppState extends BaseDisplayAppState {
         rootNode.attachChild(targetInGoalIndicator);
 
         Camera cam = mainApplication.getCamera();
-        cam.setFrustumPerspective(45, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000);
         cam.setLocation(new Vector3f(0, 100, 0));
-        FlyByCamera flyCam = mainApplication.getFlyByCamera();
-        flyCam.setMoveSpeed(100);
-        flyCam.setEnabled(false);
-
-        mainApplication.getInputManager().addRawInputListener(new JoystickEventListener());
 
         Container scoreContainer = new Container();
         scoreContainer.setLocalTranslation(20, mainApplication.getContext().getSettings().getHeight() - 20, 0);
         lblGoals = new Label("");
         scoreContainer.addChild(lblGoals);
-        mainApplication.getGuiNode().attachChild(scoreContainer);
+        guiNode.attachChild(scoreContainer);
 
         optimalStrengthIndicator = new Label("");
         optimalStrengthIndicator.setBackground(new IconComponent("textures/optimal_strength_indicator.png"));
         optimalStrengthIndicator.setLocalTranslation(new Vector3f(0, 70, 2));
         optimalStrengthIndicator.setLocalScale(0.085f);
-        mainApplication.getGuiNode().attachChild(optimalStrengthIndicator);
+        guiNode.attachChild(optimalStrengthIndicator);
 
         playerContainer = new Container();
         playerContainer.setLocalTranslation(20, 61, 0);
         playerContainer.setPreferredSize(new Vector3f(200, 20, 1));
         pbrStrength = new ProgressBar();
         playerContainer.addChild(pbrStrength);
-        mainApplication.getGuiNode().attachChild(playerContainer);
+        guiNode.attachChild(playerContainer);
+
+        mainApplication.getRootNode().attachChild(rootNode);
+        mainApplication.getGuiNode().attachChild(guiNode);
+
+        joystickEventListener = new JoystickEventListener();
+        mainApplication.getInputManager().addRawInputListener(joystickEventListener);
     }
 
     private Material createTextureMaterial(String diffusePath, String normalPath, String specularPath) {
@@ -320,19 +272,15 @@ public class GameAppState extends BaseDisplayAppState {
                 float squareToCircleFactor = FastMath.sqrt((axisX * axisX) + (axisY * axisY) - (axisX * axisX * axisY * axisY)) / FastMath.sqrt((axisX * axisX) + (axisY * axisY));
                 x = axisX * squareToCircleFactor;
                 y = axisY * squareToCircleFactor;
-                System.out.println(axisX);
             }
             controller1.setTargetDirection(x, y);
         }
 
         public void onJoyButtonEvent(JoyButtonEvent evt) {
             if ((evt.getButtonIndex() == 9) && evt.isPressed()) {
-                AppStateManager stateManager = mainApplication.getStateManager();
-                if (stateManager.hasState(ingameMenuAppState)) {
-                    stateManager.detach(ingameMenuAppState);
-                } else {
-                    stateManager.attach(ingameMenuAppState);
-                }
+                // TODO: Why do I have to cast here?
+                IngameMenuAppState ingameMenuAppState = (IngameMenuAppState) getAppState(IngameMenuAppState.class);
+                ingameMenuAppState.setEnabled(!ingameMenuAppState.isEnabled());
             } else {
                 controller1.onButtonPressed(evt.getButtonIndex(), evt.isPressed());
             }
@@ -440,6 +388,8 @@ public class GameAppState extends BaseDisplayAppState {
 
         String time = getFormattedTime(game.getHalfTimePassedTime()) + " (+" + getFormattedTime(game.getHalfTimePassedOverTime()) + ")";
         lblGoals.setText(game.getGoals()[0] + " : " + game.getGoals()[1] + " --- " + time);
+        // TODO: Why do I have to cast here?
+        IngameMenuAppState ingameMenuAppState = (IngameMenuAppState) getAppState(IngameMenuAppState.class);
         ingameMenuAppState.setTime(time);
         ingameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
     }
@@ -475,5 +425,13 @@ public class GameAppState extends BaseDisplayAppState {
             return RUN_ANIMATION_SLOW;
         }
         return IDLE_ANIMATION;
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+        mainApplication.getRootNode().detachChild(rootNode);
+        mainApplication.getGuiNode().detachChild(guiNode);
+        mainApplication.getInputManager().removeRawInputListener(joystickEventListener);
     }
 }

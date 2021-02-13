@@ -100,7 +100,11 @@ public class MenuGroup {
     }
 
     public void confirm() {
-        activeElement.getAction().run();
+        if (activeElement != null) {
+            activeElement.getAction().run();
+        } else {
+            back();
+        }
     }
 
     public void back() {

@@ -26,7 +26,7 @@ public class BaseDisplayAppState<E extends Main> extends AbstractAppState{
         super.initialize(stateManager, application);
         mainApplication = (E) application;
     }
-    
+
     protected <T extends AppState> T getAppState(Class<T> appStateClass){
         return mainApplication.getStateManager().getState(appStateClass);
     }

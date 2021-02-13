@@ -9,6 +9,9 @@ import com.simsilica.lemur.component.IconComponent;
 
 public class MainMenuAppState extends MenuAppState {
 
+    public MainMenuAppState() {
+        autoEnabled = true;
+    }
     private int buttonWidth;
     private int buttonHeight;
     private MenuGroup menuGroup;
@@ -32,7 +35,7 @@ public class MainMenuAppState extends MenuAppState {
         guiNode.attachChild(logo);
 
         menuGroup = new MenuGroup(() -> {});
-        addButton(new Vector3f(marginX, (totalHeight / 2f), 0), "Anstoß", this::openTeamsMenu);
+        addButton(new Vector3f(marginX, (totalHeight / 2f), 0), "Anstoß", () -> openMenu(TeamsMenuAppState.class));
         addButton(new Vector3f(marginX + buttonWidth + buttonsMarginBetween, (totalHeight / 2f), 0), "Einstellungen", () -> System.out.println("Einstellungen"));
         addButton(new Vector3f(marginX, (totalHeight / 2f) - buttonHeight - buttonsMarginBetween, 0), "Test", () -> System.out.println("Test"));
         addButton(new Vector3f(marginX + buttonWidth + buttonsMarginBetween, (totalHeight / 2f) - buttonHeight - buttonsMarginBetween, 0), "Beenden", this::closeApplication);
@@ -48,11 +51,6 @@ public class MainMenuAppState extends MenuAppState {
         button.setFontSize(20);
         guiNode.attachChild(button);
         menuGroup.addElement(new MenuElement(button, action));
-    }
-
-    private void openTeamsMenu() {
-        close();
-        mainApplication.getStateManager().attach(new TeamsMenuAppState());
     }
 
     private void closeApplication() {

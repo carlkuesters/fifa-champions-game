@@ -1,7 +1,6 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.IconComponent;
 
@@ -9,15 +8,7 @@ public class TeamsMenuAppState extends MenuAppState {
 
     @Override
     protected void initMenu() {
-        int titleMarginTop = 70;
-        int titleWidth = 200;
-        Label lblTitle = new Label("Anstoß");
-        lblTitle.setFontSize(32);
-        lblTitle.setLocalTranslation(new Vector3f((totalWidth / 2f) - (titleWidth / 2f), totalHeight - titleMarginTop, 0));
-        lblTitle.setPreferredSize(new Vector3f(titleWidth, 0, 0));
-        lblTitle.setTextHAlignment(HAlignment.Center);
-        guiNode.attachChild(lblTitle);
-
+        addTitle("Anstoß");
         addSide(-1);
         addSide(1);
     }
@@ -61,18 +52,8 @@ public class TeamsMenuAppState extends MenuAppState {
 
         guiNode.attachChild(container);
 
-        MenuGroup menuGroup = new MenuGroup(this::backToMainMenu);
-        menuGroup.addElement(new MenuElement(container, this::openShirtsMenu));
+        MenuGroup menuGroup = new MenuGroup(() -> openMenu(MainMenuAppState.class));
+        menuGroup.addElement(new MenuElement(container, () -> openMenu(ShirtMenuAppState.class)));
         addMenuGroup(menuGroup);
-    }
-
-    private void backToMainMenu() {
-        close();
-        mainApplication.getStateManager().attach(new MainMenuAppState());
-    }
-
-    private void openShirtsMenu() {
-        close();
-        mainApplication.getStateManager().attach(new ShirtMenuAppState());
     }
 }
