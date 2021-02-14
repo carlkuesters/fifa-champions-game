@@ -34,7 +34,7 @@ public class IngameMenuAppState extends MenuAppState {
         int buttonY2 = yStart - buttonHeight - marginBetween;
         addButton(new Vector3f(buttonX1, buttonY1, 0), "Fortsetzen", this::close);
         addButton(new Vector3f(buttonX2, buttonY1, 0), "Seitenwahl", () -> openMenu(TeamSelectionMenuAppState.class));
-        addButton(new Vector3f(buttonX1, buttonY2, 0), "Aufstellung", () -> System.out.println("Aufstellung"));
+        addButton(new Vector3f(buttonX1, buttonY2, 0), "Aufstellung", () -> openMenu(FormationMenuAppState.class));
         addButton(new Vector3f(buttonX2, buttonY2, 0), "Beenden", this::endGame);
         addMenuGroup(menuGroup);
     }

@@ -49,8 +49,8 @@ public class MenuGroup {
         MenuElement newActiveElement = null;
         for (MenuElement element : elements) {
             if (element != activeElement) {
-                Vector3f activeElementCorner = activeElement.getPanel().getLocalTranslation().clone();
-                Vector3f elementCorner = element.getPanel().getLocalTranslation().clone();
+                Vector3f activeElementCorner = activeElement.getPanel().getWorldTranslation().clone();
+                Vector3f elementCorner = element.getPanel().getWorldTranslation().clone();
                 if (direction.getX() > 0) {
                     activeElementCorner.addLocal(activeElement.getPanel().getSize().getX(), 0, 0);
                 } else if (direction.getX() < 0) {

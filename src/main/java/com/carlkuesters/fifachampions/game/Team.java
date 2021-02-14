@@ -32,6 +32,10 @@ public class Team {
         return players;
     }
 
+    public Formation getFormation() {
+        return formation;
+    }
+
     public PlayerObject getGoalkeeper() {
         return players.stream()
                 .filter(playerObject -> playerObject.getPlayer() instanceof Goalkeeper)

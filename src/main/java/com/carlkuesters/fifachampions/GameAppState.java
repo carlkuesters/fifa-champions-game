@@ -3,6 +3,7 @@ package com.carlkuesters.fifachampions;
 import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
+import com.carlkuesters.fifachampions.menu.FormationMenuAppState;
 import com.carlkuesters.fifachampions.menu.IngameMenuAppState;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
@@ -392,6 +393,15 @@ public class GameAppState extends BaseDisplayAppState {
         IngameMenuAppState ingameMenuAppState = (IngameMenuAppState) getAppState(IngameMenuAppState.class);
         ingameMenuAppState.setTime(time);
         ingameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
+
+        // TODO: Why do I have to cast here?
+        FormationMenuAppState formationMenuAppState = (FormationMenuAppState) getAppState(FormationMenuAppState.class);
+        for (Team team : game.getTeams()) {
+            for (int playerIndex = 0; playerIndex < team.getPlayers().size(); playerIndex++) {
+                Vector2f formationLocation = team.getFormation().getLocation(playerIndex);
+                formationMenuAppState.setFormationPlayerPosition(team.getSide(), playerIndex, formationLocation);
+            }
+        }
     }
 
     private String getFormattedTime(float time) {
