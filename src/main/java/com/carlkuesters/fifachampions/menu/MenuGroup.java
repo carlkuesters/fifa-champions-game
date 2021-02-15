@@ -14,7 +14,7 @@ public class MenuGroup {
     public MenuGroup(Runnable back) {
         this.back = back;
         elements = new LinkedList<>();
-        defaultElementBackgroundColors = new HashMap();
+        defaultElementBackgroundColors = new HashMap<>();
     }
     private Runnable back;
     private LinkedList<MenuElement> elements;

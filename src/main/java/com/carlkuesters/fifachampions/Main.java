@@ -44,8 +44,9 @@ public class Main extends SimpleApplication {
         stateManager.attach(new TeamsMenuAppState());
         stateManager.attach(new ShirtMenuAppState());
         stateManager.attach(new GameSettingsMenuAppState());
-        stateManager.attach(new IngameMenuAppState());
+        stateManager.attach(new PauseIngameMenuAppState());
         stateManager.attach(new TeamSelectionMenuAppState());
         stateManager.attach(new FormationMenuAppState());
+        stateManager.attach(new GameOverIngameMenuAppState());
     }
 }

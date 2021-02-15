@@ -4,7 +4,8 @@ import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.carlkuesters.fifachampions.menu.FormationMenuAppState;
-import com.carlkuesters.fifachampions.menu.IngameMenuAppState;
+import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
+import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.Application;
@@ -280,8 +281,8 @@ public class GameAppState extends BaseDisplayAppState {
         public void onJoyButtonEvent(JoyButtonEvent evt) {
             if ((evt.getButtonIndex() == 9) && evt.isPressed()) {
                 // TODO: Why do I have to cast here?
-                IngameMenuAppState ingameMenuAppState = (IngameMenuAppState) getAppState(IngameMenuAppState.class);
-                ingameMenuAppState.setEnabled(!ingameMenuAppState.isEnabled());
+                PauseIngameMenuAppState pauseIngameMenuAppState = (PauseIngameMenuAppState) getAppState(PauseIngameMenuAppState.class);
+                pauseIngameMenuAppState.setEnabled(!pauseIngameMenuAppState.isEnabled());
             } else {
                 controller1.onButtonPressed(evt.getButtonIndex(), evt.isPressed());
             }
@@ -387,12 +388,16 @@ public class GameAppState extends BaseDisplayAppState {
             cam.lookAtDirection(new Vector3f(0, -1, -1.25f), Vector3f.UNIT_Y);
         }
 
-        String time = getFormattedTime(game.getHalfTimePassedTime()) + " (+" + getFormattedTime(game.getHalfTimePassedOverTime()) + ")";
+        float passedTime = game.getHalfTimePassedTime();
+        if (game.getHalfTime() == 1) {
+            passedTime += Game.HALFTIME_DURATION;
+        }
+        String time = getFormattedTime(passedTime) + " (+" + getFormattedTime(game.getHalfTimePassedOverTime()) + ")";
         lblGoals.setText(game.getGoals()[0] + " : " + game.getGoals()[1] + " --- " + time);
         // TODO: Why do I have to cast here?
-        IngameMenuAppState ingameMenuAppState = (IngameMenuAppState) getAppState(IngameMenuAppState.class);
-        ingameMenuAppState.setTime(time);
-        ingameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
+        PauseIngameMenuAppState pauseIngameMenuAppState = (PauseIngameMenuAppState) getAppState(PauseIngameMenuAppState.class);
+        pauseIngameMenuAppState.setTime(time);
+        pauseIngameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
 
         // TODO: Why do I have to cast here?
         FormationMenuAppState formationMenuAppState = (FormationMenuAppState) getAppState(FormationMenuAppState.class);
@@ -402,10 +407,24 @@ public class GameAppState extends BaseDisplayAppState {
                 formationMenuAppState.setFormationPlayerPosition(team.getSide(), playerIndex, formationLocation);
             }
         }
+
+        if (game.isGameOver()) {
+            mainApplication.getStateManager().detach(this);
+            mainApplication.getStateManager().getState(PauseIngameMenuAppState.class).setEnabled(false);
+            mainApplication.getStateManager().getState(GameOverIngameMenuAppState.class).setEnabled(true);
+        }
     }
 
     private String getFormattedTime(float time) {
-        return "" + (((int) (time * 100)) / 100f);
+        int secondsPerHalfTime = (45 * 60);
+        int seconds = (int) ((time / Game.HALFTIME_DURATION) * secondsPerHalfTime);
+        int minutes = (seconds / 60);
+        seconds -= (minutes * 60);
+        return getFormattedMinutesOrSeconds(minutes) + ":" + getFormattedMinutesOrSeconds(seconds);
+    }
+
+    private String getFormattedMinutesOrSeconds(int value) {
+        return ((value < 10) ? "0" : "") + value;
     }
 
     private void updateTransform(PhysicsObject physicsObject, Spatial spatial) {

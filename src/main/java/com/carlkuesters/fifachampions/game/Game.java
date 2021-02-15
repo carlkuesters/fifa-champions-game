@@ -39,6 +39,7 @@ public class Game implements GameLoopListener {
     private static final Vector3f CORNER_KICK_TOP_LEFT = new Vector3f(-1 * FIELD_HALF_WIDTH, 0, FIELD_HALF_HEIGHT);
     private static final Vector3f CORNER_KICK_BOTTOM_RIGHT = new Vector3f(FIELD_HALF_WIDTH, 0, -1 * FIELD_HALF_HEIGHT);
     private static final Vector3f CORNER_KICK_TOP_RIGHT = new Vector3f(FIELD_HALF_WIDTH, 0, FIELD_HALF_HEIGHT);
+    private boolean isGameOver;
     private boolean isTimeRunning;
     private float logicTime = 0;
     private int halfTime = 0;
@@ -539,8 +540,20 @@ public class Game implements GameLoopListener {
         }
     }
 
+    public void onGameOver() {
+        isGameOver = true;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
     public float getLogicTime() {
         return logicTime;
+    }
+
+    public int getHalfTime() {
+        return halfTime;
     }
 
     public float getHalfTimePassedTime() {

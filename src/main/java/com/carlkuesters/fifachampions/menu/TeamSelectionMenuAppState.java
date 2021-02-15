@@ -12,7 +12,7 @@ public class TeamSelectionMenuAppState extends MenuAppState {
     protected void initMenu() {
         addTitle("Seitenauswahl");
 
-        MenuGroup menuGroup = new MenuGroup(() -> openMenu(IngameMenuAppState.class));
+        MenuGroup menuGroup = new MenuGroup(() -> openMenu(PauseIngameMenuAppState.class));
 
         int containerWidth = 600;
         int containerHeight = 400;

@@ -27,7 +27,7 @@ public class FormationMenuAppState extends MenuAppState {
     }
 
     private void addSide(int side) {
-        MenuGroup menuGroup = new MenuGroup(() -> openMenu(IngameMenuAppState.class));
+        MenuGroup menuGroup = new MenuGroup(() -> openMenu(PauseIngameMenuAppState.class));
 
         int containerX = getContainerX(side);
         Container container = new Container();
@@ -140,7 +140,7 @@ public class FormationMenuAppState extends MenuAppState {
         lblSkil.setFontSize(12);
         container.addChild(lblSkil);
 
-        menuGroup.addElement(new MenuElement(container, () -> openMenu(IngameMenuAppState.class)));
+        menuGroup.addElement(new MenuElement(container, () -> openMenu(PauseIngameMenuAppState.class)));
 
         return container;
     }
@@ -180,7 +180,7 @@ public class FormationMenuAppState extends MenuAppState {
         lblName.setFontSize(12);
         container.addChild(lblName);
 
-        menuGroup.addElement(new MenuElement(container, () -> openMenu(IngameMenuAppState.class)));
+        menuGroup.addElement(new MenuElement(container, () -> openMenu(PauseIngameMenuAppState.class)));
 
         return container;
     }

@@ -9,12 +9,10 @@ import com.simsilica.lemur.component.SpringGridLayout;
 
 public class IngameMenuAppState extends MenuAppState {
 
-    private int marginX = 100;
-    private int containerHeight = 600;
-    private int marginBetween = 20;
-    private int yStart;
-    private int buttonWidth;
-    private int buttonHeight;
+    protected int marginX = 100;
+    protected int containerHeight = 600;
+    protected int marginBetween = 20;
+    protected int yStart;
     private MenuGroup menuGroup;
     private Label lblTime = new Label("");
     private Label lblScore = new Label("");
@@ -22,24 +20,14 @@ public class IngameMenuAppState extends MenuAppState {
     @Override
     protected void initMenu() {
         yStart = ((totalHeight / 2) + (containerHeight / 2));
-        buttonWidth = (((totalWidth / 2) - (marginBetween / 2) - marginBetween - marginX) / 2);
-        buttonHeight = ((containerHeight - marginBetween) / 2);
 
         addGameInfo();
 
-        menuGroup = new MenuGroup(() -> {});
-        int buttonX1 = ((totalWidth / 2) + (marginBetween / 2));
-        int buttonX2 = (buttonX1 + buttonWidth + marginBetween);
-        int buttonY1 = yStart;
-        int buttonY2 = yStart - buttonHeight - marginBetween;
-        addButton(new Vector3f(buttonX1, buttonY1, 0), "Fortsetzen", this::close);
-        addButton(new Vector3f(buttonX2, buttonY1, 0), "Seitenwahl", () -> openMenu(TeamSelectionMenuAppState.class));
-        addButton(new Vector3f(buttonX1, buttonY2, 0), "Aufstellung", () -> openMenu(FormationMenuAppState.class));
-        addButton(new Vector3f(buttonX2, buttonY2, 0), "Beenden", this::endGame);
+        menuGroup = new MenuGroup(this::close);
         addMenuGroup(menuGroup);
     }
 
-    private void addGameInfo() {
+    protected void addGameInfo() {
         int containerWidth = ((totalWidth / 2) - (marginBetween / 2) - marginX);
         int containerX = ((totalWidth / 2) - (marginBetween / 2) - containerWidth);
 
@@ -111,7 +99,7 @@ public class IngameMenuAppState extends MenuAppState {
         guiNode.attachChild(container);
     }
 
-    private void addButton(Vector3f position, String text, Runnable action) {
+    protected void addButton(Vector3f position, int buttonWidth, int buttonHeight, String text, Runnable action) {
         Button button = new Button(text);
         button.setLocalTranslation(position);
         button.setPreferredSize(new Vector3f(buttonWidth, buttonHeight, 0));
@@ -130,7 +118,7 @@ public class IngameMenuAppState extends MenuAppState {
         lblTime.setText(time);
     }
 
-    public void endGame() {
+    protected void endGame() {
         mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(GameAppState.class));
         openMenu(MainMenuAppState.class);
     }

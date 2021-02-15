@@ -6,6 +6,6 @@ public class GameOverSituation extends Situation {
 
     @Override
     public void start() {
-        // TODO
+        game.onGameOver();
     }
 }
