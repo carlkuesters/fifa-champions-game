@@ -3,8 +3,10 @@ package com.carlkuesters.fifachampions.menu;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.simsilica.lemur.Panel;
 import com.simsilica.lemur.component.TbtQuadBackgroundComponent;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class MenuGroup {
@@ -12,17 +14,25 @@ public class MenuGroup {
     public MenuGroup(Runnable back) {
         this.back = back;
         elements = new LinkedList<>();
+        defaultElementBackgroundColors = new HashMap();
     }
     private Runnable back;
     private LinkedList<MenuElement> elements;
     private MenuElement activeElement;
-    private ColorRGBA defaultElementBackgroundColor;
+    private HashMap<MenuElement, ColorRGBA> defaultElementBackgroundColors;
+    private TbtQuadBackgroundComponent defaultBackground;
 
     public void addElement(MenuElement element) {
         elements.add(element);
+
+        TbtQuadBackgroundComponent background = (TbtQuadBackgroundComponent) element.getPanel().getBackground();
+        ColorRGBA backgroundColor = ((background != null) ? background.getColor() : null);
+        defaultElementBackgroundColors.put(element, backgroundColor);
+        if ((defaultBackground == null) && (background != null)) {
+            defaultBackground = background;
+        }
+
         if (activeElement == null) {
-            TbtQuadBackgroundComponent background = (TbtQuadBackgroundComponent) element.getPanel().getBackground();
-            defaultElementBackgroundColor = background.getColor();
             setActiveElement(element);
         }
     }
@@ -65,13 +75,13 @@ public class MenuGroup {
                 float primaryAxisDistance;
                 float secondaryAxisDistance;
                 if (direction.getX() != 0) {
-                    primaryAxisDistance = FastMath.abs(distance.getY());
-                    secondaryAxisDistance = FastMath.sign(direction.getX()) * distance.getX();
+                    primaryAxisDistance = FastMath.sign(direction.getX()) * distance.getX();
+                    secondaryAxisDistance = FastMath.abs(distance.getY());
                 } else {
-                    primaryAxisDistance = FastMath.abs(distance.getX());
-                    secondaryAxisDistance = FastMath.sign(direction.getY()) * distance.getY();
+                    primaryAxisDistance = FastMath.sign(direction.getY()) * distance.getY();
+                    secondaryAxisDistance = FastMath.abs(distance.getX());
                 }
-                if (secondaryAxisDistance >= 0) {
+                if (primaryAxisDistance >= 0) {
                     if ((primaryAxisDistance < minimumPrimaryAxisDistance)
                     || ((primaryAxisDistance == minimumPrimaryAxisDistance) && (secondaryAxisDistance < minimumSecondaryAxisDistance))) {
                         minimumPrimaryAxisDistance = primaryAxisDistance;
@@ -88,15 +98,21 @@ public class MenuGroup {
 
     public void setActiveElement(MenuElement activeElement) {
         if (this.activeElement != null) {
-            setBackground(this.activeElement, defaultElementBackgroundColor);
+            setBackground(this.activeElement, defaultElementBackgroundColors.get(this.activeElement));
         }
         this.activeElement = activeElement;
         setBackground(activeElement, ColorRGBA.Red);
     }
 
     private void setBackground(MenuElement element, ColorRGBA color) {
-        TbtQuadBackgroundComponent background = (TbtQuadBackgroundComponent) element.getPanel().getBackground();
-        background.setColor(color);
+        Panel panel = element.getPanel();
+        if (color != null) {
+            TbtQuadBackgroundComponent background = defaultBackground.clone();
+            background.setColor(color);
+            panel.setBackground(background);
+        } else {
+            panel.setBackground(null);
+        }
     }
 
     public void confirm() {
