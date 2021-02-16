@@ -1,6 +1,7 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.game.BaseDisplayAppState;
+import com.carlkuesters.fifachampions.joystick.MenuJoystickSubListener;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Vector3f;
@@ -15,11 +16,11 @@ public abstract class MenuAppState extends BaseDisplayAppState {
     public MenuAppState() {
         guiNode = new Node();
         menuGroups = new LinkedList<>();
-        menuJoystickListener = new MenuJoystickListener(this::getMenuGroup);
+        menuJoystickSubListener = new MenuJoystickSubListener(this::getMenuGroup);
     }
     protected Node guiNode;
     private LinkedList<MenuGroup> menuGroups;
-    private MenuJoystickListener menuJoystickListener;
+    private MenuJoystickSubListener menuJoystickSubListener;
     protected int totalWidth;
     protected int totalHeight;
     protected boolean autoEnabled;
@@ -69,10 +70,10 @@ public abstract class MenuAppState extends BaseDisplayAppState {
         super.setEnabled(enabled);
         if (enabled) {
             mainApplication.getGuiNode().attachChild(guiNode);
-            mainApplication.getInputManager().addRawInputListener(menuJoystickListener);
+            mainApplication.getJoystickListener().setMenuSubListener(menuJoystickSubListener);
         } else {
             mainApplication.getGuiNode().detachChild(guiNode);
-            mainApplication.getInputManager().removeRawInputListener(menuJoystickListener);
+            mainApplication.getJoystickListener().setMenuSubListener(null);
         }
     }
 }

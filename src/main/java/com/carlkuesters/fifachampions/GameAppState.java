@@ -3,6 +3,7 @@ package com.carlkuesters.fifachampions;
 import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
+import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
 import com.carlkuesters.fifachampions.menu.FormationMenuAppState;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
@@ -10,16 +11,8 @@ import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
-import com.jme3.input.JoystickAxis;
-import com.jme3.input.RawInputListener;
-import com.jme3.input.event.JoyAxisEvent;
-import com.jme3.input.event.JoyButtonEvent;
-import com.jme3.input.event.KeyInputEvent;
-import com.jme3.input.event.MouseButtonEvent;
-import com.jme3.input.event.MouseMotionEvent;
-import com.jme3.input.event.TouchEvent;
+import com.jme3.input.Joystick;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -52,7 +45,6 @@ public class GameAppState extends BaseDisplayAppState {
     private Node targetInGoalIndicator;
     private Vector3f targetCameraLocation = new Vector3f();
     private Spatial ballModel;
-    private Controller controller1;
     private Label lblGoals;
     private Container playerContainer;
     private Label optimalStrengthIndicator;
@@ -60,7 +52,7 @@ public class GameAppState extends BaseDisplayAppState {
     private float displayedStrength;
     private float remainingDisplayedStrengthDuration;
     private PlayerObject displayedStrengthPlayerObject;
-    private JoystickEventListener joystickEventListener;
+    boolean isFirstFrame = true;
 
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
@@ -68,24 +60,42 @@ public class GameAppState extends BaseDisplayAppState {
         rootNode = new Node();
         guiNode = new Node();
 
-        Team team1 = generateTeam("Team1");
-        Team team2 = generateTeam("Team2");
-        game = new Game(new Team[]{team1, team2});
-        controller1 = new Controller();
-        game.addController(controller1);
-        controller1.setContext(game, team1);
-        Controller controller2 = new Controller();
-        game.addController(controller2);
-        controller2.setContext(game, team2);
-        game.start();
+        // TODO: Create via menu and pass here
+        GameCreationInfo gameCreationInfo = new GameCreationInfo();
+        gameCreationInfo.setTeams(new Team[] {
+            generateTeam("Team1"),
+            generateTeam("Team2")
+        });
+        HashMap<Integer, Integer> controllerTeams = new HashMap<>();
+        int teamIndex = 0;
+        for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
+            controllerTeams.put(joystick.getJoyId(), teamIndex);
+            teamIndex++;
+        }
+        gameCreationInfo.setControllerTeams(controllerTeams);
 
-        AssetManager assetManager = mainApplication.getAssetManager();
+        game = new Game(gameCreationInfo.getTeams());
+
+        HashMap<Integer, Controller> controllers = new HashMap<>();
+        for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
+            Controller controller = new Controller();
+            int controllerTeamIndex = gameCreationInfo.getControllerTeams().get(joystick.getJoyId());
+            Team controllerTeam = gameCreationInfo.getTeams()[controllerTeamIndex];
+            controller.setContext(game, controllerTeam);
+            game.addController(controller);
+            controllers.put(joystick.getJoyId(), controller);
+        }
+        mainApplication.getJoystickListener().setGameSubListener(new GameJoystickSubListener(controllers, () -> {
+            stateManager.getState(PauseIngameMenuAppState.class).setEnabled(true);
+        }));
+
+        game.start();
 
         String teamColorName = "yellow";
         float playerModelOffsetForFeetsOnGround = 1.302f;
         for (Team team : game.getTeams()) {
             for (PlayerObject playerObject : team.getPlayers()) {
-                Node playerModel = (Node) assetManager.loadModel("models/player/player.j3o");
+                Node playerModel = (Node) mainApplication.getAssetManager().loadModel("models/player/player.j3o");
                 playerModel.scale(0.0106f);
                 float halfPlayerModelHeight = (JMonkeyUtil.getSpatialDimension(playerModel).getY() / 2);
                 // Center player model on y axis
@@ -128,7 +138,7 @@ public class GameAppState extends BaseDisplayAppState {
         ColorRGBA controllerColor = ColorRGBA.Blue;
         for (Controller controller : game.getControllers()) {
             Spatial controllerVisual = new Geometry("player", new Box(0.1f, 0.2f, 0.1f));
-            Material materialController = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+            Material materialController = new Material(mainApplication.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
             materialController.setBoolean("UseMaterialColors", true);
             materialController.setColor("Ambient", controllerColor);
             materialController.setColor("Diffuse", controllerColor);
@@ -142,7 +152,7 @@ public class GameAppState extends BaseDisplayAppState {
         }
 
         Node ballNode = new Node();
-        ballModel = assetManager.loadModel("models/ball/ball.j3o");
+        ballModel = mainApplication.getAssetManager().loadModel("models/ball/ball.j3o");
         // Target circumference = 2 * (69cm / 2*Pi) = 21.9633821467
         ballModel.setLocalScale(0.001606f);
         ballModel.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
@@ -162,7 +172,7 @@ public class GameAppState extends BaseDisplayAppState {
         Geometry ballGroundIndicatorGeometry = new Geometry(null, new Quad(ballGroundIndicatorSize, ballGroundIndicatorSize));
         ballGroundIndicatorGeometry.setLocalTranslation((ballGroundIndicatorSize / -2), groundHeight, (ballGroundIndicatorSize / 2));
         ballGroundIndicatorGeometry.rotate(JMonkeyUtil.getQuaternion_X(-90));
-        Material materialBallGroundIndicator = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        Material materialBallGroundIndicator = new Material(mainApplication.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         materialBallGroundIndicator.setTexture("ColorMap", loadTexture("textures/ball_ground_indicator.png"));
         materialBallGroundIndicator.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         materialBallGroundIndicator.getAdditionalRenderState().setDepthTest(false);
@@ -176,7 +186,7 @@ public class GameAppState extends BaseDisplayAppState {
         Geometry targetInGoalIndicatorGeometry = new Geometry(null, new Quad(targetInGoalIndicatorSize, targetInGoalIndicatorSize));
         targetInGoalIndicatorGeometry.setLocalTranslation(0, (targetInGoalIndicatorSize / -4), (targetInGoalIndicatorSize / -2));
         targetInGoalIndicatorGeometry.rotate(JMonkeyUtil.getQuaternion_Y(-90));
-        Material materialTargetInGoalIndicator = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        Material materialTargetInGoalIndicator = new Material(mainApplication.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         materialTargetInGoalIndicator.setTexture("ColorMap", loadTexture("textures/target_in_goal_indicator.png"));
         materialTargetInGoalIndicator.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         materialTargetInGoalIndicator.getAdditionalRenderState().setDepthTest(false);
@@ -211,9 +221,6 @@ public class GameAppState extends BaseDisplayAppState {
 
         mainApplication.getRootNode().attachChild(rootNode);
         mainApplication.getGuiNode().attachChild(guiNode);
-
-        joystickEventListener = new JoystickEventListener();
-        mainApplication.getInputManager().addRawInputListener(joystickEventListener);
     }
 
     private Material createTextureMaterial(String diffusePath, String normalPath, String specularPath) {
@@ -252,51 +259,6 @@ public class GameAppState extends BaseDisplayAppState {
                 new Vector2f(0.7f, 0.5f)
         }));
     }
-
-    protected class JoystickEventListener implements RawInputListener {
-
-        private float axisX;
-        private float axisY;
-
-        public void onJoyAxisEvent(JoyAxisEvent evt) {
-            JoystickAxis axis = evt.getAxis();
-            float value = evt.getValue();
-            if (axis == axis.getJoystick().getXAxis()) {
-                axisX = value;
-            } else if (axis == axis.getJoystick().getYAxis()) {
-                axisY = value;
-            }
-            float x = 0;
-            float y = 0;
-            float minimumAxisValue = 0.0001f; // Old controller
-            minimumAxisValue = 0.1f; // PS5 controller
-            if ((FastMath.abs(axisX) > minimumAxisValue) || (FastMath.abs(axisY) > minimumAxisValue)) {
-                float squareToCircleFactor = FastMath.sqrt((axisX * axisX) + (axisY * axisY) - (axisX * axisX * axisY * axisY)) / FastMath.sqrt((axisX * axisX) + (axisY * axisY));
-                x = axisX * squareToCircleFactor;
-                y = axisY * squareToCircleFactor;
-            }
-            controller1.setTargetDirection(x, y);
-        }
-
-        public void onJoyButtonEvent(JoyButtonEvent evt) {
-            if ((evt.getButtonIndex() == 9) && evt.isPressed()) {
-                // TODO: Why do I have to cast here?
-                PauseIngameMenuAppState pauseIngameMenuAppState = (PauseIngameMenuAppState) getAppState(PauseIngameMenuAppState.class);
-                pauseIngameMenuAppState.setEnabled(!pauseIngameMenuAppState.isEnabled());
-            } else {
-                controller1.onButtonPressed(evt.getButtonIndex(), evt.isPressed());
-            }
-        }
-
-        public void beginInput() {}
-        public void endInput() {}
-        public void onMouseMotionEvent(MouseMotionEvent evt) {}
-        public void onMouseButtonEvent(MouseButtonEvent evt) {}
-        public void onKeyEvent(KeyInputEvent evt) {}
-        public void onTouchEvent(TouchEvent evt) {}
-    }
-
-    boolean isFirstFrame = true;
 
     @Override
     public void update(float tpf) {
@@ -356,6 +318,8 @@ public class GameAppState extends BaseDisplayAppState {
             optimalStrengthIndicator.setCullHint(Spatial.CullHint.Always);
         }
 
+        // TODO: UI for multiple controllers
+        Controller controller1 = game.getControllers().get(0);
         if (controller1.getPlayerObject() != null) {
             ChargedButtonBehaviour chargingButtonBehaviour = controller1.getChargingButtonBehaviour();
             if (chargingButtonBehaviour != null) {
@@ -376,16 +340,16 @@ public class GameAppState extends BaseDisplayAppState {
             playerContainer.setCullHint(Spatial.CullHint.Always);
         }
 
-        Camera cam = mainApplication.getCamera();
+        Camera camera = mainApplication.getCamera();
         CameraPerspective cameraPerspective = game.getCameraPerspective();
         if (cameraPerspective != null) {
-            cam.setLocation(cameraPerspective.getPosition());
-            cam.lookAtDirection(cameraPerspective.getDirection(), Vector3f.UNIT_Y);
+            camera.setLocation(cameraPerspective.getPosition());
+            camera.lookAtDirection(cameraPerspective.getDirection(), Vector3f.UNIT_Y);
         } else {
             targetCameraLocation.set(0.8f * game.getBall().getPosition().getX(), 0, 0.5f * (game.getBall().getPosition().getZ() + 25));
             targetCameraLocation.addLocal(0, 20, 20);
-            cam.setLocation(targetCameraLocation);
-            cam.lookAtDirection(new Vector3f(0, -1, -1.25f), Vector3f.UNIT_Y);
+            camera.setLocation(targetCameraLocation);
+            camera.lookAtDirection(new Vector3f(0, -1, -1.25f), Vector3f.UNIT_Y);
         }
 
         float passedTime = game.getHalfTimePassedTime();
@@ -461,6 +425,6 @@ public class GameAppState extends BaseDisplayAppState {
         super.cleanup();
         mainApplication.getRootNode().detachChild(rootNode);
         mainApplication.getGuiNode().detachChild(guiNode);
-        mainApplication.getInputManager().removeRawInputListener(joystickEventListener);
+        mainApplication.getJoystickListener().setGameSubListener(null);
     }
 }

@@ -1,15 +1,15 @@
-package com.carlkuesters.fifachampions.menu;
+package com.carlkuesters.fifachampions.joystick;
 
+import com.carlkuesters.fifachampions.menu.MenuGroup;
 import com.jme3.input.JoystickAxis;
-import com.jme3.input.RawInputListener;
 import com.jme3.input.event.*;
 
 import java.util.HashMap;
 import java.util.function.Function;
 
-public class MenuJoystickListener implements RawInputListener {
+public class MenuJoystickSubListener {
 
-    public MenuJoystickListener(Function<Integer, MenuGroup> getControllerMenuGroup) {
+    public MenuJoystickSubListener(Function<Integer, MenuGroup> getControllerMenuGroup) {
         this.getControllerMenuGroup = getControllerMenuGroup;
     }
     private Function<Integer, MenuGroup> getControllerMenuGroup;
@@ -53,16 +53,10 @@ public class MenuJoystickListener implements RawInputListener {
                     menuGroup.confirm();
                     break;
                 case 2:
+                case 9:
                     menuGroup.back();
                     break;
             }
         }
     }
-
-    public void beginInput() {}
-    public void endInput() {}
-    public void onMouseMotionEvent(MouseMotionEvent evt) {}
-    public void onMouseButtonEvent(MouseButtonEvent evt) {}
-    public void onKeyEvent(KeyInputEvent evt) {}
-    public void onTouchEvent(TouchEvent evt) {}
 }
