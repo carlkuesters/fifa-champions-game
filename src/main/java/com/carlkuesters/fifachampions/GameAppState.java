@@ -60,27 +60,18 @@ public class GameAppState extends BaseDisplayAppState {
         rootNode = new Node();
         guiNode = new Node();
 
-        // TODO: Create via menu and pass here
-        GameCreationInfo gameCreationInfo = new GameCreationInfo();
-        gameCreationInfo.setTeams(new Team[] {
-            generateTeam("Team1"),
-            generateTeam("Team2")
-        });
-        HashMap<Integer, Integer> controllerTeams = new HashMap<>();
-        int teamIndex = 0;
-        for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
-            controllerTeams.put(joystick.getJoyId(), teamIndex);
-            teamIndex++;
+        GameCreationInfo gameCreationInfo = mainApplication.getGameCreationInfo();
+        Team[] teams = new Team[gameCreationInfo.getTeams().length];
+        for (int i = 0; i < teams.length; i++) {
+            TeamInfo teamInfo = gameCreationInfo.getTeams()[i];
+            teams[i] = new Team(teamInfo.getName(), teamInfo.getPlayers(), teamInfo.getDefaultFormation());
         }
-        gameCreationInfo.setControllerTeams(controllerTeams);
-
-        game = new Game(gameCreationInfo.getTeams());
-
+        game = new Game(teams);
         HashMap<Integer, Controller> controllers = new HashMap<>();
         for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
             Controller controller = new Controller();
             int controllerTeamIndex = gameCreationInfo.getControllerTeams().get(joystick.getJoyId());
-            Team controllerTeam = gameCreationInfo.getTeams()[controllerTeamIndex];
+            Team controllerTeam = game.getTeams()[controllerTeamIndex];
             controller.setContext(game, controllerTeam);
             game.addController(controller);
             controllers.put(joystick.getJoyId(), controller);
@@ -234,30 +225,6 @@ public class GameAppState extends BaseDisplayAppState {
 
     private Texture loadTexture(String filePath){
         return mainApplication.getAssetManager().loadTexture(new TextureKey(filePath, false));
-    }
-
-    private Team generateTeam(String teamName) {
-        Player[] players = new Player[11];
-        players[0] = new Goalkeeper("Goalkeeper");
-        for (int i = 1; i < players.length; i++) {
-            players[i] = new Player(teamName + "-Player #" + i);
-        }
-        return new Team(players, new Formation(new Vector2f[]{
-                new Vector2f(-1, 0),
-
-                new Vector2f(-0.7f, -0.75f),
-                new Vector2f(-0.7f, -0.25f),
-                new Vector2f(-0.7f, 0.25f),
-                new Vector2f(-0.7f, 0.75f),
-
-                new Vector2f(0, -0.75f),
-                new Vector2f(0, -0.25f),
-                new Vector2f(0, 0.25f),
-                new Vector2f(0, 0.75f),
-
-                new Vector2f(0.7f, -0.5f),
-                new Vector2f(0.7f, 0.5f)
-        }));
     }
 
     @Override

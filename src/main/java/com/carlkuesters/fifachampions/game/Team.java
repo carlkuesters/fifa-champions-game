@@ -5,16 +5,22 @@ import java.util.ArrayList;
 
 public class Team {
 
-    public Team(Player[] players, Formation formation) {
+    public Team(String name, Player[] players, Formation formation) {
+        this.name = name;
         for (Player player : players) {
             this.players.add(new PlayerObject(this, player));
         }
         this.formation = formation;
     }
+    private String name;
     private Game game;
     private int side;
     private ArrayList<PlayerObject> players = new ArrayList<>();
     private Formation formation;
+
+    public String getName() {
+        return name;
+    }
 
     public void setGame(Game game) {
         this.game = game;

@@ -3,6 +3,7 @@ package com.carlkuesters.fifachampions.joystick;
 import com.jme3.input.RawInputListener;
 import com.jme3.input.event.*;
 import lombok.Setter;
+
 public class JoystickListener implements RawInputListener {
 
     @Setter

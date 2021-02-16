@@ -1,6 +1,6 @@
 package com.carlkuesters.fifachampions;
 
-import com.carlkuesters.fifachampions.game.Team;
+import com.carlkuesters.fifachampions.game.TeamInfo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +10,5 @@ import java.util.HashMap;
 @Setter
 public class GameCreationInfo {
     private HashMap<Integer, Integer> controllerTeams;
-    private Team[] teams;
+    private TeamInfo[] teams;
 }
