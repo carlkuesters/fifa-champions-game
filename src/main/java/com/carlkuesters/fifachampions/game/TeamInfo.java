@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class TeamInfo {
     private String name;
-    private Player[] players;
+    private Player[] fieldPlayers;
+    private Player[] reservePlayers;
     private Formation defaultFormation;
 }

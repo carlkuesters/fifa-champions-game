@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions.menu;
 
+import com.carlkuesters.fifachampions.game.TeamInfo;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
@@ -15,18 +16,22 @@ public class FormationMenuAppState extends MenuAppState {
     private int playerImageBigHeight = 60;
     private int formationLeftAndRightColumnWidth = 25;
     private int formationTrikotImageSize = 30;
-    private Container[][] formationPlayers = new Container[2][11];
+    private FieldPlayerContainer[][] fieldPlayers = new FieldPlayerContainer[2][11];
+    private ReservePlayerContainer[][] reservePlayers = new ReservePlayerContainer[2][];
 
     @Override
     protected void initMenu() {
         addTitle("Aufstellung");
-        containerY = (totalHeight - 100);
+        containerY = (totalHeight - 80);
         containerWidth = ((totalWidth - (2 * containerMarginOutside) - containerMarginBetween) / 2);
         addSide(-1);
         addSide(1);
     }
 
     private void addSide(int side) {
+        int teamIndex = ((side + 1) / 2);
+        TeamInfo teamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
+
         MenuGroup menuGroup = new MenuGroup(() -> openMenu(PauseIngameMenuAppState.class));
 
         int containerX = getContainerX(side);
@@ -50,27 +55,36 @@ public class FormationMenuAppState extends MenuAppState {
         formationBackground.setBackground(formationBackgroundIcon);
         container.addChild(formationBackground);
 
-        Container reservePlayers = new Container();
-        reservePlayers.setBackground(null);
+        Container reservePlayersContainer = new Container();
+        reservePlayersContainer.setBackground(null);
+        int reservePlayerIndex = 0;
+        reservePlayers[teamIndex] = new ReservePlayerContainer[teamInfo.getReservePlayers().length];
         for (int y = 0; y < 4; y++) {
             Container reservePlayersRow = new Container();
             reservePlayersRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
             reservePlayersRow.setBackground(null);
             for (int x = 0; x < 5; x++) {
-                Container containerReservePlayerDetails = createPlayerDetailsSmall(menuGroup);
-                reservePlayersRow.addChild(containerReservePlayerDetails);
+                ReservePlayerContainer reservePlayerContainer = createReservePlayer(menuGroup);
+                reservePlayersRow.addChild(reservePlayerContainer.getContainer());
+                reservePlayers[teamIndex][reservePlayerIndex] = reservePlayerContainer;
+                reservePlayerIndex++;
+                if (reservePlayerIndex >= teamInfo.getReservePlayers().length) {
+                    break;
+                }
             }
-            reservePlayers.addChild(reservePlayersRow);
+            reservePlayersContainer.addChild(reservePlayersRow);
+            if (reservePlayerIndex >= teamInfo.getReservePlayers().length) {
+                break;
+            }
         }
-        container.addChild(reservePlayers);
+        container.addChild(reservePlayersContainer);
 
         guiNode.attachChild(container);
 
-        int teamIndex = ((side + 1) / 2);
-        for (int i = 0; i < formationPlayers[teamIndex].length; i++) {
-            Container formationPlayer = createFormationPlayer(menuGroup);
-            guiNode.attachChild(formationPlayer);
-            formationPlayers[teamIndex][i] = formationPlayer;
+        for (int i = 0; i < fieldPlayers[teamIndex].length; i++) {
+            FieldPlayerContainer fieldPlayerContainer = createFieldPlayer(menuGroup);
+            guiNode.attachChild(fieldPlayerContainer.getContainer());
+            fieldPlayers[teamIndex][i] = fieldPlayerContainer;
         }
 
         addMenuGroup(menuGroup);
@@ -116,15 +130,18 @@ public class FormationMenuAppState extends MenuAppState {
         return container;
     }
 
-    private Container createPlayerDetailsSmall(MenuGroup menuGroup) {
+    private ReservePlayerContainer createReservePlayer(MenuGroup menuGroup) {
         Container container = new Container();
-        container.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
+
+        Container topRow = new Container();
+        topRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
+        topRow.setBackground(null);
 
         Label lblPosition = new Label("XX");
         lblPosition.setTextHAlignment(HAlignment.Center);
         lblPosition.setTextVAlignment(VAlignment.Center);
         lblPosition.setFontSize(12);
-        container.addChild(lblPosition);
+        topRow.addChild(lblPosition);
 
         int playerImageHeight = 40;
         Panel playerImage = new Panel();
@@ -132,20 +149,28 @@ public class FormationMenuAppState extends MenuAppState {
         playerIcon.setIconSize(new Vector2f(playerImageHeight, playerImageHeight));
         playerIcon.setHAlignment(HAlignment.Center);
         playerImage.setBackground(playerIcon);
-        container.addChild(playerImage);
+        topRow.addChild(playerImage);
 
-        Label lblSkil = new Label("99");
-        lblSkil.setTextHAlignment(HAlignment.Center);
-        lblSkil.setTextVAlignment(VAlignment.Center);
-        lblSkil.setFontSize(12);
-        container.addChild(lblSkil);
+        Label lblSkill = new Label("99");
+        lblSkill.setTextHAlignment(HAlignment.Center);
+        lblSkill.setTextVAlignment(VAlignment.Center);
+        lblSkill.setFontSize(12);
+        topRow.addChild(lblSkill);
+
+        container.addChild(topRow);
+
+        Label lblName = new Label("XXXXXX");
+        lblName.setTextHAlignment(HAlignment.Center);
+        lblName.setTextVAlignment(VAlignment.Center);
+        lblName.setFontSize(12);
+        container.addChild(lblName);
 
         menuGroup.addElement(new MenuElement(container, () -> openMenu(PauseIngameMenuAppState.class)));
 
-        return container;
+        return new ReservePlayerContainer(container, lblPosition, lblSkill, lblName);
     }
 
-    private Container createFormationPlayer(MenuGroup menuGroup) {
+    private FieldPlayerContainer createFieldPlayer(MenuGroup menuGroup) {
         Container container = new Container();
         container.setBackground(null);
 
@@ -182,14 +207,25 @@ public class FormationMenuAppState extends MenuAppState {
 
         menuGroup.addElement(new MenuElement(container, () -> openMenu(PauseIngameMenuAppState.class)));
 
-        return container;
+        return new FieldPlayerContainer(container, lblSkill, lblName);
     }
 
-    public void setFormationPlayerPosition(int side, int playerIndex, Vector2f formationLocation) {
+    public void updateFieldPlayer(int side, int playerIndex, String name, int skill, Vector2f formationLocation) {
+        int teamIndex = ((side + 1) / 2);
+        FieldPlayerContainer fieldPlayerContainer = fieldPlayers[teamIndex][playerIndex];
+        fieldPlayerContainer.getLblName().setText(name);
+        fieldPlayerContainer.getLblSkill().setText("" + skill);
         float x = getFormationPlayerX(side, formationLocation.getY());
         float y = getFormationPlayerY(formationLocation.getX());
+        fieldPlayerContainer.getContainer().setLocalTranslation(x, y, 1);
+    }
+
+    public void updateReservePlayer(int side, int playerIndex, String position, int skill, String name) {
         int teamIndex = ((side + 1) / 2);
-        formationPlayers[teamIndex][playerIndex].setLocalTranslation(x, y, 1);
+        ReservePlayerContainer reservePlayerContainer = reservePlayers[teamIndex][playerIndex];
+        reservePlayerContainer.getLblPosition().setText(position);
+        reservePlayerContainer.getLblSkill().setText("" + skill);
+        reservePlayerContainer.getLblName().setText(name);
     }
 
     private float getFormationPlayerX(int side, float formationY) {

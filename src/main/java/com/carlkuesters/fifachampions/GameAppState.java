@@ -7,6 +7,7 @@ import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
 import com.carlkuesters.fifachampions.menu.FormationMenuAppState;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
+import com.carlkuesters.fifachampions.menu.TeamSelectionMenuAppState;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.Application;
@@ -64,7 +65,7 @@ public class GameAppState extends BaseDisplayAppState {
         Team[] teams = new Team[gameCreationInfo.getTeams().length];
         for (int i = 0; i < teams.length; i++) {
             TeamInfo teamInfo = gameCreationInfo.getTeams()[i];
-            teams[i] = new Team(teamInfo.getName(), teamInfo.getPlayers(), teamInfo.getDefaultFormation());
+            teams[i] = new Team(teamInfo.getName(), teamInfo.getFieldPlayers(), teamInfo.getReservePlayers(), teamInfo.getDefaultFormation());
         }
         game = new Game(teams);
         HashMap<Integer, Controller> controllers = new HashMap<>();
@@ -331,11 +332,29 @@ public class GameAppState extends BaseDisplayAppState {
         pauseIngameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
 
         // TODO: Why do I have to cast here?
+        TeamSelectionMenuAppState teamSelectionMenuAppState = (TeamSelectionMenuAppState) getAppState(TeamSelectionMenuAppState.class);
+        int controllerIndex = 0;
+        for (Controller controller : game.getControllers()) {
+            teamSelectionMenuAppState.updateControllerSide(controllerIndex, controller.getTeam().getSide());
+            controllerIndex++;
+        }
+
+        // TODO: Why do I have to cast here?
         FormationMenuAppState formationMenuAppState = (FormationMenuAppState) getAppState(FormationMenuAppState.class);
         for (Team team : game.getTeams()) {
             for (int playerIndex = 0; playerIndex < team.getPlayers().size(); playerIndex++) {
+                PlayerObject playerObject = team.getPlayers().get(playerIndex);
+                String name = playerObject.getPlayer().getName();
+                int skill = 99;
                 Vector2f formationLocation = team.getFormation().getLocation(playerIndex);
-                formationMenuAppState.setFormationPlayerPosition(team.getSide(), playerIndex, formationLocation);
+                formationMenuAppState.updateFieldPlayer(team.getSide(), playerIndex, name, skill, formationLocation);
+            }
+            for (int playerIndex = 0; playerIndex < team.getReservePlayers().length; playerIndex++) {
+                Player reservePlayer = team.getReservePlayers()[playerIndex];
+                String position = "XX";
+                int skill = 99;
+                String name = reservePlayer.getName();
+                formationMenuAppState.updateReservePlayer(team.getSide(), playerIndex, position, skill, name);
             }
         }
 

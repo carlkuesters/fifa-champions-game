@@ -5,17 +5,19 @@ import java.util.ArrayList;
 
 public class Team {
 
-    public Team(String name, Player[] players, Formation formation) {
+    public Team(String name, Player[] players, Player[] reservePlayers, Formation formation) {
         this.name = name;
         for (Player player : players) {
             this.players.add(new PlayerObject(this, player));
         }
+        this.reservePlayers = reservePlayers;
         this.formation = formation;
     }
     private String name;
     private Game game;
     private int side;
     private ArrayList<PlayerObject> players = new ArrayList<>();
+    private Player[] reservePlayers;
     private Formation formation;
 
     public String getName() {
@@ -36,6 +38,10 @@ public class Team {
 
     public ArrayList<PlayerObject> getPlayers() {
         return players;
+    }
+
+    public Player[] getReservePlayers() {
+        return reservePlayers;
     }
 
     public Formation getFormation() {

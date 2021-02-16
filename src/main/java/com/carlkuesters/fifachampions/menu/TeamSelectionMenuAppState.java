@@ -8,6 +8,8 @@ import com.simsilica.lemur.component.SpringGridLayout;
 
 public class TeamSelectionMenuAppState extends MenuAppState {
 
+    private IconComponent[] controllerIcons;
+
     @Override
     protected void initMenu() {
         addTitle("Seitenauswahl");
@@ -30,7 +32,8 @@ public class TeamSelectionMenuAppState extends MenuAppState {
         containerInner.setBackground(null);
         containerOuter.addChild(containerInner);
 
-        for (int i = 0; i < 4; i++) {
+        controllerIcons = new IconComponent[mainApplication.getInputManager().getJoysticks().length];
+        for (int i = 0; i < controllerIcons.length; i++) {
             Container row = new Container();
             row.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
             row.setInsets(new Insets3f(0, rowPadding, 0, rowPadding));
@@ -47,6 +50,7 @@ public class TeamSelectionMenuAppState extends MenuAppState {
             }
             controllerIcon.setVAlignment(VAlignment.Center);
             controllerIcon.setIconSize(new Vector2f(controllerLogoSize, controllerLogoSize));
+            controllerIcons[i] = controllerIcon;
             controllerLogo.setBackground(controllerIcon);
             row.addChild(controllerLogo);
 
@@ -56,5 +60,17 @@ public class TeamSelectionMenuAppState extends MenuAppState {
         guiNode.attachChild(containerOuter);
 
         addMenuGroup(menuGroup);
+    }
+
+    public void updateControllerSide(int controllerIndex, int side) {
+        HAlignment hAlignment;
+        if (side == 1) {
+            hAlignment = HAlignment.Left;
+        } else if (side == -1) {
+            hAlignment = HAlignment.Right;
+        } else {
+            hAlignment = HAlignment.Center;
+        }
+        controllerIcons[controllerIndex].setHAlignment(hAlignment);
     }
 }

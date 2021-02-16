@@ -16,6 +16,7 @@ public class TeamsMenuAppState extends MenuAppState {
 
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
+        TeamInfo teamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
 
         int containerMarginOutside = 150;
         int containerMarginBetween = 400;
@@ -28,7 +29,6 @@ public class TeamsMenuAppState extends MenuAppState {
         Container container = new Container();
         container.setLocalTranslation(containerX, containerY, 0);
 
-        TeamInfo teamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
         Label lblTeamName = new Label(teamInfo.getName());
         lblTeamName.setFontSize(20);
         container.addChild(lblTeamName);
