@@ -1,28 +1,27 @@
 package com.carlkuesters.fifachampions.game;
 
 import com.jme3.math.Vector2f;
+import lombok.Getter;
+
 import java.util.ArrayList;
 
 public class Team {
 
-    public Team(String name, Player[] players, Player[] reservePlayers, Formation formation) {
-        this.name = name;
+    public Team(String trikotName, Player[] players, Player[] reservePlayers, Formation formation) {
+        this.trikotName = trikotName;
         for (Player player : players) {
             this.players.add(new PlayerObject(this, player));
         }
         this.reservePlayers = reservePlayers;
         this.formation = formation;
     }
-    private String name;
+    @Getter
+    private String trikotName;
     private Game game;
     private int side;
     private ArrayList<PlayerObject> players = new ArrayList<>();
     private Player[] reservePlayers;
     private Formation formation;
-
-    public String getName() {
-        return name;
-    }
 
     public void setGame(Game game) {
         this.game = game;

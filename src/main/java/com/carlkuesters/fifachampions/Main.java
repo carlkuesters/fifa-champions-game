@@ -80,7 +80,7 @@ public class Main extends SimpleApplication {
     }
 
     private TeamInfo getDefaultTeam(String teamName) {
-        String[] trikotNames = new String[] { "" };
+        String[] trikotNames = new String[] { "amaranth", "red", "striped", "thinstripes", "yellow" };
         Player[] fieldPlayers = new Player[11];
         fieldPlayers[0] = new Goalkeeper(teamName + "-Goalie1");
         for (int i = 1; i < fieldPlayers.length; i++) {
@@ -110,6 +110,6 @@ public class Main extends SimpleApplication {
     }
 
     private InitialTeamInfo generateInitialTeamInfo(TeamInfo teamInfo) {
-        return new InitialTeamInfo(teamInfo, teamInfo.getTrikotNames()[0], teamInfo.getFieldPlayers(), teamInfo.getReservePlayers(), teamInfo.getDefaultFormation());
+        return new InitialTeamInfo(teamInfo, 0, teamInfo.getFieldPlayers(), teamInfo.getReservePlayers(), teamInfo.getDefaultFormation());
     }
 }

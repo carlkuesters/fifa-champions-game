@@ -66,7 +66,8 @@ public class GameAppState extends BaseDisplayAppState {
         Team[] teams = new Team[gameCreationInfo.getTeams().length];
         for (int i = 0; i < teams.length; i++) {
             InitialTeamInfo initialTeamInfo = gameCreationInfo.getTeams()[i];
-            teams[i] = new Team(initialTeamInfo.getTeamInfo().getName(), initialTeamInfo.getFieldPlayers(), initialTeamInfo.getReservePlayers(), initialTeamInfo.getFormation());
+            String trikotName = initialTeamInfo.getTeamInfo().getTrikotNames()[initialTeamInfo.getTrikotIndex()];
+            teams[i] = new Team(trikotName, initialTeamInfo.getFieldPlayers(), initialTeamInfo.getReservePlayers(), initialTeamInfo.getFormation());
         }
         game = new Game(teams);
         controllers = new HashMap<>();
@@ -89,16 +90,14 @@ public class GameAppState extends BaseDisplayAppState {
 
         game.start();
 
-        String teamColorName = "yellow";
         for (Team team : game.getTeams()) {
             for (PlayerObject playerObject : team.getPlayers()) {
                 PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager());
-                String trikotName = ((playerObject.getPlayer() instanceof Goalkeeper) ? "thinstripes" : teamColorName);
+                String trikotName = ((playerObject.getPlayer() instanceof Goalkeeper) ? "thinstripes" : playerObject.getTeam().getTrikotName());
                 playerVisual.setTrikot(trikotName);
                 rootNode.attachChild(playerVisual.getWrapperNode());
                 playerVisuals.put(playerObject, playerVisual);
             }
-            teamColorName = "red";
         }
 
         ColorRGBA controllerColor = ColorRGBA.Blue;
