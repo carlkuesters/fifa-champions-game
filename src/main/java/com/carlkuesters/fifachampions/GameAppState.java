@@ -7,16 +7,15 @@ import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
 import com.carlkuesters.fifachampions.menu.FormationMenuAppState;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
+import com.carlkuesters.fifachampions.visuals.MaterialFactory;
+import com.carlkuesters.fifachampions.visuals.PlayerVisual;
 import com.jme3.animation.AnimChannel;
-import com.jme3.animation.AnimControl;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.TextureKey;
 import com.jme3.input.Joystick;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -26,7 +25,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
-import com.jme3.texture.Texture;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.IconComponent;
 import lombok.Getter;
@@ -41,7 +39,7 @@ public class GameAppState extends BaseDisplayAppState {
 
     private Node rootNode;
     private Node guiNode;
-    private HashMap<PlayerObject, Node> playerVisuals = new HashMap<>();
+    private HashMap<PlayerObject, PlayerVisual> playerVisuals = new HashMap<>();
     private HashMap<Controller, Node> controllerVisuals = new HashMap<>();
     @Getter
     private HashMap<Integer, Controller> controllers;
@@ -92,44 +90,12 @@ public class GameAppState extends BaseDisplayAppState {
         game.start();
 
         String teamColorName = "yellow";
-        float playerModelOffsetForFeetsOnGround = 1.302f;
         for (Team team : game.getTeams()) {
             for (PlayerObject playerObject : team.getPlayers()) {
-                Node playerModel = (Node) mainApplication.getAssetManager().loadModel("models/player/player.j3o");
-                playerModel.scale(0.0106f);
-                float halfPlayerModelHeight = (JMonkeyUtil.getSpatialDimension(playerModel).getY() / 2);
-                // Center player model on y axis
-                playerModel.move(0, (playerModelOffsetForFeetsOnGround - halfPlayerModelHeight), 0);
-                playerModel.rotate(0, -1 * FastMath.HALF_PI, 0);
-                AnimControl animControl = playerModel.getControl(AnimControl.class);
-                animControl.createChannel();
-                // Head
-                Material materialHead = createTextureMaterial(
-                        "models/player/resources/WSP_head_D.png",
-                        "models/player/resources/WSP_head_N.png",
-                        "models/player/resources/WSP_head_SP.png"
-                );
-                Geometry head = (Geometry) playerModel.getChild("head");
-                head.setMaterial(materialHead);
-                // Body
+                PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager());
                 String trikotName = ((playerObject.getPlayer() instanceof Goalkeeper) ? "thinstripes" : teamColorName);
-                Material materialBody = createTextureMaterial(
-                        "models/player/resources/WSP_body_" + trikotName + "_D.png",
-                        "models/player/resources/WSP_body_N.png",
-                        "models/player/resources/WSP_body_SP.png"
-                );
-                Geometry body = (Geometry) playerModel.getChild("body");
-                body.setMaterial(materialBody);
-                playerModel.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-                // Add model to visual
-                Node playerVisual = new Node();
-                playerVisual.attachChild(playerModel);
-                // Add visual to wrapper
-                Node playerWrapper = new Node();
-                playerWrapper.setLocalTranslation(0, halfPlayerModelHeight, 0);
-                playerWrapper.attachChild(playerVisual);
-                // Add wrapper to root
-                rootNode.attachChild(playerWrapper);
+                playerVisual.setTrikot(trikotName);
+                rootNode.attachChild(playerVisual.getWrapperNode());
                 playerVisuals.put(playerObject, playerVisual);
             }
             teamColorName = "red";
@@ -156,11 +122,10 @@ public class GameAppState extends BaseDisplayAppState {
         // Target circumference = 2 * (69cm / 2*Pi) = 21.9633821467
         ballModel.setLocalScale(0.001606f);
         ballModel.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        Material materialBall = createTextureMaterial(
-                "models/ball/resources/ball_D.png",
-                "models/ball/resources/ball_N.png",
-                "models/ball/resources/ball_SP.png"
-        );
+        Material materialBall = new Material(mainApplication.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        materialBall.setTexture("DiffuseMap", MaterialFactory.loadTexture(mainApplication.getAssetManager(), "models/ball/resources/ball_D.png"));
+        materialBall.setTexture("NormalMap", MaterialFactory.loadTexture(mainApplication.getAssetManager(), "models/ball/resources/ball_N.png"));
+        materialBall.setTexture("SpecularMap", MaterialFactory.loadTexture(mainApplication.getAssetManager(), "models/ball/resources/ball_SP.png"));
         ballNode.setLocalTranslation(0, 0.432f, 0);
         ballNode.attachChild(ballModel);
         Geometry ballGeometry = (Geometry) ballNode.getChild("ball");
@@ -173,7 +138,7 @@ public class GameAppState extends BaseDisplayAppState {
         ballGroundIndicatorGeometry.setLocalTranslation((ballGroundIndicatorSize / -2), groundHeight, (ballGroundIndicatorSize / 2));
         ballGroundIndicatorGeometry.rotate(JMonkeyUtil.getQuaternion_X(-90));
         Material materialBallGroundIndicator = new Material(mainApplication.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        materialBallGroundIndicator.setTexture("ColorMap", loadTexture("textures/ball_ground_indicator.png"));
+        materialBallGroundIndicator.setTexture("ColorMap", MaterialFactory.loadTexture(mainApplication.getAssetManager(), "textures/ball_ground_indicator.png"));
         materialBallGroundIndicator.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         materialBallGroundIndicator.getAdditionalRenderState().setDepthTest(false);
         ballGroundIndicatorGeometry.setMaterial(materialBallGroundIndicator);
@@ -187,7 +152,7 @@ public class GameAppState extends BaseDisplayAppState {
         targetInGoalIndicatorGeometry.setLocalTranslation(0, (targetInGoalIndicatorSize / -4), (targetInGoalIndicatorSize / -2));
         targetInGoalIndicatorGeometry.rotate(JMonkeyUtil.getQuaternion_Y(-90));
         Material materialTargetInGoalIndicator = new Material(mainApplication.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        materialTargetInGoalIndicator.setTexture("ColorMap", loadTexture("textures/target_in_goal_indicator.png"));
+        materialTargetInGoalIndicator.setTexture("ColorMap", MaterialFactory.loadTexture(mainApplication.getAssetManager(), "textures/target_in_goal_indicator.png"));
         materialTargetInGoalIndicator.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         materialTargetInGoalIndicator.getAdditionalRenderState().setDepthTest(false);
         materialTargetInGoalIndicator.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
@@ -223,19 +188,6 @@ public class GameAppState extends BaseDisplayAppState {
         mainApplication.getGuiNode().attachChild(guiNode);
     }
 
-    private Material createTextureMaterial(String diffusePath, String normalPath, String specularPath) {
-        Material material = new Material(mainApplication.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-        // textureDiffuse.setWrap(Texture.WrapMode.Repeat);
-        material.setTexture("DiffuseMap", loadTexture(diffusePath));
-        material.setTexture("NormalMap", loadTexture(normalPath));
-        material.setTexture("SpecularMap", loadTexture(specularPath));
-        return material;
-    }
-
-    private Texture loadTexture(String filePath){
-        return mainApplication.getAssetManager().loadTexture(new TextureKey(filePath, false));
-    }
-
     @Override
     public void update(float tpf) {
         super.update(tpf);
@@ -246,17 +198,17 @@ public class GameAppState extends BaseDisplayAppState {
         }
         game.update(tpf);
 
-        for (Entry<PlayerObject, Node> playerEntry : playerVisuals.entrySet()) {
+        for (Entry<PlayerObject, PlayerVisual> playerEntry : playerVisuals.entrySet()) {
             PlayerObject playerObject = playerEntry.getKey();
-            Node playerVisual = playerEntry.getValue();
-            updateTransform(playerObject, playerVisual);
+            PlayerVisual playerVisual = playerEntry.getValue();
+            updateTransform(playerObject, playerVisual.getModelNode());
             // Run Animation
             float velocity = playerObject.getVelocity().length();
             PlayerAnimation playerAnimation = playerObject.getAnimation();
             if (isNullOrDefaultRunAnimation(playerAnimation)) {
                 playerAnimation = getPlayerDefaultRunAnimation(velocity);
             }
-            AnimChannel animChannel = playerVisual.getChild(0).getControl(AnimControl.class).getChannel(0);
+            AnimChannel animChannel = playerVisual.getAnimChannel();
             if (!playerAnimation.getName().equals(animChannel.getAnimationName())) {
                 animChannel.setAnim(playerAnimation.getName());
             }
