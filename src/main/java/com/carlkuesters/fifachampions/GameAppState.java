@@ -30,8 +30,10 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.IconComponent;
+import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class GameAppState extends BaseDisplayAppState {
@@ -42,6 +44,8 @@ public class GameAppState extends BaseDisplayAppState {
     private Node guiNode;
     private HashMap<PlayerObject, Node> playerVisuals = new HashMap<>();
     private HashMap<Controller, Node> controllerVisuals = new HashMap<>();
+    @Getter
+    private HashMap<Integer, Controller> controllers;
     private Node ballGroundIndicator;
     private Node targetInGoalIndicator;
     private Vector3f targetCameraLocation = new Vector3f();
@@ -68,12 +72,12 @@ public class GameAppState extends BaseDisplayAppState {
             teams[i] = new Team(teamInfo.getName(), teamInfo.getFieldPlayers(), teamInfo.getReservePlayers(), teamInfo.getDefaultFormation());
         }
         game = new Game(teams);
-        HashMap<Integer, Controller> controllers = new HashMap<>();
+        controllers = new HashMap<>();
         for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
-            Controller controller = new Controller();
+            Controller controller = new Controller(game);
             int controllerTeamIndex = gameCreationInfo.getControllerTeams().get(joystick.getJoyId());
             Team controllerTeam = game.getTeams()[controllerTeamIndex];
-            controller.setContext(game, controllerTeam);
+            controller.setTeam(controllerTeam);
             game.addController(controller);
             controllers.put(joystick.getJoyId(), controller);
         }
@@ -242,10 +246,6 @@ public class GameAppState extends BaseDisplayAppState {
             PlayerObject playerObject = playerEntry.getKey();
             Node playerVisual = playerEntry.getValue();
             updateTransform(playerObject, playerVisual);
-            if (playerObject.getController() != null) {
-                Spatial controllerVisual = controllerVisuals.get(playerObject.getController());
-                controllerVisual.setLocalTranslation(playerObject.getPosition());
-            }
             // Run Animation
             float velocity = playerObject.getVelocity().length();
             PlayerAnimation playerAnimation = playerObject.getAnimation();
@@ -258,6 +258,17 @@ public class GameAppState extends BaseDisplayAppState {
             }
             animChannel.setSpeed(animChannel.getAnimMaxTime() / playerAnimation.getLoopDuration());
             animChannel.setLoopMode(playerAnimation.getLoopMode());
+        }
+
+        for (Map.Entry<Controller, Node> entry : controllerVisuals.entrySet()) {
+            Controller controller = entry.getKey();
+            Node controllerVisual = entry.getValue();
+            if (controller.getPlayerObject() != null) {
+                controllerVisual.setLocalTranslation(controller.getPlayerObject().getPosition());
+                controllerVisual.setCullHint(Spatial.CullHint.Inherit);
+            } else {
+                controllerVisual.setCullHint(Spatial.CullHint.Always);
+            }
         }
 
         updateTransform(game.getBall(), ballModel);
@@ -335,7 +346,11 @@ public class GameAppState extends BaseDisplayAppState {
         TeamSelectionMenuAppState teamSelectionMenuAppState = (TeamSelectionMenuAppState) getAppState(TeamSelectionMenuAppState.class);
         int controllerIndex = 0;
         for (Controller controller : game.getControllers()) {
-            teamSelectionMenuAppState.updateControllerSide(controllerIndex, controller.getTeam().getSide());
+            int teamSide = 0;
+            if (controller.getTeam() != null) {
+                teamSide = controller.getTeam().getSide();
+            }
+            teamSelectionMenuAppState.updateControllerSide(controllerIndex, teamSide);
             controllerIndex++;
         }
 

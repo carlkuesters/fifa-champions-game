@@ -12,7 +12,7 @@ public class GameSettingsMenuAppState extends MenuAppState {
     protected void initMenu() {
         addTitle("Einstellungen");
 
-        MenuGroup menuGroup = new MenuGroup(() -> openMenu(ShirtMenuAppState.class));
+        ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(ShirtMenuAppState.class));
 
         int containerWidth = 600;
         int containerX = ((totalWidth / 2) - (containerWidth / 2));

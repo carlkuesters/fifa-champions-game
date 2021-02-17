@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions.menu;
 
+import com.carlkuesters.fifachampions.GameAppState;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
@@ -14,7 +15,11 @@ public class TeamSelectionMenuAppState extends MenuAppState {
     protected void initMenu() {
         addTitle("Seitenauswahl");
 
-        MenuGroup menuGroup = new MenuGroup(() -> openMenu(PauseIngameMenuAppState.class));
+        TeamSelectionMenuGroup menuGroup = new TeamSelectionMenuGroup(() -> openMenu(PauseIngameMenuAppState.class), joyId -> {
+            // TODO: Why do I have to cast here?
+            GameAppState gameAppState = (GameAppState) getAppState(GameAppState.class);
+            return gameAppState.getControllers().get(joyId);
+        });
 
         int containerWidth = 600;
         int containerHeight = 400;

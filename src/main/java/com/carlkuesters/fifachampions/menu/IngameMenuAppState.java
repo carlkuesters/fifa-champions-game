@@ -13,7 +13,7 @@ public class IngameMenuAppState extends MenuAppState {
     protected int containerHeight = 600;
     protected int marginBetween = 20;
     protected int yStart;
-    private MenuGroup menuGroup;
+    private ElementsMenuGroup menuGroup;
     private Label lblTime = new Label("");
     private Label lblScore = new Label("");
 
@@ -23,7 +23,7 @@ public class IngameMenuAppState extends MenuAppState {
 
         addGameInfo();
 
-        menuGroup = new MenuGroup(this::close);
+        menuGroup = new ElementsMenuGroup(this::close);
         addMenuGroup(menuGroup);
     }
 

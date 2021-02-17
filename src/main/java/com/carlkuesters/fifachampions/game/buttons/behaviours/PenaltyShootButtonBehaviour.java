@@ -16,7 +16,8 @@ public class PenaltyShootButtonBehaviour extends ApproachShootButtonBehaviour<Pe
         Ball ball = game.getBall();
         // Shooter
         Vector3f shootGoalLinePosition = getGoalLinePosition(game, playerObject.getTeam(), penaltySituation.getTargetShootDirection());
-        Vector3f ballVelocity = ball.getInitialVelocity_ByTargetVelocityX(shootGoalLinePosition, 20);
+        int targetVelocityX = (game.getHalfTimeSideFactor() * playerObject.getTeam().getSide() * 20);
+        Vector3f ballVelocity = ball.getInitialVelocity_ByTargetVelocityX(shootGoalLinePosition,targetVelocityX);
         playerObject.shoot(ballVelocity);
         // Goalkeeper
         PlayerObject goalkeeper = penaltySituation.getGoalkeeper();
@@ -27,6 +28,7 @@ public class PenaltyShootButtonBehaviour extends ApproachShootButtonBehaviour<Pe
     }
 
     private Vector3f getGoalLinePosition(Game game, Team shootingTeam, float targetDirection) {
-        return new Vector3f(game.getHalfTimeSideFactor() * shootingTeam.getSide() * Game.FIELD_HALF_WIDTH, Game.GOAL_HEIGHT / 2, targetDirection * 3);
+        int goalSideFactor = (game.getHalfTimeSideFactor() * shootingTeam.getSide());
+        return new Vector3f(goalSideFactor * Game.FIELD_HALF_WIDTH, Game.GOAL_HEIGHT / 2, goalSideFactor * targetDirection * 3);
     }
 }

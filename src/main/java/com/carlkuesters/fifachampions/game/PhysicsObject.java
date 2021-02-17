@@ -207,7 +207,7 @@ public class PhysicsObject extends GameObject {
         float a = (slowFactor / -2);
 
         List<Parabole> paraboles = ParaboleUtil.getParaboles_X1_Y1_Y2_FDX2_A(x1, y1, y2, firstDerivativeX2, a);
-        return ParaboleUtil.getQuadraticFormulaResult(paraboles, true);
+        return ParaboleUtil.getQuadraticFormulaResult(paraboles, (targetVelocity > 0));
     }
 
     public static Parabole getParabole_PerfectStop(float currentValue, float targetValue, float flyDuration) {

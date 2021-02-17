@@ -32,7 +32,7 @@ public class FormationMenuAppState extends MenuAppState {
         int teamIndex = ((side + 1) / 2);
         TeamInfo teamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
 
-        MenuGroup menuGroup = new MenuGroup(() -> openMenu(PauseIngameMenuAppState.class));
+        ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(PauseIngameMenuAppState.class));
 
         int containerX = getContainerX(side);
         Container container = new Container();
@@ -130,7 +130,7 @@ public class FormationMenuAppState extends MenuAppState {
         return container;
     }
 
-    private ReservePlayerContainer createReservePlayer(MenuGroup menuGroup) {
+    private ReservePlayerContainer createReservePlayer(ElementsMenuGroup menuGroup) {
         Container container = new Container();
 
         Container topRow = new Container();
@@ -170,7 +170,7 @@ public class FormationMenuAppState extends MenuAppState {
         return new ReservePlayerContainer(container, lblPosition, lblSkill, lblName);
     }
 
-    private FieldPlayerContainer createFieldPlayer(MenuGroup menuGroup) {
+    private FieldPlayerContainer createFieldPlayer(ElementsMenuGroup menuGroup) {
         Container container = new Container();
         container.setBackground(null);
 

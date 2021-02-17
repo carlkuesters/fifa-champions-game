@@ -4,12 +4,14 @@ import com.carlkuesters.fifachampions.game.buttons.*;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedBallButtonBehaviour;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
 import com.jme3.math.Vector2f;
+import lombok.Getter;
 
 import java.util.HashMap;
 
 public class Controller implements GameLoopListener {
 
-    public Controller() {
+    public Controller(Game game) {
+        this.game = game;
         registerButton(0, new FlankOrStraddleButton());
         registerButton(1, new PassDirectOrPressureButton());
         registerButton(2, new ShootButton());
@@ -17,6 +19,7 @@ public class Controller implements GameLoopListener {
         registerButton(4, new SwitchPlayerButton());
         registerButton(7, new SprintButton());
     }
+    @Getter
     private Game game;
     private Team team;
     private PlayerObject playerObject;
@@ -26,16 +29,18 @@ public class Controller implements GameLoopListener {
 
     @Override
     public void update(float tpf) {
-        for (ControllerButton button : buttons.values()) {
-            ControllerButtonBehaviour buttonBehaviour = button.getBehaviour();
-            if (buttonBehaviour != null) {
-                buttonBehaviour.setController(this);
-                if (buttonBehaviour instanceof GameLoopListener) {
-                    GameLoopListener buttonBehaviourGameLoopListener = (GameLoopListener) buttonBehaviour;
-                    buttonBehaviourGameLoopListener.update(tpf);
-                }
-                if (buttonBehaviour.isTriggered()) {
-                    buttonBehaviour.trigger();
+        if (team != null) {
+            for (ControllerButton button : buttons.values()) {
+                ControllerButtonBehaviour buttonBehaviour = button.getBehaviour();
+                if (buttonBehaviour != null) {
+                    buttonBehaviour.setController(this);
+                    if (buttonBehaviour instanceof GameLoopListener) {
+                        GameLoopListener buttonBehaviourGameLoopListener = (GameLoopListener) buttonBehaviour;
+                        buttonBehaviourGameLoopListener.update(tpf);
+                    }
+                    if (buttonBehaviour.isTriggered()) {
+                        buttonBehaviour.trigger();
+                    }
                 }
             }
         }
@@ -46,10 +51,13 @@ public class Controller implements GameLoopListener {
         buttons.put(buttonIndex, button);
     }
 
-    public void setContext(Game game, Team team) {
-        this.game = game;
+    public void setTeam(Team team) {
         this.team = team;
-        switchPlayer();
+        if (team != null) {
+            switchPlayer();
+        } else {
+            setPlayer(null);
+        }
     }
 
     public Team getTeam() {
@@ -57,11 +65,13 @@ public class Controller implements GameLoopListener {
     }
     
     public void onButtonPressed(int buttonIndex, boolean isPressed) {
-        ControllerButton button = buttons.get(buttonIndex);
-        if (button != null) {
-            ControllerButtonBehaviour behaviour = button.getBehaviour();
-            if (behaviour != null) {
-                button.getBehaviour().onPressed(isPressed);
+        if (team != null) {
+            ControllerButton button = buttons.get(buttonIndex);
+            if (button != null) {
+                ControllerButtonBehaviour behaviour = button.getBehaviour();
+                if (behaviour != null) {
+                    button.getBehaviour().onPressed(isPressed);
+                }
             }
         }
     }
@@ -74,7 +84,9 @@ public class Controller implements GameLoopListener {
         if (this.playerObject != null) {
             this.playerObject.setController(null);
         }
-        playerObject.setController(this);
+        if (playerObject != null) {
+            playerObject.setController(this);
+        }
         this.playerObject = playerObject;
     }
 

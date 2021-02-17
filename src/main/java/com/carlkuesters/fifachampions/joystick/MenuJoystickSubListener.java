@@ -25,9 +25,9 @@ public class MenuJoystickSubListener {
                 if (value != values[0]) {
                     values[0] = value;
                     if (value > 0) {
-                        menuGroup.navigateRight();
+                        menuGroup.navigateRight(evt.getJoyIndex());
                     } else if (value < 0) {
-                        menuGroup.navigateLeft();
+                        menuGroup.navigateLeft(evt.getJoyIndex());
                     }
                 }
 
@@ -35,9 +35,9 @@ public class MenuJoystickSubListener {
                 if (value != values[1]) {
                     values[1] = value;
                     if (value > 0) {
-                        menuGroup.navigateUp();
+                        menuGroup.navigateUp(evt.getJoyIndex());
                     } else if (value < 0) {
-                        menuGroup.navigateDown();
+                        menuGroup.navigateDown(evt.getJoyIndex());
                     }
                 }
             }

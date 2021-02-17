@@ -56,7 +56,7 @@ public class TeamsMenuAppState extends MenuAppState {
 
         guiNode.attachChild(container);
 
-        MenuGroup menuGroup = new MenuGroup(() -> openMenu(MainMenuAppState.class));
+        ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(MainMenuAppState.class));
         menuGroup.addElement(new MenuElement(container, () -> openMenu(ShirtMenuAppState.class)));
         addMenuGroup(menuGroup);
     }
