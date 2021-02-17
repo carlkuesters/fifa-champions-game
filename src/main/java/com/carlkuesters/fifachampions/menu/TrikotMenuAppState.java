@@ -5,7 +5,7 @@ import com.simsilica.lemur.Container;
 import com.simsilica.lemur.HAlignment;
 import com.simsilica.lemur.Label;
 
-public class ShirtMenuAppState extends MenuAppState {
+public class TrikotMenuAppState extends MenuAppState {
 
     @Override
     protected void initMenu() {

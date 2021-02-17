@@ -1,6 +1,6 @@
 package com.carlkuesters.fifachampions.menu;
 
-import com.carlkuesters.fifachampions.game.TeamInfo;
+import com.carlkuesters.fifachampions.game.InitialTeamInfo;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
@@ -30,7 +30,7 @@ public class FormationMenuAppState extends MenuAppState {
 
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
-        TeamInfo teamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
+        InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
 
         ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(PauseIngameMenuAppState.class));
 
@@ -58,7 +58,7 @@ public class FormationMenuAppState extends MenuAppState {
         Container reservePlayersContainer = new Container();
         reservePlayersContainer.setBackground(null);
         int reservePlayerIndex = 0;
-        reservePlayers[teamIndex] = new ReservePlayerContainer[teamInfo.getReservePlayers().length];
+        reservePlayers[teamIndex] = new ReservePlayerContainer[initialTeamInfo.getReservePlayers().length];
         for (int y = 0; y < 4; y++) {
             Container reservePlayersRow = new Container();
             reservePlayersRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
@@ -68,12 +68,12 @@ public class FormationMenuAppState extends MenuAppState {
                 reservePlayersRow.addChild(reservePlayerContainer.getContainer());
                 reservePlayers[teamIndex][reservePlayerIndex] = reservePlayerContainer;
                 reservePlayerIndex++;
-                if (reservePlayerIndex >= teamInfo.getReservePlayers().length) {
+                if (reservePlayerIndex >= initialTeamInfo.getReservePlayers().length) {
                     break;
                 }
             }
             reservePlayersContainer.addChild(reservePlayersRow);
-            if (reservePlayerIndex >= teamInfo.getReservePlayers().length) {
+            if (reservePlayerIndex >= initialTeamInfo.getReservePlayers().length) {
                 break;
             }
         }

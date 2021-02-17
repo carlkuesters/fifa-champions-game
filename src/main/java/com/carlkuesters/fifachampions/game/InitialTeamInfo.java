@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class TeamInfo {
-    private String name;
-    private String[] trikotNames;
+public class InitialTeamInfo {
+    private TeamInfo teamInfo;
+    private String trikotName;
     private Player[] fieldPlayers;
     private Player[] reservePlayers;
-    private Formation defaultFormation;
+    private Formation formation;
 }

@@ -1,6 +1,6 @@
 package com.carlkuesters.fifachampions.menu;
 
-import com.carlkuesters.fifachampions.game.TeamInfo;
+import com.carlkuesters.fifachampions.game.InitialTeamInfo;
 import com.jme3.math.Vector2f;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.IconComponent;
@@ -16,7 +16,7 @@ public class TeamsMenuAppState extends MenuAppState {
 
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
-        TeamInfo teamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
+        InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
 
         int containerMarginOutside = 150;
         int containerMarginBetween = 400;
@@ -29,7 +29,7 @@ public class TeamsMenuAppState extends MenuAppState {
         Container container = new Container();
         container.setLocalTranslation(containerX, containerY, 0);
 
-        Label lblTeamName = new Label(teamInfo.getName());
+        Label lblTeamName = new Label(initialTeamInfo.getTeamInfo().getName());
         lblTeamName.setFontSize(20);
         container.addChild(lblTeamName);
 
@@ -57,7 +57,7 @@ public class TeamsMenuAppState extends MenuAppState {
         guiNode.attachChild(container);
 
         ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(InitialTeamSelectionMenuAppState.class));
-        menuGroup.addElement(new MenuElement(container, () -> openMenu(ShirtMenuAppState.class)));
+        menuGroup.addElement(new MenuElement(container, () -> openMenu(TrikotMenuAppState.class)));
         addMenuGroup(menuGroup);
     }
 }

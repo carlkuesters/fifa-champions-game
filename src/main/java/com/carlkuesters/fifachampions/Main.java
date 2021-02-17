@@ -41,9 +41,10 @@ public class Main extends SimpleApplication {
         setDisplayStatView(false);
 
         gameCreationInfo = new GameCreationInfo();
-        gameCreationInfo.setTeams(new TeamInfo[] {
-            generateTeam("T1"),
-            generateTeam("T2")
+        TeamInfo defaultTeam = getDefaultTeam("FC-C");
+        gameCreationInfo.setTeams(new InitialTeamInfo[] {
+            generateInitialTeamInfo(defaultTeam),
+            generateInitialTeamInfo(defaultTeam)
         });
         HashMap<Integer, Integer> controllerTeamSides = new HashMap<>();
         int teamSide = 1;
@@ -68,7 +69,7 @@ public class Main extends SimpleApplication {
         stateManager.attach(new StadiumAppState());
         stateManager.attach(new InitialTeamSelectionMenuAppState());
         stateManager.attach(new TeamsMenuAppState());
-        stateManager.attach(new ShirtMenuAppState());
+        stateManager.attach(new TrikotMenuAppState());
         stateManager.attach(new GameSettingsMenuAppState());
         stateManager.attach(new PauseIngameMenuAppState());
         stateManager.attach(new PauseTeamSelectionMenuAppState());
@@ -78,7 +79,8 @@ public class Main extends SimpleApplication {
         stateManager.attach(new MainMenuAppState());
     }
 
-    private TeamInfo generateTeam(String teamName) {
+    private TeamInfo getDefaultTeam(String teamName) {
+        String[] trikotNames = new String[] { "" };
         Player[] fieldPlayers = new Player[11];
         fieldPlayers[0] = new Goalkeeper(teamName + "-Goalie1");
         for (int i = 1; i < fieldPlayers.length; i++) {
@@ -89,7 +91,7 @@ public class Main extends SimpleApplication {
         for (int i = 1; i < reservePlayers.length; i++) {
             reservePlayers[i] = new Player(teamName + "-Spieler" + (fieldPlayers.length + 1));
         }
-        return new TeamInfo(teamName, fieldPlayers, reservePlayers, new Formation(new Vector2f[]{
+        return new TeamInfo(teamName, trikotNames, fieldPlayers, reservePlayers, new Formation(new Vector2f[]{
             new Vector2f(-1, 0),
 
             new Vector2f(-0.7f, -0.75f),
@@ -105,5 +107,9 @@ public class Main extends SimpleApplication {
             new Vector2f(0.7f, -0.5f),
             new Vector2f(0.7f, 0.5f)
         }));
+    }
+
+    private InitialTeamInfo generateInitialTeamInfo(TeamInfo teamInfo) {
+        return new InitialTeamInfo(teamInfo, teamInfo.getTrikotNames()[0], teamInfo.getFieldPlayers(), teamInfo.getReservePlayers(), teamInfo.getDefaultFormation());
     }
 }

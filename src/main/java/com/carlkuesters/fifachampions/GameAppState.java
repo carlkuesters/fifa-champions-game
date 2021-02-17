@@ -65,8 +65,8 @@ public class GameAppState extends BaseDisplayAppState {
         GameCreationInfo gameCreationInfo = mainApplication.getGameCreationInfo();
         Team[] teams = new Team[gameCreationInfo.getTeams().length];
         for (int i = 0; i < teams.length; i++) {
-            TeamInfo teamInfo = gameCreationInfo.getTeams()[i];
-            teams[i] = new Team(teamInfo.getName(), teamInfo.getFieldPlayers(), teamInfo.getReservePlayers(), teamInfo.getDefaultFormation());
+            InitialTeamInfo initialTeamInfo = gameCreationInfo.getTeams()[i];
+            teams[i] = new Team(initialTeamInfo.getTeamInfo().getName(), initialTeamInfo.getFieldPlayers(), initialTeamInfo.getReservePlayers(), initialTeamInfo.getFormation());
         }
         game = new Game(teams);
         controllers = new HashMap<>();
