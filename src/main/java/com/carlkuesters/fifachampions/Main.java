@@ -83,7 +83,7 @@ public class Main extends SimpleApplication {
         for (int i = 1; i < fieldPlayers.length; i++) {
             fieldPlayers[i] = new Player(teamName + "-Spieler" + i);
         }
-        Player[] reservePlayers = new Player[17];
+        Player[] reservePlayers = new Player[20];
         reservePlayers[0] = new Goalkeeper(teamName + "-Goalie2");
         for (int i = 1; i < reservePlayers.length; i++) {
             reservePlayers[i] = new Player(teamName + "-Spieler" + (fieldPlayers.length + 1));

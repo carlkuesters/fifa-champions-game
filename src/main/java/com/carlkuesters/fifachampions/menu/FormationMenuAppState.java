@@ -50,7 +50,7 @@ public class FormationMenuAppState extends MenuAppState {
         container.addChild(playerDetailsRow);
 
         Panel formationBackground = new Panel();
-        IconComponent formationBackgroundIcon = new IconComponent("textures/logo.png");
+        IconComponent formationBackgroundIcon = new IconComponent("textures/formation_background.png");
         formationBackgroundIcon.setIconSize(new Vector2f(containerWidth, containerWidth));
         formationBackground.setBackground(formationBackgroundIcon);
         container.addChild(formationBackground);
@@ -103,7 +103,7 @@ public class FormationMenuAppState extends MenuAppState {
         container.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
 
         Panel playerImage = new Panel();
-        IconComponent playerIcon = new IconComponent("textures/logo.png");
+        IconComponent playerIcon = new IconComponent("textures/player_face.png");
         playerIcon.setIconSize(new Vector2f(playerImageBigHeight, playerImageBigHeight));
         playerIcon.setHAlignment(HAlignment.Center);
         playerIcon.setVAlignment(VAlignment.Center);
@@ -145,7 +145,7 @@ public class FormationMenuAppState extends MenuAppState {
 
         int playerImageHeight = 40;
         Panel playerImage = new Panel();
-        IconComponent playerIcon = new IconComponent("textures/logo.png");
+        IconComponent playerIcon = new IconComponent("textures/player_face.png");
         playerIcon.setIconSize(new Vector2f(playerImageHeight, playerImageHeight));
         playerIcon.setHAlignment(HAlignment.Center);
         playerImage.setBackground(playerIcon);
@@ -186,7 +186,7 @@ public class FormationMenuAppState extends MenuAppState {
         topRow.addChild(lblSkill);
 
         Panel trikotImage = new Panel();
-        IconComponent trikotIcon = new IconComponent("textures/logo.png");
+        IconComponent trikotIcon = new IconComponent("textures/player_face.png");
         trikotIcon.setIconSize(new Vector2f(formationTrikotImageSize, formationTrikotImageSize));
         trikotIcon.setHAlignment(HAlignment.Center);
         trikotImage.setBackground(trikotIcon);
