@@ -46,13 +46,6 @@ public abstract class TeamSelectionMenuAppState extends MenuAppState {
 
             Panel controllerLogo = new Panel();
             IconComponent controllerIcon = new IconComponent("textures/controller.png");
-            if (Math.random() < 0.33) {
-                controllerIcon.setHAlignment(HAlignment.Left);
-            } else if (Math.random() < 0.5) {
-                controllerIcon.setHAlignment(HAlignment.Center);
-            } else {
-                controllerIcon.setHAlignment(HAlignment.Right);
-            }
             controllerIcon.setVAlignment(VAlignment.Center);
             controllerIcon.setIconSize(new Vector2f(controllerLogoSize, controllerLogoSize));
             controllerIcons.put(joystick.getJoyId(), controllerIcon);
