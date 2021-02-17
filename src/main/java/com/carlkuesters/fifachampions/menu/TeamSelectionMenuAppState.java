@@ -45,7 +45,7 @@ public abstract class TeamSelectionMenuAppState extends MenuAppState {
             row.setBackground(null);
 
             Panel controllerLogo = new Panel();
-            IconComponent controllerIcon = new IconComponent("textures/logo.png");
+            IconComponent controllerIcon = new IconComponent("textures/controller.png");
             if (Math.random() < 0.33) {
                 controllerIcon.setHAlignment(HAlignment.Left);
             } else if (Math.random() < 0.5) {
