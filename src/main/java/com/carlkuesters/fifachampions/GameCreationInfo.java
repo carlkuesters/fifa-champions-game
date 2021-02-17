@@ -9,6 +9,6 @@ import java.util.HashMap;
 @Getter
 @Setter
 public class GameCreationInfo {
-    private HashMap<Integer, Integer> controllerTeams;
+    private HashMap<Integer, Integer> controllerTeamSides;
     private TeamInfo[] teams;
 }

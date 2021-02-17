@@ -45,13 +45,13 @@ public class Main extends SimpleApplication {
             generateTeam("T1"),
             generateTeam("T2")
         });
-        HashMap<Integer, Integer> controllerTeams = new HashMap<>();
-        int teamIndex = 0;
+        HashMap<Integer, Integer> controllerTeamSides = new HashMap<>();
+        int teamSide = 1;
         for (Joystick joystick : inputManager.getJoysticks()) {
-            controllerTeams.put(joystick.getJoyId(), teamIndex);
-            teamIndex++;
+            controllerTeamSides.put(joystick.getJoyId(), teamSide);
+            teamSide *= -1;
         }
-        gameCreationInfo.setControllerTeams(controllerTeams);
+        gameCreationInfo.setControllerTeamSides(controllerTeamSides);
 
         joystickListener = new JoystickListener();
         inputManager.addRawInputListener(joystickListener);
@@ -66,11 +66,12 @@ public class Main extends SimpleApplication {
 
         stateManager.attach(new PostFilterAppState());
         stateManager.attach(new StadiumAppState());
+        stateManager.attach(new InitialTeamSelectionMenuAppState());
         stateManager.attach(new TeamsMenuAppState());
         stateManager.attach(new ShirtMenuAppState());
         stateManager.attach(new GameSettingsMenuAppState());
         stateManager.attach(new PauseIngameMenuAppState());
-        stateManager.attach(new TeamSelectionMenuAppState());
+        stateManager.attach(new PauseTeamSelectionMenuAppState());
         stateManager.attach(new FormationMenuAppState());
         stateManager.attach(new GameOverIngameMenuAppState());
         // Has to be attached last, so its joystick sub listener is not disabled by the others

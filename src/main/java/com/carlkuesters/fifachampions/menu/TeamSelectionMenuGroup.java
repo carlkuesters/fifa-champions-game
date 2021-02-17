@@ -1,17 +1,19 @@
 package com.carlkuesters.fifachampions.menu;
 
-import com.carlkuesters.fifachampions.game.Controller;
-import com.carlkuesters.fifachampions.game.Team;
-
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class TeamSelectionMenuGroup extends MenuGroup {
 
-    public TeamSelectionMenuGroup(Runnable back, Function<Integer, Controller> getControllerByJoyId) {
+    public TeamSelectionMenuGroup(Runnable back, Function<Integer, Integer> getTeamSide, BiConsumer<Integer, Integer> setTeamSide, Runnable confirm) {
         super(back);
-        this.getControllerByJoyId = getControllerByJoyId;
+        this.getTeamSide = getTeamSide;
+        this.setTeamSide = setTeamSide;
+        this.confirm = confirm;
     }
-    private Function<Integer, Controller> getControllerByJoyId;
+    private Function<Integer, Integer> getTeamSide;
+    private BiConsumer<Integer, Integer> setTeamSide;
+    private Runnable confirm;
 
     @Override
     public void navigateLeft(int joyId) {
@@ -26,18 +28,15 @@ public class TeamSelectionMenuGroup extends MenuGroup {
     }
 
     private void switchTeam(int joyId, int direction) {
-        Controller controller = getControllerByJoyId.apply(joyId);
-        Team oldTeam = controller.getTeam();
-        int oldTeamSide = ((oldTeam != null) ? oldTeam.getSide() : 0);
+        int oldTeamSide = getTeamSide.apply(joyId);
         int newTeamSide = Math.max(-1, Math.min(oldTeamSide + direction, 1));
         if (newTeamSide != oldTeamSide) {
-            Team newTeam = null;
-            if (newTeamSide == 1) {
-                newTeam = controller.getGame().getTeams()[0];
-            } else if (newTeamSide == -1) {
-                newTeam = controller.getGame().getTeams()[1];
-            }
-            controller.setTeam(newTeam);
+            setTeamSide.accept(joyId, newTeamSide);
         }
+    }
+
+    @Override
+    public void confirm() {
+        confirm.run();
     }
 }

@@ -7,7 +7,6 @@ import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
 import com.carlkuesters.fifachampions.menu.FormationMenuAppState;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
-import com.carlkuesters.fifachampions.menu.TeamSelectionMenuAppState;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.Application;
@@ -75,8 +74,13 @@ public class GameAppState extends BaseDisplayAppState {
         controllers = new HashMap<>();
         for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
             Controller controller = new Controller(game);
-            int controllerTeamIndex = gameCreationInfo.getControllerTeams().get(joystick.getJoyId());
-            Team controllerTeam = game.getTeams()[controllerTeamIndex];
+            Team controllerTeam = null;
+            int teamSide = gameCreationInfo.getControllerTeamSides().get(joystick.getJoyId());
+            if (teamSide == 1) {
+                controllerTeam = game.getTeams()[0];
+            } else if (teamSide == -1) {
+                controllerTeam = game.getTeams()[1];
+            }
             controller.setTeam(controllerTeam);
             game.addController(controller);
             controllers.put(joystick.getJoyId(), controller);
@@ -341,18 +345,6 @@ public class GameAppState extends BaseDisplayAppState {
         PauseIngameMenuAppState pauseIngameMenuAppState = (PauseIngameMenuAppState) getAppState(PauseIngameMenuAppState.class);
         pauseIngameMenuAppState.setTime(time);
         pauseIngameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
-
-        // TODO: Why do I have to cast here?
-        TeamSelectionMenuAppState teamSelectionMenuAppState = (TeamSelectionMenuAppState) getAppState(TeamSelectionMenuAppState.class);
-        int controllerIndex = 0;
-        for (Controller controller : game.getControllers()) {
-            int teamSide = 0;
-            if (controller.getTeam() != null) {
-                teamSide = controller.getTeam().getSide();
-            }
-            teamSelectionMenuAppState.updateControllerSide(controllerIndex, teamSide);
-            controllerIndex++;
-        }
 
         // TODO: Why do I have to cast here?
         FormationMenuAppState formationMenuAppState = (FormationMenuAppState) getAppState(FormationMenuAppState.class);
