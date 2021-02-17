@@ -1,6 +1,7 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
+import com.carlkuesters.fifachampions.visuals.PlayerVisual;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.Container;
 import com.simsilica.lemur.HAlignment;
@@ -9,6 +10,7 @@ import com.simsilica.lemur.Label;
 public class TrikotMenuAppState extends MenuAppState {
 
     private Label[] lblTrikotNames = new Label[2];
+    private PlayerVisual[] playerVisuals = new PlayerVisual[2];
 
     @Override
     protected void initMenu() {
@@ -47,12 +49,32 @@ public class TrikotMenuAppState extends MenuAppState {
         );
         addMenuGroup(menuGroup);
 
+        PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager());
+        playerVisual.getModelNode().setLocalTranslation(side * 1.75f, 0, 0);
+        playerVisual.playAnimation(PlayerVisual.IDLE_ANIMATION);
+        playerVisuals[teamIndex] = playerVisual;
+
         updateTrikot(teamIndex);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        for (PlayerVisual playerVisual : playerVisuals) {
+            if (enabled) {
+                mainApplication.getRootNode().attachChild(playerVisual.getWrapperNode());
+                mainApplication.getCamera().setLocation(new Vector3f(0, 1, 5));
+                mainApplication.getCamera().lookAtDirection(new Vector3f(0, 0.05f, -1), Vector3f.UNIT_Y);
+            } else {
+                mainApplication.getRootNode().detachChild(playerVisual.getWrapperNode());
+            }
+        }
     }
 
     private void updateTrikot(int teamIndex) {
         InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
         String trikotName = initialTeamInfo.getTeamInfo().getTrikotNames()[initialTeamInfo.getTrikotIndex()];
         lblTrikotNames[teamIndex].setText(trikotName);
+        playerVisuals[teamIndex].setTrikot(trikotName);
     }
 }

@@ -1,6 +1,7 @@
 package com.carlkuesters.fifachampions.visuals;
 
 import com.carlkuesters.fifachampions.JMonkeyUtil;
+import com.carlkuesters.fifachampions.game.PlayerAnimation;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.asset.AssetManager;
@@ -12,6 +13,11 @@ import com.jme3.scene.Node;
 import lombok.Getter;
 
 public class PlayerVisual {
+
+    public static final PlayerAnimation RUN_ANIMATION_FAST = new PlayerAnimation("run_fast", 0.7f);
+    public static final PlayerAnimation RUN_ANIMATION_MEDIUM = new PlayerAnimation("run_medium", 1.17f);
+    public static final PlayerAnimation RUN_ANIMATION_SLOW = new PlayerAnimation("run_slow", 1.59f);
+    public static final PlayerAnimation IDLE_ANIMATION = new PlayerAnimation("idle", 4);
 
     public PlayerVisual(AssetManager assetManager) {
         this.assetManager = assetManager;
@@ -53,10 +59,17 @@ public class PlayerVisual {
     private Node modelNode;
     @Getter
     private Node wrapperNode;
-    @Getter
     private AnimChannel animChannel;
 
     public void setTrikot(String trikotName) {
         materialBody.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/WSP_body_" + trikotName + "_D.png"));
+    }
+
+    public void playAnimation(PlayerAnimation playerAnimation) {
+        if (!playerAnimation.getName().equals(animChannel.getAnimationName())) {
+            animChannel.setAnim(playerAnimation.getName());
+        }
+        animChannel.setSpeed(animChannel.getAnimMaxTime() / playerAnimation.getLoopDuration());
+        animChannel.setLoopMode(playerAnimation.getLoopMode());
     }
 }

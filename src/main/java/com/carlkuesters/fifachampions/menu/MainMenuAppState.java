@@ -53,6 +53,14 @@ public class MainMenuAppState extends MenuAppState {
         menuGroup.addElement(new MenuElement(button, action));
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if (enabled) {
+            mainApplication.getCamera().setLocation(new Vector3f(0, 100, 0));
+        }
+    }
+
     private void closeApplication() {
         System.exit(0);
     }

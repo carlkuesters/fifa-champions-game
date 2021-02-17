@@ -9,7 +9,6 @@ import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
 import com.carlkuesters.fifachampions.visuals.MaterialFactory;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
-import com.jme3.animation.AnimChannel;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.Joystick;
@@ -161,9 +160,6 @@ public class GameAppState extends BaseDisplayAppState {
         targetInGoalIndicator.attachChild(targetInGoalIndicatorGeometry);
         rootNode.attachChild(targetInGoalIndicator);
 
-        Camera cam = mainApplication.getCamera();
-        cam.setLocation(new Vector3f(0, 100, 0));
-
         Container scoreContainer = new Container();
         scoreContainer.setLocalTranslation(20, mainApplication.getContext().getSettings().getHeight() - 20, 0);
         lblGoals = new Label("");
@@ -207,12 +203,7 @@ public class GameAppState extends BaseDisplayAppState {
             if (isNullOrDefaultRunAnimation(playerAnimation)) {
                 playerAnimation = getPlayerDefaultRunAnimation(velocity);
             }
-            AnimChannel animChannel = playerVisual.getAnimChannel();
-            if (!playerAnimation.getName().equals(animChannel.getAnimationName())) {
-                animChannel.setAnim(playerAnimation.getName());
-            }
-            animChannel.setSpeed(animChannel.getAnimMaxTime() / playerAnimation.getLoopDuration());
-            animChannel.setLoopMode(playerAnimation.getLoopMode());
+            playerVisual.playAnimation(playerAnimation);
         }
 
         for (Map.Entry<Controller, Node> entry : controllerVisuals.entrySet()) {
@@ -340,28 +331,23 @@ public class GameAppState extends BaseDisplayAppState {
         spatial.setLocalRotation(physicsObject.getRotation());
     }
 
-    private PlayerAnimation RUN_ANIMATION_FAST = new PlayerAnimation("run_fast", 0.7f);
-    private PlayerAnimation RUN_ANIMATION_MEDIUM = new PlayerAnimation("run_medium", 1.17f);
-    private PlayerAnimation RUN_ANIMATION_SLOW = new PlayerAnimation("run_slow", 1.59f);
-    private PlayerAnimation IDLE_ANIMATION = new PlayerAnimation("idle", 4);
-
     private boolean isNullOrDefaultRunAnimation(PlayerAnimation playerAnimation) {
         return ((playerAnimation == null)
-                || (playerAnimation == RUN_ANIMATION_FAST)
-                || (playerAnimation == RUN_ANIMATION_MEDIUM)
-                || (playerAnimation == RUN_ANIMATION_SLOW)
-                || (playerAnimation == IDLE_ANIMATION));
+             || (playerAnimation == PlayerVisual.RUN_ANIMATION_FAST)
+             || (playerAnimation == PlayerVisual.RUN_ANIMATION_MEDIUM)
+             || (playerAnimation == PlayerVisual.RUN_ANIMATION_SLOW)
+             || (playerAnimation == PlayerVisual.IDLE_ANIMATION));
     }
 
     private PlayerAnimation getPlayerDefaultRunAnimation(float velocity) {
         if (velocity > 8) {
-            return RUN_ANIMATION_FAST;
+            return PlayerVisual.RUN_ANIMATION_FAST;
         } else if (velocity > 3) {
-            return RUN_ANIMATION_MEDIUM;
+            return PlayerVisual.RUN_ANIMATION_MEDIUM;
         } else if (velocity > MathUtil.EPSILON) {
-            return RUN_ANIMATION_SLOW;
+            return PlayerVisual.RUN_ANIMATION_SLOW;
         }
-        return IDLE_ANIMATION;
+        return PlayerVisual.IDLE_ANIMATION;
     }
 
     @Override
