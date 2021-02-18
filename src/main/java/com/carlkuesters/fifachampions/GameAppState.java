@@ -4,7 +4,7 @@ import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
-import com.carlkuesters.fifachampions.menu.FormationMenuAppState;
+import com.carlkuesters.fifachampions.menu.PauseFormationMenuAppState;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
 import com.carlkuesters.fifachampions.visuals.MaterialFactory;
@@ -289,21 +289,21 @@ public class GameAppState extends BaseDisplayAppState {
         pauseIngameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
 
         // TODO: Why do I have to cast here?
-        FormationMenuAppState formationMenuAppState = (FormationMenuAppState) getAppState(FormationMenuAppState.class);
+        PauseFormationMenuAppState pauseFormationMenuAppState = (PauseFormationMenuAppState) getAppState(PauseFormationMenuAppState.class);
         for (Team team : game.getTeams()) {
             for (int playerIndex = 0; playerIndex < team.getPlayers().size(); playerIndex++) {
                 PlayerObject playerObject = team.getPlayers().get(playerIndex);
                 String name = playerObject.getPlayer().getName();
                 int skill = 99;
                 Vector2f formationLocation = team.getFormation().getLocation(playerIndex);
-                formationMenuAppState.updateFieldPlayer(-1 * team.getSide(), playerIndex, name, skill, formationLocation);
+                pauseFormationMenuAppState.updateFieldPlayer(-1 * team.getSide(), playerIndex, name, skill, formationLocation);
             }
             for (int playerIndex = 0; playerIndex < team.getReservePlayers().length; playerIndex++) {
                 Player reservePlayer = team.getReservePlayers()[playerIndex];
                 String position = "XX";
                 int skill = 99;
                 String name = reservePlayer.getName();
-                formationMenuAppState.updateReservePlayer(-1 * team.getSide(), playerIndex, position, skill, name);
+                pauseFormationMenuAppState.updateReservePlayer(-1 * team.getSide(), playerIndex, position, skill, name);
             }
         }
 

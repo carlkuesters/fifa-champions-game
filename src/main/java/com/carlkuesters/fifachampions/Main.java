@@ -84,7 +84,7 @@ public class Main extends SimpleApplication {
         stateManager.attach(new GameSettingsMenuAppState());
         stateManager.attach(new PauseIngameMenuAppState());
         stateManager.attach(new PauseSideSelectionMenuAppState());
-        stateManager.attach(new FormationMenuAppState());
+        stateManager.attach(new PauseFormationMenuAppState());
         stateManager.attach(new GameOverIngameMenuAppState());
         // Has to be attached last, so its joystick sub listener is not disabled by the others
         stateManager.attach(new MainMenuAppState());

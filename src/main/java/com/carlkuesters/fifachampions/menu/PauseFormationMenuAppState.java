@@ -10,7 +10,7 @@ import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.IconComponent;
 import com.simsilica.lemur.component.SpringGridLayout;
 
-public class FormationMenuAppState extends MenuAppState {
+public class PauseFormationMenuAppState extends MenuAppState {
 
     private int containerMarginOutside = 150;
     private int containerMarginBetween = 400;
