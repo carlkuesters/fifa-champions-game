@@ -66,7 +66,7 @@ public class GameAppState extends BaseDisplayAppState {
         for (int i = 0; i < teams.length; i++) {
             InitialTeamInfo initialTeamInfo = gameCreationInfo.getTeams()[i];
             String trikotName = initialTeamInfo.getTeamInfo().getTrikotNames()[initialTeamInfo.getTrikotIndex()];
-            teams[i] = new Team(trikotName, initialTeamInfo.getFieldPlayers(), initialTeamInfo.getReservePlayers(), initialTeamInfo.getFormation());
+            teams[i] = new Team(initialTeamInfo.getTeamInfo(), trikotName, initialTeamInfo.getFieldPlayers(), initialTeamInfo.getReservePlayers(), initialTeamInfo.getFormation());
         }
         game = new Game(teams);
         controllers = new HashMap<>();
@@ -296,14 +296,14 @@ public class GameAppState extends BaseDisplayAppState {
                 String name = playerObject.getPlayer().getName();
                 int skill = 99;
                 Vector2f formationLocation = team.getFormation().getLocation(playerIndex);
-                formationMenuAppState.updateFieldPlayer(team.getSide(), playerIndex, name, skill, formationLocation);
+                formationMenuAppState.updateFieldPlayer(-1 * team.getSide(), playerIndex, name, skill, formationLocation);
             }
             for (int playerIndex = 0; playerIndex < team.getReservePlayers().length; playerIndex++) {
                 Player reservePlayer = team.getReservePlayers()[playerIndex];
                 String position = "XX";
                 int skill = 99;
                 String name = reservePlayer.getName();
-                formationMenuAppState.updateReservePlayer(team.getSide(), playerIndex, position, skill, name);
+                formationMenuAppState.updateReservePlayer(-1 * team.getSide(), playerIndex, position, skill, name);
             }
         }
 

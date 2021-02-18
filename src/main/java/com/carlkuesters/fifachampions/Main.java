@@ -1,12 +1,13 @@
 package com.carlkuesters.fifachampions;
 
 import com.carlkuesters.fifachampions.game.*;
+import com.carlkuesters.fifachampions.game.formations.Formation433;
+import com.carlkuesters.fifachampions.game.formations.Formation442;
 import com.carlkuesters.fifachampions.joystick.JoystickListener;
 import com.carlkuesters.fifachampions.menu.*;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.Joystick;
-import com.jme3.math.Vector2f;
 import com.jme3.system.AppSettings;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.style.BaseStyles;
@@ -27,6 +28,10 @@ public class Main extends SimpleApplication {
         getDefaultTeam("FC-C2"),
         getDefaultTeam("FC-C3"),
         getDefaultTeam("FC-C4"),
+    };
+    public static final Formation[] FORMATIONS = new Formation[] {
+        new Formation442(),
+        new Formation433(),
     };
 
     public Main() {
@@ -97,22 +102,7 @@ public class Main extends SimpleApplication {
         for (int i = 1; i < reservePlayers.length; i++) {
             reservePlayers[i] = new Player(teamName + "-Spieler" + (fieldPlayers.length + i));
         }
-        return new TeamInfo(teamName, trikotNames, fieldPlayers, reservePlayers, new Formation(new Vector2f[]{
-            new Vector2f(-1, 0),
-
-            new Vector2f(-0.7f, -0.75f),
-            new Vector2f(-0.7f, -0.25f),
-            new Vector2f(-0.7f, 0.25f),
-            new Vector2f(-0.7f, 0.75f),
-
-            new Vector2f(0, -0.75f),
-            new Vector2f(0, -0.25f),
-            new Vector2f(0, 0.25f),
-            new Vector2f(0, 0.75f),
-
-            new Vector2f(0.7f, -0.5f),
-            new Vector2f(0.7f, 0.5f)
-        }));
+        return new TeamInfo(teamName, trikotNames, fieldPlayers, reservePlayers, new Formation442());
     }
 
     private InitialTeamInfo generateInitialTeamInfo(int teamIndex) {

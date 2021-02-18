@@ -37,30 +37,30 @@ public class ElementsMenuGroup extends MenuGroup {
     }
 
     @Override
-    public void navigateLeft(int joyId) {
-        super.navigateLeft(joyId);
-        navigate(new Vector3f(-1, 0, 0));
+    public void primaryNavigateLeft(int joyId) {
+        super.primaryNavigateLeft(joyId);
+        primaryNavigate(new Vector3f(-1, 0, 0));
     }
 
     @Override
-    public void navigateRight(int joyId) {
-        super.navigateRight(joyId);
-        navigate(new Vector3f(1, 0, 0));
+    public void primaryNavigateRight(int joyId) {
+        super.primaryNavigateRight(joyId);
+        primaryNavigate(new Vector3f(1, 0, 0));
     }
 
     @Override
-    public void navigateUp(int joyId) {
-        super.navigateUp(joyId);
-        navigate(new Vector3f(0, 1, 0));
+    public void primaryNavigateUp(int joyId) {
+        super.primaryNavigateUp(joyId);
+        primaryNavigate(new Vector3f(0, 1, 0));
     }
 
     @Override
-    public void navigateDown(int joyId) {
-        super.navigateDown(joyId);
-        navigate(new Vector3f(0, -1, 0));
+    public void primaryNavigateDown(int joyId) {
+        super.primaryNavigateDown(joyId);
+        primaryNavigate(new Vector3f(0, -1, 0));
     }
 
-    private void navigate(Vector3f direction) {
+    private void primaryNavigate(Vector3f direction) {
         float minimumPrimaryAxisDistance = Float.MAX_VALUE;
         float minimumSecondaryAxisDistance = Float.MAX_VALUE;
         MenuElement newActiveElement = null;

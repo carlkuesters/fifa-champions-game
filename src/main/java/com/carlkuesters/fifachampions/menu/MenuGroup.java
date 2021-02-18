@@ -7,19 +7,27 @@ public class MenuGroup {
     }
     private Runnable back;
 
-    public void navigateLeft(int joyId) {
+    public void primaryNavigateLeft(int joyId) {
 
     }
 
-    public void navigateRight(int joyId) {
+    public void primaryNavigateRight(int joyId) {
 
     }
 
-    public void navigateUp(int joyId) {
+    public void primaryNavigateUp(int joyId) {
 
     }
 
-    public void navigateDown(int joyId) {
+    public void primaryNavigateDown(int joyId) {
+
+    }
+
+    public void secondaryNavigateLeft(int joyId) {
+
+    }
+
+    public void secondaryNavigateRight(int joyId) {
 
     }
 

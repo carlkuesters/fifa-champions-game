@@ -16,14 +16,14 @@ public class SideSelectionMenuGroup extends MenuGroup {
     private Runnable confirm;
 
     @Override
-    public void navigateLeft(int joyId) {
-        super.navigateLeft(joyId);
+    public void primaryNavigateLeft(int joyId) {
+        super.primaryNavigateLeft(joyId);
         switchSide(joyId, 1);
     }
 
     @Override
-    public void navigateRight(int joyId) {
-        super.navigateRight(joyId);
+    public void primaryNavigateRight(int joyId) {
+        super.primaryNavigateRight(joyId);
         switchSide(joyId, -1);
     }
 

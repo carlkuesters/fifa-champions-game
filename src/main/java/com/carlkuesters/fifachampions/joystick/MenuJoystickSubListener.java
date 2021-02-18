@@ -25,9 +25,9 @@ public class MenuJoystickSubListener {
                 if (value != values[0]) {
                     values[0] = value;
                     if (value > 0) {
-                        menuGroup.navigateRight(evt.getJoyIndex());
+                        menuGroup.primaryNavigateRight(evt.getJoyIndex());
                     } else if (value < 0) {
-                        menuGroup.navigateLeft(evt.getJoyIndex());
+                        menuGroup.primaryNavigateLeft(evt.getJoyIndex());
                     }
                 }
 
@@ -35,9 +35,9 @@ public class MenuJoystickSubListener {
                 if (value != values[1]) {
                     values[1] = value;
                     if (value > 0) {
-                        menuGroup.navigateUp(evt.getJoyIndex());
+                        menuGroup.primaryNavigateUp(evt.getJoyIndex());
                     } else if (value < 0) {
-                        menuGroup.navigateDown(evt.getJoyIndex());
+                        menuGroup.primaryNavigateDown(evt.getJoyIndex());
                     }
                 }
             }
@@ -51,6 +51,12 @@ public class MenuJoystickSubListener {
                 case 0:
                 case 1:
                     menuGroup.confirm(evt.getJoyIndex());
+                    break;
+                case 4:
+                    menuGroup.secondaryNavigateLeft(evt.getJoyIndex());
+                    break;
+                case 5:
+                    menuGroup.secondaryNavigateRight(evt.getJoyIndex());
                     break;
                 case 2:
                 case 9:

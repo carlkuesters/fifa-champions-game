@@ -18,14 +18,14 @@ public abstract class GameCreationCarouselMenuGroup extends CarouselMenuGroup {
     private Consumer<Integer> confirm;
 
     @Override
-    protected int getValue(int joyId) {
+    public int getCarouselValue(int joyId) {
         return getValue(getInitialTeamInfo(joyId));
     }
 
     protected abstract int getValue(InitialTeamInfo initialTeamInfo);
 
     @Override
-    protected void setValue(int joyId, int value) {
+    public void setCarouselValue(int joyId, int value) {
         InitialTeamInfo initialTeamInfo = getInitialTeamInfo(joyId);
         setValue(initialTeamInfo, value);
         updateTeam.accept(getTeamIndex(joyId));
@@ -34,7 +34,7 @@ public abstract class GameCreationCarouselMenuGroup extends CarouselMenuGroup {
     protected abstract void setValue(InitialTeamInfo initialTeamInfo, int value);
 
     @Override
-    protected int getMaximumValue(int joyId) {
+    public int getCarouselMaximumValue(int joyId) {
         return getMaximumValue(getInitialTeamInfo(joyId));
     }
 

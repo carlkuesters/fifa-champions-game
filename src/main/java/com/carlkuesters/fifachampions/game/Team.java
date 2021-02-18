@@ -2,12 +2,14 @@ package com.carlkuesters.fifachampions.game;
 
 import com.jme3.math.Vector2f;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 
 public class Team {
 
-    public Team(String trikotName, Player[] players, Player[] reservePlayers, Formation formation) {
+    public Team(TeamInfo teamInfo, String trikotName, Player[] players, Player[] reservePlayers, Formation formation) {
+        this.teamInfo = teamInfo;
         this.trikotName = trikotName;
         for (Player player : players) {
             this.players.add(new PlayerObject(this, player));
@@ -16,11 +18,14 @@ public class Team {
         this.formation = formation;
     }
     @Getter
+    private TeamInfo teamInfo;
+    @Getter
     private String trikotName;
     private Game game;
     private int side;
     private ArrayList<PlayerObject> players = new ArrayList<>();
     private Player[] reservePlayers;
+    @Setter
     private Formation formation;
 
     public void setGame(Game game) {

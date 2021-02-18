@@ -1,6 +1,9 @@
 package com.carlkuesters.fifachampions.menu;
 
+import com.carlkuesters.fifachampions.GameAppState;
+import com.carlkuesters.fifachampions.game.Formation;
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
+import com.carlkuesters.fifachampions.game.Team;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
@@ -32,7 +35,7 @@ public class FormationMenuAppState extends MenuAppState {
         int teamIndex = ((side + 1) / 2);
         InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
 
-        ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(PauseIngameMenuAppState.class));
+        FormationMenuGroup menuGroup = new FormationMenuGroup(() -> openMenu(PauseIngameMenuAppState.class), this::getFormation, this::setFormation);
 
         int containerX = getContainerX(side);
         Container container = new Container();
@@ -130,7 +133,7 @@ public class FormationMenuAppState extends MenuAppState {
         return container;
     }
 
-    private ReservePlayerContainer createReservePlayer(ElementsMenuGroup menuGroup) {
+    private ReservePlayerContainer createReservePlayer(FormationMenuGroup menuGroup) {
         Container container = new Container();
 
         Container topRow = new Container();
@@ -170,7 +173,7 @@ public class FormationMenuAppState extends MenuAppState {
         return new ReservePlayerContainer(container, lblPosition, lblSkill, lblName);
     }
 
-    private FieldPlayerContainer createFieldPlayer(ElementsMenuGroup menuGroup) {
+    private FieldPlayerContainer createFieldPlayer(FormationMenuGroup menuGroup) {
         Container container = new Container();
         container.setBackground(null);
 
@@ -208,6 +211,20 @@ public class FormationMenuAppState extends MenuAppState {
         menuGroup.addElement(new MenuElement(container, () -> openMenu(PauseIngameMenuAppState.class)));
 
         return new FieldPlayerContainer(container, lblSkill, lblName);
+    }
+
+    private Formation getFormation(int joyId) {
+        return getTeam(joyId).getFormation();
+    }
+
+    private void setFormation(int joyId, Formation formation) {
+        getTeam(joyId).setFormation(formation);
+    }
+
+    private Team getTeam(int joyId) {
+        // TODO: Why do I have to cast here?
+        GameAppState gameAppState = (GameAppState) getAppState(GameAppState.class);
+        return gameAppState.getControllers().get(joyId).getTeam();
     }
 
     public void updateFieldPlayer(int side, int playerIndex, String name, int skill, Vector2f formationLocation) {
