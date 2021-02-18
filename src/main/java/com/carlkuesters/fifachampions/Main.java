@@ -116,7 +116,8 @@ public class Main extends SimpleApplication {
     }
 
     private InitialTeamInfo generateInitialTeamInfo(int teamIndex) {
-        TeamInfo teamInfo = TEAMS[teamIndex];
-        return new InitialTeamInfo(teamIndex, 0, teamInfo.getFieldPlayers(), teamInfo.getReservePlayers(), teamInfo.getDefaultFormation());
+        InitialTeamInfo initialTeamInfo = new InitialTeamInfo();
+        initialTeamInfo.setTeam(teamIndex);
+        return initialTeamInfo;
     }
 }

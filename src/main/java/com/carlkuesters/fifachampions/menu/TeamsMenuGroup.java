@@ -19,7 +19,7 @@ public class TeamsMenuGroup extends GameCreationCarouselMenuGroup {
 
     @Override
     protected void setValue(InitialTeamInfo initialTeamInfo, int value) {
-        initialTeamInfo.setTeamIndex(value);
+        initialTeamInfo.setTeam(value);
     }
 
     @Override

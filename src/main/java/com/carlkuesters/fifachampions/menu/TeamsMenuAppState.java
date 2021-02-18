@@ -1,6 +1,5 @@
 package com.carlkuesters.fifachampions.menu;
 
-import com.carlkuesters.fifachampions.Main;
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
 import com.carlkuesters.fifachampions.game.TeamInfo;
 import com.jme3.math.Vector2f;
@@ -21,7 +20,7 @@ public class TeamsMenuAppState extends MenuAppState {
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
         InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
-        TeamInfo teamInfo = Main.TEAMS[initialTeamInfo.getTeamIndex()];
+        TeamInfo teamInfo = initialTeamInfo.getTeamInfo();
 
         int containerMarginOutside = 150;
         int containerMarginBetween = 400;
@@ -73,8 +72,7 @@ public class TeamsMenuAppState extends MenuAppState {
 
     private void updateTeam(int teamIndex) {
         InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
-        TeamInfo teamInfo = Main.TEAMS[initialTeamInfo.getTeamIndex()];
-        String teamName = teamInfo.getName();
+        String teamName = initialTeamInfo.getTeamInfo().getName();
         lblTeamNames[teamIndex].setText(teamName);
     }
 }
