@@ -5,9 +5,9 @@ import com.carlkuesters.fifachampions.game.InitialTeamInfo;
 
 import java.util.function.Consumer;
 
-public class TrikotMenuGroup extends MenuGroup {
+public class TrikotMenuGroup extends CarouselMenuGroup {
 
-    public TrikotMenuGroup(Runnable back, GameCreationInfo gameCreationInfo, Consumer<Integer> updateTeamTrikot, Runnable confirm) {
+    public TrikotMenuGroup(Runnable back, GameCreationInfo gameCreationInfo, Consumer<Integer> updateTeamTrikot, Consumer<Integer> confirm) {
         super(back);
         this.gameCreationInfo = gameCreationInfo;
         this.updateTeamTrikot = updateTeamTrikot;
@@ -15,21 +15,30 @@ public class TrikotMenuGroup extends MenuGroup {
     }
     private GameCreationInfo gameCreationInfo;
     private Consumer<Integer> updateTeamTrikot;
-    private Runnable confirm;
+    private Consumer<Integer> confirm;
 
     @Override
-    public void navigateLeft(int joyId) {
-        super.navigateLeft(joyId);
-        switchTrikot(joyId, 1);
+    protected int getValue(int joyId) {
+        return getInitialTeamInfo(joyId).getTrikotIndex();
     }
 
     @Override
-    public void navigateRight(int joyId) {
-        super.navigateRight(joyId);
-        switchTrikot(joyId, -1);
+    protected void setValue(int joyId, int value) {
+        getInitialTeamInfo(joyId).setTrikotIndex(value);
+        updateTeamTrikot.accept(getTeamIndex(joyId));
     }
 
-    private void switchTrikot(int joyId, int direction) {
+    @Override
+    protected int getMaximumValue(int joyId) {
+        return (getInitialTeamInfo(joyId).getTeamInfo().getTrikotNames().length - 1);
+    }
+
+    private InitialTeamInfo getInitialTeamInfo(int joyId) {
+        return gameCreationInfo.getTeams()[getTeamIndex(joyId)];
+    }
+
+    // TODO: Check if teamIndex is not null in the callers of this method (unassigned controllers)
+    private int getTeamIndex(int joyId) {
         int teamSide = gameCreationInfo.getControllerTeamSides().get(joyId);
         Integer teamIndex = null;
         if (teamSide == 1) {
@@ -37,23 +46,11 @@ public class TrikotMenuGroup extends MenuGroup {
         } else if (teamSide == -1) {
             teamIndex = 1;
         }
-        if (teamIndex != null) {
-            InitialTeamInfo initialTeamInfo = gameCreationInfo.getTeams()[teamIndex];
-            int oldTrikotIndex = initialTeamInfo.getTrikotIndex();
-            int newTrikotIndex = oldTrikotIndex + direction;
-            int trikotsCount = initialTeamInfo.getTeamInfo().getTrikotNames().length;
-            if (newTrikotIndex >= trikotsCount) {
-                newTrikotIndex = 0;
-            } else if (newTrikotIndex < 0) {
-                newTrikotIndex = (trikotsCount - 1);
-            }
-            initialTeamInfo.setTrikotIndex(newTrikotIndex);
-            updateTeamTrikot.accept(teamIndex);
-        }
+        return teamIndex;
     }
 
     @Override
-    public void confirm() {
-        confirm.run();
+    public void confirm(int joyId) {
+        confirm.accept(joyId);
     }
 }

@@ -45,7 +45,7 @@ public class TrikotMenuAppState extends MenuAppState {
             () -> openMenu(TeamsMenuAppState.class),
             mainApplication.getGameCreationInfo(),
             this::updateTrikot,
-            () -> openMenu(GameSettingsMenuAppState.class)
+            joyId -> openMenu(GameSettingsMenuAppState.class)
         );
         addMenuGroup(menuGroup);
 

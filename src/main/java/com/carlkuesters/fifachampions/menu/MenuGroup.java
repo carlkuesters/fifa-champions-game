@@ -23,7 +23,7 @@ public class MenuGroup {
 
     }
 
-    public void confirm() {
+    public void confirm(int joyId) {
         back();
     }
 

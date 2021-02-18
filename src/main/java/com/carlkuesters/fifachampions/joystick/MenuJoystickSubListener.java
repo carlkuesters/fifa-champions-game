@@ -50,7 +50,7 @@ public class MenuJoystickSubListener {
             switch (evt.getButtonIndex()) {
                 case 0:
                 case 1:
-                    menuGroup.confirm();
+                    menuGroup.confirm(evt.getJoyIndex());
                     break;
                 case 2:
                 case 9:

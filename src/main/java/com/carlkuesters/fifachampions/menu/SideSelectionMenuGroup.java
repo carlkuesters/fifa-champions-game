@@ -18,16 +18,16 @@ public class SideSelectionMenuGroup extends MenuGroup {
     @Override
     public void navigateLeft(int joyId) {
         super.navigateLeft(joyId);
-        switchTeam(joyId, 1);
+        switchSide(joyId, 1);
     }
 
     @Override
     public void navigateRight(int joyId) {
         super.navigateRight(joyId);
-        switchTeam(joyId, -1);
+        switchSide(joyId, -1);
     }
 
-    private void switchTeam(int joyId, int direction) {
+    private void switchSide(int joyId, int direction) {
         int oldTeamSide = getTeamSide.apply(joyId);
         int newTeamSide = Math.max(-1, Math.min(oldTeamSide + direction, 1));
         if (newTeamSide != oldTeamSide) {
@@ -36,7 +36,7 @@ public class SideSelectionMenuGroup extends MenuGroup {
     }
 
     @Override
-    public void confirm() {
+    public void confirm(int joyId) {
         confirm.run();
     }
 }

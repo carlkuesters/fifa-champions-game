@@ -123,11 +123,11 @@ public class ElementsMenuGroup extends MenuGroup {
     }
 
     @Override
-    public void confirm() {
+    public void confirm(int joyId) {
         if (activeElement != null) {
             activeElement.getAction().run();
         } else {
-            super.confirm();
+            super.confirm(joyId);
         }
     }
 }
