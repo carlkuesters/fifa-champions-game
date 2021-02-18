@@ -24,6 +24,7 @@ public class Team {
     private Game game;
     private int side;
     private ArrayList<PlayerObject> players = new ArrayList<>();
+    @Getter
     private Player[] reservePlayers;
     @Setter
     private Formation formation;
@@ -42,10 +43,6 @@ public class Team {
 
     public ArrayList<PlayerObject> getPlayers() {
         return players;
-    }
-
-    public Player[] getReservePlayers() {
-        return reservePlayers;
     }
 
     public Formation getFormation() {
