@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InitialTeamInfo {
-    private TeamInfo teamInfo;
+    private int teamIndex;
     private int trikotIndex;
     private Player[] fieldPlayers;
     private Player[] reservePlayers;

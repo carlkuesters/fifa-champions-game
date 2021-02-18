@@ -9,13 +9,13 @@ public abstract class CarouselMenuGroup extends MenuGroup {
     @Override
     public void navigateLeft(int joyId) {
         super.navigateLeft(joyId);
-        changeValue(joyId, 1);
+        changeValue(joyId, -1);
     }
 
     @Override
     public void navigateRight(int joyId) {
         super.navigateRight(joyId);
-        changeValue(joyId, -1);
+        changeValue(joyId, 1);
     }
 
     private void changeValue(int joyId, int direction) {

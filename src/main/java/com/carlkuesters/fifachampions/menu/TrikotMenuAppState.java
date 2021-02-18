@@ -1,6 +1,8 @@
 package com.carlkuesters.fifachampions.menu;
 
+import com.carlkuesters.fifachampions.Main;
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
+import com.carlkuesters.fifachampions.game.TeamInfo;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.Container;
@@ -73,7 +75,8 @@ public class TrikotMenuAppState extends MenuAppState {
 
     private void updateTrikot(int teamIndex) {
         InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
-        String trikotName = initialTeamInfo.getTeamInfo().getTrikotNames()[initialTeamInfo.getTrikotIndex()];
+        TeamInfo teamInfo = Main.TEAMS[initialTeamInfo.getTeamIndex()];
+        String trikotName = teamInfo.getTrikotNames()[initialTeamInfo.getTrikotIndex()];
         lblTrikotNames[teamIndex].setText(trikotName);
         playerVisuals[teamIndex].setTrikot(trikotName);
     }

@@ -22,6 +22,13 @@ public class Main extends SimpleApplication {
         app.start();
     }
 
+    public static final TeamInfo[] TEAMS = new TeamInfo[] {
+        getDefaultTeam("FC-C1"),
+        getDefaultTeam("FC-C2"),
+        getDefaultTeam("FC-C3"),
+        getDefaultTeam("FC-C4"),
+    };
+
     public Main() {
         settings = new AppSettings(true);
         settings.setWidth(1600);
@@ -41,10 +48,9 @@ public class Main extends SimpleApplication {
         setDisplayStatView(false);
 
         gameCreationInfo = new GameCreationInfo();
-        TeamInfo defaultTeam = getDefaultTeam("FC-C");
         gameCreationInfo.setTeams(new InitialTeamInfo[] {
-            generateInitialTeamInfo(defaultTeam),
-            generateInitialTeamInfo(defaultTeam)
+            generateInitialTeamInfo(0),
+            generateInitialTeamInfo(1)
         });
         HashMap<Integer, Integer> controllerTeamSides = new HashMap<>();
         int teamSide = 1;
@@ -79,7 +85,7 @@ public class Main extends SimpleApplication {
         stateManager.attach(new MainMenuAppState());
     }
 
-    private TeamInfo getDefaultTeam(String teamName) {
+    private static TeamInfo getDefaultTeam(String teamName) {
         String[] trikotNames = new String[] { "amaranth", "red", "striped", "thinstripes", "yellow" };
         Player[] fieldPlayers = new Player[11];
         fieldPlayers[0] = new Goalkeeper(teamName + "-Goalie1");
@@ -89,7 +95,7 @@ public class Main extends SimpleApplication {
         Player[] reservePlayers = new Player[20];
         reservePlayers[0] = new Goalkeeper(teamName + "-Goalie2");
         for (int i = 1; i < reservePlayers.length; i++) {
-            reservePlayers[i] = new Player(teamName + "-Spieler" + (fieldPlayers.length + 1));
+            reservePlayers[i] = new Player(teamName + "-Spieler" + (fieldPlayers.length + i));
         }
         return new TeamInfo(teamName, trikotNames, fieldPlayers, reservePlayers, new Formation(new Vector2f[]{
             new Vector2f(-1, 0),
@@ -109,7 +115,8 @@ public class Main extends SimpleApplication {
         }));
     }
 
-    private InitialTeamInfo generateInitialTeamInfo(TeamInfo teamInfo) {
-        return new InitialTeamInfo(teamInfo, 0, teamInfo.getFieldPlayers(), teamInfo.getReservePlayers(), teamInfo.getDefaultFormation());
+    private InitialTeamInfo generateInitialTeamInfo(int teamIndex) {
+        TeamInfo teamInfo = TEAMS[teamIndex];
+        return new InitialTeamInfo(teamIndex, 0, teamInfo.getFieldPlayers(), teamInfo.getReservePlayers(), teamInfo.getDefaultFormation());
     }
 }

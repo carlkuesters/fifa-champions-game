@@ -65,7 +65,8 @@ public class GameAppState extends BaseDisplayAppState {
         Team[] teams = new Team[gameCreationInfo.getTeams().length];
         for (int i = 0; i < teams.length; i++) {
             InitialTeamInfo initialTeamInfo = gameCreationInfo.getTeams()[i];
-            String trikotName = initialTeamInfo.getTeamInfo().getTrikotNames()[initialTeamInfo.getTrikotIndex()];
+            TeamInfo teamInfo = Main.TEAMS[initialTeamInfo.getTeamIndex()];
+            String trikotName = teamInfo.getTrikotNames()[initialTeamInfo.getTrikotIndex()];
             teams[i] = new Team(trikotName, initialTeamInfo.getFieldPlayers(), initialTeamInfo.getReservePlayers(), initialTeamInfo.getFormation());
         }
         game = new Game(teams);

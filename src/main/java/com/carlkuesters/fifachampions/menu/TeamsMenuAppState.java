@@ -1,11 +1,15 @@
 package com.carlkuesters.fifachampions.menu;
 
+import com.carlkuesters.fifachampions.Main;
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
+import com.carlkuesters.fifachampions.game.TeamInfo;
 import com.jme3.math.Vector2f;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.IconComponent;
 
 public class TeamsMenuAppState extends MenuAppState {
+
+    private Label[] lblTeamNames = new Label[2];
 
     @Override
     protected void initMenu() {
@@ -17,6 +21,7 @@ public class TeamsMenuAppState extends MenuAppState {
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
         InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
+        TeamInfo teamInfo = Main.TEAMS[initialTeamInfo.getTeamIndex()];
 
         int containerMarginOutside = 150;
         int containerMarginBetween = 400;
@@ -29,9 +34,10 @@ public class TeamsMenuAppState extends MenuAppState {
         Container container = new Container();
         container.setLocalTranslation(containerX, containerY, 0);
 
-        Label lblTeamName = new Label(initialTeamInfo.getTeamInfo().getName());
+        Label lblTeamName = new Label(teamInfo.getName());
         lblTeamName.setFontSize(20);
         container.addChild(lblTeamName);
+        lblTeamNames[teamIndex] = lblTeamName;
 
         Panel teamImage = new Panel();
         IconComponent teamIconComponent = new IconComponent("textures/logo.png");
@@ -56,8 +62,19 @@ public class TeamsMenuAppState extends MenuAppState {
 
         guiNode.attachChild(container);
 
-        ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(InitialSideSelectionMenuAppState.class));
-        menuGroup.addElement(new MenuElement(container, () -> openMenu(TrikotMenuAppState.class)));
+        TeamsMenuGroup menuGroup = new TeamsMenuGroup(
+            () -> openMenu(InitialSideSelectionMenuAppState.class),
+            mainApplication.getGameCreationInfo(),
+            this::updateTeam,
+            joyId -> openMenu(TrikotMenuAppState.class)
+        );
         addMenuGroup(menuGroup);
+    }
+
+    private void updateTeam(int teamIndex) {
+        InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
+        TeamInfo teamInfo = Main.TEAMS[initialTeamInfo.getTeamIndex()];
+        String teamName = teamInfo.getName();
+        lblTeamNames[teamIndex].setText(teamName);
     }
 }
