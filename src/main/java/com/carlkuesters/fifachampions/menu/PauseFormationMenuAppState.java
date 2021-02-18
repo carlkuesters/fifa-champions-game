@@ -21,4 +21,14 @@ public class PauseFormationMenuAppState extends FormationMenuAppState {
         GameAppState gameAppState = (GameAppState) getAppState(GameAppState.class);
         return gameAppState.getControllers().get(joyId).getTeam();
     }
+
+    @Override
+    protected void confirm() {
+        openMenu(PauseIngameMenuAppState.class);
+    }
+
+    @Override
+    protected void back() {
+        openMenu(PauseIngameMenuAppState.class);
+    }
 }

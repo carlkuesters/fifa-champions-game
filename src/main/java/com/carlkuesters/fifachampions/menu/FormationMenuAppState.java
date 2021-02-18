@@ -31,7 +31,7 @@ public abstract class FormationMenuAppState extends MenuAppState {
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
 
-        FormationMenuGroup menuGroup = new FormationMenuGroup(() -> openMenu(PauseIngameMenuAppState.class), this::getFormation, this::setFormation);
+        FormationMenuGroup menuGroup = new FormationMenuGroup(this::back, this::getFormation, this::setFormation);
 
         int containerX = getContainerX(side);
         Container container = new Container();
@@ -157,7 +157,7 @@ public abstract class FormationMenuAppState extends MenuAppState {
         lblName.setFontSize(12);
         container.addChild(lblName);
 
-        menuGroup.addElement(new MenuElement(container, () -> openMenu(PauseIngameMenuAppState.class)));
+        menuGroup.addElement(new MenuElement(container, this::confirm));
 
         return new ReservePlayerContainer(container, lblPosition, lblSkill, lblName);
     }
@@ -197,7 +197,7 @@ public abstract class FormationMenuAppState extends MenuAppState {
         lblName.setFontSize(12);
         container.addChild(lblName);
 
-        menuGroup.addElement(new MenuElement(container, () -> openMenu(PauseIngameMenuAppState.class)));
+        menuGroup.addElement(new MenuElement(container, this::confirm));
 
         return new FieldPlayerContainer(container, lblSkill, lblName);
     }
@@ -237,4 +237,8 @@ public abstract class FormationMenuAppState extends MenuAppState {
         float progressY = (1 - ((formationX + 1) / 2));
         return (startY - (progressY * maximumDistanceY));
     }
+
+    protected abstract void confirm();
+
+    protected abstract void back();
 }

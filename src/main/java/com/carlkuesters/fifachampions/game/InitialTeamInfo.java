@@ -12,6 +12,7 @@ public class InitialTeamInfo {
     private int trikotIndex;
     private Player[] fieldPlayers;
     private Player[] reservePlayers;
+    @Setter
     private Formation formation;
 
     public void setTeam(int teamIndex) {
