@@ -56,7 +56,7 @@ public class TeamsMenuAppState extends MenuAppState {
 
         guiNode.attachChild(container);
 
-        ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(InitialTeamSelectionMenuAppState.class));
+        ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(InitialSideSelectionMenuAppState.class));
         menuGroup.addElement(new MenuElement(container, () -> openMenu(TrikotMenuAppState.class)));
         addMenuGroup(menuGroup);
     }

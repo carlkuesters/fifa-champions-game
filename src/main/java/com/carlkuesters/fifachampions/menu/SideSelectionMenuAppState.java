@@ -9,7 +9,7 @@ import com.simsilica.lemur.component.SpringGridLayout;
 
 import java.util.HashMap;
 
-public abstract class TeamSelectionMenuAppState extends MenuAppState {
+public abstract class SideSelectionMenuAppState extends MenuAppState {
 
     private HashMap<Integer, IconComponent> controllerIcons = new HashMap<>();
 
@@ -17,7 +17,7 @@ public abstract class TeamSelectionMenuAppState extends MenuAppState {
     protected void initMenu() {
         addTitle("Seitenauswahl");
 
-        TeamSelectionMenuGroup menuGroup = new TeamSelectionMenuGroup(this::back, this::getTeamSide, (joyId, teamSide) -> {
+        SideSelectionMenuGroup menuGroup = new SideSelectionMenuGroup(this::back, this::getTeamSide, (joyId, teamSide) -> {
             setTeamSide(joyId, teamSide);
             updateControllerSide(joyId, teamSide);
         }, this::confirm);

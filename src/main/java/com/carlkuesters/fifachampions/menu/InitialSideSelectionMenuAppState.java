@@ -1,6 +1,6 @@
 package com.carlkuesters.fifachampions.menu;
 
-public class InitialTeamSelectionMenuAppState extends TeamSelectionMenuAppState {
+public class InitialSideSelectionMenuAppState extends SideSelectionMenuAppState {
 
     @Override
     protected void back() {

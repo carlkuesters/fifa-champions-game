@@ -4,7 +4,7 @@ import com.carlkuesters.fifachampions.GameAppState;
 import com.carlkuesters.fifachampions.game.Controller;
 import com.carlkuesters.fifachampions.game.Team;
 
-public class PauseTeamSelectionMenuAppState extends TeamSelectionMenuAppState {
+public class PauseSideSelectionMenuAppState extends SideSelectionMenuAppState {
 
     @Override
     protected void back() {

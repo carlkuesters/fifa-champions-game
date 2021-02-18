@@ -67,12 +67,12 @@ public class Main extends SimpleApplication {
 
         stateManager.attach(new PostFilterAppState());
         stateManager.attach(new StadiumAppState());
-        stateManager.attach(new InitialTeamSelectionMenuAppState());
+        stateManager.attach(new InitialSideSelectionMenuAppState());
         stateManager.attach(new TeamsMenuAppState());
         stateManager.attach(new TrikotMenuAppState());
         stateManager.attach(new GameSettingsMenuAppState());
         stateManager.attach(new PauseIngameMenuAppState());
-        stateManager.attach(new PauseTeamSelectionMenuAppState());
+        stateManager.attach(new PauseSideSelectionMenuAppState());
         stateManager.attach(new FormationMenuAppState());
         stateManager.attach(new GameOverIngameMenuAppState());
         // Has to be attached last, so its joystick sub listener is not disabled by the others

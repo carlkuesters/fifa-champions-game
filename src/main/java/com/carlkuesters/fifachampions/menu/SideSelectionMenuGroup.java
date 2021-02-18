@@ -3,9 +3,9 @@ package com.carlkuesters.fifachampions.menu;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class TeamSelectionMenuGroup extends MenuGroup {
+public class SideSelectionMenuGroup extends MenuGroup {
 
-    public TeamSelectionMenuGroup(Runnable back, Function<Integer, Integer> getTeamSide, BiConsumer<Integer, Integer> setTeamSide, Runnable confirm) {
+    public SideSelectionMenuGroup(Runnable back, Function<Integer, Integer> getTeamSide, BiConsumer<Integer, Integer> setTeamSide, Runnable confirm) {
         super(back);
         this.getTeamSide = getTeamSide;
         this.setTeamSide = setTeamSide;
