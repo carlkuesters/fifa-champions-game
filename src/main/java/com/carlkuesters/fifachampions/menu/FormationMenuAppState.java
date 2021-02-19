@@ -31,7 +31,7 @@ public abstract class FormationMenuAppState extends MenuAppState {
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
 
-        FormationMenuGroup menuGroup = new FormationMenuGroup(this::back, this::getFormation, this::setFormation);
+        FormationMenuGroup menuGroup = new FormationMenuGroup(this::back, this::getFormation, this::setFormation, this::swapPlayers);
 
         int containerX = getContainerX(side);
         Container container = new Container();
@@ -205,6 +205,10 @@ public abstract class FormationMenuAppState extends MenuAppState {
     protected abstract Formation getFormation(int joyId);
 
     protected abstract void setFormation(int joyId, Formation formation);
+
+    private void swapPlayers(MenuElement element1, MenuElement element2) {
+        System.out.println(element1 + "\t" + element2);
+    }
 
     public void updateFieldPlayer(int side, int playerIndex, String name, int skill, Vector2f formationLocation) {
         int teamIndex = ((side + 1) / 2);

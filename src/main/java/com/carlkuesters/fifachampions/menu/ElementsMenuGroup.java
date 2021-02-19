@@ -5,6 +5,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.Panel;
 import com.simsilica.lemur.component.TbtQuadBackgroundComponent;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -17,6 +18,7 @@ public class ElementsMenuGroup extends MenuGroup {
         defaultElementBackgroundColors = new HashMap<>();
     }
     private LinkedList<MenuElement> elements;
+    @Getter
     private MenuElement activeElement;
     private HashMap<MenuElement, ColorRGBA> defaultElementBackgroundColors;
     private TbtQuadBackgroundComponent defaultBackground;
@@ -103,15 +105,27 @@ public class ElementsMenuGroup extends MenuGroup {
         }
     }
 
-    public void setActiveElement(MenuElement activeElement) {
-        if (this.activeElement != null) {
-            setBackground(this.activeElement, defaultElementBackgroundColors.get(this.activeElement));
+    public void setActiveElement(MenuElement newActiveElement) {
+        MenuElement oldActiveElement = this.activeElement;
+        activeElement = newActiveElement;
+        if (oldActiveElement != null) {
+            updateBackgroundColor(oldActiveElement);
         }
-        this.activeElement = activeElement;
-        setBackground(activeElement, ColorRGBA.Red);
+        updateBackgroundColor(activeElement);
     }
 
-    private void setBackground(MenuElement element, ColorRGBA color) {
+    protected void updateBackgroundColor(MenuElement element) {
+        setBackground(element, getBackgroundColor(element));
+    }
+
+    protected ColorRGBA getBackgroundColor(MenuElement element) {
+        if (element == activeElement) {
+            return ColorRGBA.Red;
+        }
+        return defaultElementBackgroundColors.get(element);
+    }
+
+    protected void setBackground(MenuElement element, ColorRGBA color) {
         Panel panel = element.getPanel();
         if (color != null) {
             TbtQuadBackgroundComponent background = defaultBackground.clone();

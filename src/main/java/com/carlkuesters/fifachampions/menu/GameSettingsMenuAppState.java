@@ -21,7 +21,7 @@ public class GameSettingsMenuAppState extends MenuAppState {
         Container container = new Container();
         container.setLocalTranslation(containerX, containerY, 0);
 
-        addButton(container, menuGroup, "Eintrag #1", this::startGame);
+        addButton(container, menuGroup, "Spiel starten", this::startGame);
         addButton(container, menuGroup, "Aufstellung", () -> openMenu(InitialFormationMenuAppState.class));
         addButton(container, menuGroup, "Eintrag #3", this::startGame);
         addButton(container, menuGroup, "Eintrag #4", this::startGame);
