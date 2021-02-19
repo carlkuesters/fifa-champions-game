@@ -11,4 +11,5 @@ public class FieldPlayerContainer {
     private Container container;
     private Label lblSkill;
     private Label lblName;
+    private MenuElement menuElement;
 }

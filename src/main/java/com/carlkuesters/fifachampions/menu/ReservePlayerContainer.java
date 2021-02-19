@@ -12,4 +12,5 @@ public class ReservePlayerContainer {
     private Label lblPosition;
     private Label lblSkill;
     private Label lblName;
+    private MenuElement menuElement;
 }

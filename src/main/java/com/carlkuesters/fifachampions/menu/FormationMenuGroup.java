@@ -5,18 +5,19 @@ import com.carlkuesters.fifachampions.game.Formation;
 import com.jme3.math.ColorRGBA;
 
 import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
 
-    public FormationMenuGroup(Runnable back, Function<Integer, Formation> getFormation, BiConsumer<Integer, Formation> setFormation, BiConsumer<MenuElement, MenuElement> swapPlayers) {
+    public FormationMenuGroup(Runnable back, Supplier<Formation> getFormation, Consumer<Formation> setFormation, BiConsumer<MenuElement, MenuElement> swapPlayers) {
         super(back);
         this.getFormation = getFormation;
         this.setFormation = setFormation;
         this.swapPlayers = swapPlayers;
     }
-    private Function<Integer, Formation> getFormation;
-    private BiConsumer<Integer, Formation> setFormation;
+    private Supplier<Formation> getFormation;
+    private Consumer<Formation> setFormation;
     private MenuElement selectedElement;
     private BiConsumer<MenuElement, MenuElement> swapPlayers;
 
@@ -34,7 +35,7 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
 
     @Override
     public int getCarouselValue(int joyId) {
-        Formation formation = getFormation.apply(joyId);
+        Formation formation = getFormation.get();
         for (int i = 0; i < Main.FORMATIONS.length; i++) {
             if (formation == Main.FORMATIONS[i]) {
                 return i;
@@ -45,7 +46,7 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
 
     @Override
     public void setCarouselValue(int joyId, int value) {
-        setFormation.accept(joyId, Main.FORMATIONS[value]);
+        setFormation.accept(Main.FORMATIONS[value]);
     }
 
     @Override

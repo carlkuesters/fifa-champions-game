@@ -4,7 +4,6 @@ import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
-import com.carlkuesters.fifachampions.menu.PauseFormationMenuAppState;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
 import com.carlkuesters.fifachampions.visuals.MaterialFactory;
@@ -15,7 +14,6 @@ import com.jme3.input.Joystick;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
@@ -34,6 +32,7 @@ import java.util.Map.Entry;
 
 public class GameAppState extends BaseDisplayAppState {
 
+    @Getter
     private Game game;
 
     private Node rootNode;
@@ -287,25 +286,6 @@ public class GameAppState extends BaseDisplayAppState {
         PauseIngameMenuAppState pauseIngameMenuAppState = (PauseIngameMenuAppState) getAppState(PauseIngameMenuAppState.class);
         pauseIngameMenuAppState.setTime(time);
         pauseIngameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
-
-        // TODO: Why do I have to cast here?
-        PauseFormationMenuAppState pauseFormationMenuAppState = (PauseFormationMenuAppState) getAppState(PauseFormationMenuAppState.class);
-        for (Team team : game.getTeams()) {
-            for (int playerIndex = 0; playerIndex < team.getPlayers().size(); playerIndex++) {
-                PlayerObject playerObject = team.getPlayers().get(playerIndex);
-                String name = playerObject.getPlayer().getName();
-                int skill = 99;
-                Vector2f formationLocation = team.getFormation().getLocation(playerIndex);
-                pauseFormationMenuAppState.updateFieldPlayer(-1 * team.getSide(), playerIndex, name, skill, formationLocation);
-            }
-            for (int playerIndex = 0; playerIndex < team.getReservePlayers().length; playerIndex++) {
-                Player reservePlayer = team.getReservePlayers()[playerIndex];
-                String position = "XX";
-                int skill = 99;
-                String name = reservePlayer.getName();
-                pauseFormationMenuAppState.updateReservePlayer(-1 * team.getSide(), playerIndex, position, skill, name);
-            }
-        }
 
         if (game.isGameOver()) {
             mainApplication.getStateManager().detach(this);

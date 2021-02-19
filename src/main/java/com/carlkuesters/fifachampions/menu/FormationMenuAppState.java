@@ -1,11 +1,14 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.game.Formation;
+import com.carlkuesters.fifachampions.game.Player;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.IconComponent;
 import com.simsilica.lemur.component.SpringGridLayout;
+
+import java.util.HashMap;
 
 public abstract class FormationMenuAppState extends MenuAppState {
 
@@ -18,6 +21,8 @@ public abstract class FormationMenuAppState extends MenuAppState {
     private int formationTrikotImageSize = 30;
     private FieldPlayerContainer[][] fieldPlayers = new FieldPlayerContainer[2][11];
     private ReservePlayerContainer[][] reservePlayers = new ReservePlayerContainer[2][20];
+    private HashMap<MenuElement, Integer> fieldPlayerElementIndices = new HashMap<>();
+    private HashMap<MenuElement, Integer> reservePlayerElementIndices = new HashMap<>();
 
     @Override
     protected void initMenu() {
@@ -31,7 +36,15 @@ public abstract class FormationMenuAppState extends MenuAppState {
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
 
-        FormationMenuGroup menuGroup = new FormationMenuGroup(this::back, this::getFormation, this::setFormation, this::swapPlayers);
+        FormationMenuGroup menuGroup = new FormationMenuGroup(
+            this::back,
+            () -> getFormation(teamIndex),
+            formation -> {
+                setFormation(teamIndex, formation);
+                updateFieldPlayers(teamIndex);
+            },
+            (element1, element2) -> swapPlayers(teamIndex, element1, element2)
+        );
 
         int containerX = getContainerX(side);
         Container container = new Container();
@@ -64,7 +77,7 @@ public abstract class FormationMenuAppState extends MenuAppState {
             for (int x = 0; x < 5; x++) {
                 ReservePlayerContainer reservePlayerContainer = createReservePlayer(menuGroup);
                 reservePlayersRow.addChild(reservePlayerContainer.getContainer());
-                this.reservePlayers[teamIndex][reservePlayerIndex] = reservePlayerContainer;
+                reservePlayers[teamIndex][reservePlayerIndex] = reservePlayerContainer;
                 reservePlayerIndex++;
             }
             reservePlayersContainer.addChild(reservePlayersRow);
@@ -157,9 +170,10 @@ public abstract class FormationMenuAppState extends MenuAppState {
         lblName.setFontSize(12);
         container.addChild(lblName);
 
-        menuGroup.addElement(new MenuElement(container, this::confirm));
+        MenuElement menuElement = new MenuElement(container, this::confirm);
+        menuGroup.addElement(menuElement);
 
-        return new ReservePlayerContainer(container, lblPosition, lblSkill, lblName);
+        return new ReservePlayerContainer(container, lblPosition, lblSkill, lblName, menuElement);
     }
 
     private FieldPlayerContainer createFieldPlayer(FormationMenuGroup menuGroup) {
@@ -197,38 +211,53 @@ public abstract class FormationMenuAppState extends MenuAppState {
         lblName.setFontSize(12);
         container.addChild(lblName);
 
-        menuGroup.addElement(new MenuElement(container, this::confirm));
+        MenuElement menuElement = new MenuElement(container, this::confirm);
+        menuGroup.addElement(menuElement);
 
-        return new FieldPlayerContainer(container, lblSkill, lblName);
+        return new FieldPlayerContainer(container, lblSkill, lblName, menuElement);
     }
 
-    protected abstract Formation getFormation(int joyId);
+    protected abstract Formation getFormation(int teamIndex);
 
-    protected abstract void setFormation(int joyId, Formation formation);
+    protected abstract void setFormation(int teamIndex, Formation formation);
 
-    private void swapPlayers(MenuElement element1, MenuElement element2) {
-        System.out.println(element1 + "\t" + element2);
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if (enabled) {
+            for (int teamIndex = 0; teamIndex < 2; teamIndex++) {
+                updateFieldPlayers(teamIndex);
+                updateReservePlayers(teamIndex);
+            }
+        }
     }
 
-    public void updateFieldPlayer(int side, int playerIndex, String name, int skill, Vector2f formationLocation) {
-        int teamIndex = ((side + 1) / 2);
+    private void updateFieldPlayers(int teamIndex) {
+        Formation formation = getFormation(teamIndex);
+        Player[] fieldPlayers = getFieldPlayers(teamIndex);
+        for (int playerIndex = 0; playerIndex < fieldPlayers.length; playerIndex++) {
+            updateFieldPlayer(teamIndex, playerIndex, fieldPlayers[playerIndex], formation.getLocation(playerIndex));
+        }
+    }
+
+    protected abstract Player[] getFieldPlayers(int teamIndex);
+
+    private void updateFieldPlayer(int teamIndex, int playerIndex, Player player, Vector2f formationLocation) {
+        String name = player.getName();
+        int skill = 99;
+
         FieldPlayerContainer fieldPlayerContainer = fieldPlayers[teamIndex][playerIndex];
         fieldPlayerContainer.getLblName().setText(name);
         fieldPlayerContainer.getLblSkill().setText("" + skill);
-        float x = getFormationPlayerX(side, formationLocation.getY());
+        float x = getFormationPlayerX(teamIndex, formationLocation.getY());
         float y = getFormationPlayerY(formationLocation.getX());
         fieldPlayerContainer.getContainer().setLocalTranslation(x, y, 1);
+
+        fieldPlayerElementIndices.put(fieldPlayerContainer.getMenuElement(), playerIndex);
     }
 
-    public void updateReservePlayer(int side, int playerIndex, String position, int skill, String name) {
-        int teamIndex = ((side + 1) / 2);
-        ReservePlayerContainer reservePlayerContainer = reservePlayers[teamIndex][playerIndex];
-        reservePlayerContainer.getLblPosition().setText(position);
-        reservePlayerContainer.getLblSkill().setText("" + skill);
-        reservePlayerContainer.getLblName().setText(name);
-    }
-
-    private float getFormationPlayerX(int side, float formationY) {
+    private float getFormationPlayerX(int teamIndex, float formationY) {
+        int side = ((teamIndex == 0) ? -1 : 1);
         int startX = getContainerX(side);
         int maximumDistanceX = (containerWidth - ((2 * formationLeftAndRightColumnWidth) + formationTrikotImageSize));
         float progressX = ((formationY + 1) / 2);
@@ -241,6 +270,51 @@ public abstract class FormationMenuAppState extends MenuAppState {
         float progressY = (1 - ((formationX + 1) / 2));
         return (startY - (progressY * maximumDistanceY));
     }
+
+    private void updateReservePlayers(int teamIndex) {
+        Player[] reservePlayers = getReservePlayers(teamIndex);
+        for (int playerIndex = 0; playerIndex < reservePlayers.length; playerIndex++) {
+            updateReservePlayer(teamIndex, playerIndex, reservePlayers[playerIndex]);
+        }
+    }
+
+    protected abstract Player[] getReservePlayers(int teamIndex);
+
+    private void updateReservePlayer(int teamIndex, int playerIndex, Player player) {
+        String name = player.getName();
+        String position = "XX";
+        int skill = 99;
+
+        ReservePlayerContainer reservePlayerContainer = reservePlayers[teamIndex][playerIndex];
+        reservePlayerContainer.getLblPosition().setText(position);
+        reservePlayerContainer.getLblSkill().setText("" + skill);
+        reservePlayerContainer.getLblName().setText(name);
+
+        reservePlayerElementIndices.put(reservePlayerContainer.getMenuElement(), playerIndex);
+    }
+
+    private void swapPlayers(int teamIndex, MenuElement element1, MenuElement element2) {
+        Integer fieldPlayerIndex1 = fieldPlayerElementIndices.get(element1);
+        Integer fieldPlayerIndex2 = fieldPlayerElementIndices.get(element2);
+        Integer reservePlayerIndex1 = reservePlayerElementIndices.get(element1);
+        Integer reservePlayerIndex2 = reservePlayerElementIndices.get(element2);
+        if ((fieldPlayerIndex1 != null) && (fieldPlayerIndex2 != null)) {
+            swapFieldPlayers(teamIndex, fieldPlayerIndex1, fieldPlayerIndex2);
+        } else if ((reservePlayerIndex1 != null) && (reservePlayerIndex2 != null)) {
+            swapReservePlayers(teamIndex, reservePlayerIndex1, reservePlayerIndex2);
+        } else {
+            int fieldPlayerIndex = ((fieldPlayerIndex1 != null) ? fieldPlayerIndex1 : fieldPlayerIndex2);
+            int reservePlayerIndex = ((reservePlayerIndex1 != null) ? reservePlayerIndex1 : reservePlayerIndex2);
+            swapFieldAndReservePlayer(teamIndex, fieldPlayerIndex, reservePlayerIndex);
+        }
+        updateFieldPlayers(teamIndex);
+    }
+
+    protected abstract void swapFieldPlayers(int teamIndex, int playerIndex1, int playerIndex2);
+
+    protected abstract void swapReservePlayers(int teamIndex, int playerIndex1, int playerIndex2);
+
+    protected abstract void swapFieldAndReservePlayer(int teamIndex, int fieldPlayerIndex, int reservePlayerIndex);
 
     protected abstract void confirm();
 
