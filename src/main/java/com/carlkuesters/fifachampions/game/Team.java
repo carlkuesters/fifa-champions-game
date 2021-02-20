@@ -4,17 +4,19 @@ import com.jme3.math.Vector2f;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-
 public class Team {
 
     public Team(TeamInfo teamInfo, String trikotName, Player[] players, Player[] reservePlayers, Formation formation) {
         this.teamInfo = teamInfo;
         this.trikotName = trikotName;
-        for (Player player : players) {
-            this.players.add(new PlayerObject(this, player));
+        this.players = new PlayerObject[players.length];
+        for (int i = 0; i < players.length; i++) {
+            this.players[i]  = new PlayerObject(this, players[i]);
         }
-        this.reservePlayers = reservePlayers;
+        this.reservePlayers = new PlayerObject[reservePlayers.length];
+        for (int i = 0; i < reservePlayers.length; i++) {
+            this.reservePlayers[i]  = new PlayerObject(this, reservePlayers[i]);
+        }
         this.formation = formation;
     }
     @Getter
@@ -23,9 +25,10 @@ public class Team {
     private String trikotName;
     private Game game;
     private int side;
-    private ArrayList<PlayerObject> players = new ArrayList<>();
     @Getter
-    private Player[] reservePlayers;
+    private PlayerObject[] players;
+    @Getter
+    private PlayerObject[] reservePlayers;
     @Setter
     private Formation formation;
 
@@ -41,23 +44,17 @@ public class Team {
         return side;
     }
 
-    public ArrayList<PlayerObject> getPlayers() {
-        return players;
-    }
-
     public Formation getFormation() {
         return formation;
     }
 
     public PlayerObject getGoalkeeper() {
-        return players.stream()
-                .filter(playerObject -> playerObject.getPlayer() instanceof Goalkeeper)
-                .findAny().get();
+        return players[0];
     }
 
     public Vector2f getIdealLocation(PlayerObject playerObject) {
-        for (int i = 0; i < players.size(); i++) {
-            if (players.get(i) == playerObject) {
+        for (int i = 0; i < players.length; i++) {
+            if (players[i] == playerObject) {
                 Vector2f formationLocation = getIdealLocation_FormationOnly(i);
                 Vector2f idealLocation = new Vector2f(formationLocation);
                 if (!(playerObject.getPlayer() instanceof Goalkeeper)) {

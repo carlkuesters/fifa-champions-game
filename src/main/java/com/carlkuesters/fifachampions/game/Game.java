@@ -242,7 +242,7 @@ public class Game implements GameLoopListener {
                         throwInTeam = teams[0];
 
                         // TODO: Properly choosing a starting player (based on position?)
-                        PlayerObject throwInPlayer = throwInTeam.getPlayers().get(throwInTeam.getPlayers().size() - 1);
+                        PlayerObject throwInPlayer = throwInTeam.getPlayers()[throwInTeam.getPlayers().length - 1];
                         Vector3f throwInPosition = lastBallPosition.clone().setY(0).setZ(Math.signum(lastBallPosition.getZ()) * FIELD_HALF_HEIGHT);
                         // Go a bit out of field to throw in
                         throwInPosition.addLocal(0, 0, Math.signum(throwInPosition.getZ()));
@@ -302,7 +302,7 @@ public class Game implements GameLoopListener {
     }
 
     private KickOffSituation createKickOffSituation(Team startingTeam) {
-        PlayerObject startingPlayer = startingTeam.getPlayers().get(startingTeam.getPlayers().size() - 1);        
+        PlayerObject startingPlayer = startingTeam.getPlayers()[startingTeam.getPlayers().length - 1];
         return new KickOffSituation(startingPlayer);
     }
 
@@ -318,7 +318,7 @@ public class Game implements GameLoopListener {
     public void onOffside(PlayerObject offsidePlayerObject, Vector3f lastBallTouchPosition) {
         Team freeKickTeam = ((offsidePlayerObject.getTeam() == teams[0]) ? teams[1] : teams[0]);
         // TODO: Properly choosing a starting player (based on position?)
-        PlayerObject startingPlayer = freeKickTeam.getPlayers().get(freeKickTeam.getPlayers().size() - 1);
+        PlayerObject startingPlayer = freeKickTeam.getPlayers()[freeKickTeam.getPlayers().length - 1];
         setNextSituation(new NextSituation(new FarFreeKickSituation(startingPlayer, lastBallTouchPosition), 2, false));
     }
 

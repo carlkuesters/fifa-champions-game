@@ -14,7 +14,7 @@ public class CornerKickSituation extends BallSituation {
 
     // TODO: Properly choosing a starting player (based on position?)
     private static PlayerObject getStartingPlayer(Team team) {
-        return team.getPlayers().get(team.getPlayers().size() - 1);
+        return team.getPlayers()[team.getPlayers().length - 1];
     }
 
     @Override

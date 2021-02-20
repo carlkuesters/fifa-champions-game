@@ -10,7 +10,7 @@ import com.simsilica.lemur.component.SpringGridLayout;
 
 import java.util.HashMap;
 
-public abstract class FormationMenuAppState extends MenuAppState {
+public abstract class FormationMenuAppState<P> extends MenuAppState {
 
     private int containerMarginOutside = 150;
     private int containerMarginBetween = 400;
@@ -234,13 +234,13 @@ public abstract class FormationMenuAppState extends MenuAppState {
 
     private void updateFieldPlayers(int teamIndex) {
         Formation formation = getFormation(teamIndex);
-        Player[] fieldPlayers = getFieldPlayers(teamIndex);
+        P[] fieldPlayers = getFieldPlayers(teamIndex);
         for (int playerIndex = 0; playerIndex < fieldPlayers.length; playerIndex++) {
-            updateFieldPlayer(teamIndex, playerIndex, fieldPlayers[playerIndex], formation.getLocation(playerIndex));
+            updateFieldPlayer(teamIndex, playerIndex, getPlayer(fieldPlayers[playerIndex]), formation.getLocation(playerIndex));
         }
     }
 
-    protected abstract Player[] getFieldPlayers(int teamIndex);
+    protected abstract P[] getFieldPlayers(int teamIndex);
 
     private void updateFieldPlayer(int teamIndex, int playerIndex, Player player, Vector2f formationLocation) {
         String name = player.getName();
@@ -272,13 +272,15 @@ public abstract class FormationMenuAppState extends MenuAppState {
     }
 
     private void updateReservePlayers(int teamIndex) {
-        Player[] reservePlayers = getReservePlayers(teamIndex);
+        P[] reservePlayers = getReservePlayers(teamIndex);
         for (int playerIndex = 0; playerIndex < reservePlayers.length; playerIndex++) {
-            updateReservePlayer(teamIndex, playerIndex, reservePlayers[playerIndex]);
+            updateReservePlayer(teamIndex, playerIndex, getPlayer(reservePlayers[playerIndex]));
         }
     }
 
-    protected abstract Player[] getReservePlayers(int teamIndex);
+    protected abstract P[] getReservePlayers(int teamIndex);
+
+    protected abstract Player getPlayer(P playerObject);
 
     private void updateReservePlayer(int teamIndex, int playerIndex, Player player) {
         String name = player.getName();
@@ -300,14 +302,17 @@ public abstract class FormationMenuAppState extends MenuAppState {
         Integer reservePlayerIndex2 = reservePlayerElementIndices.get(element2);
         if ((fieldPlayerIndex1 != null) && (fieldPlayerIndex2 != null)) {
             swapFieldPlayers(teamIndex, fieldPlayerIndex1, fieldPlayerIndex2);
+            updateFieldPlayers(teamIndex);
         } else if ((reservePlayerIndex1 != null) && (reservePlayerIndex2 != null)) {
             swapReservePlayers(teamIndex, reservePlayerIndex1, reservePlayerIndex2);
+            updateReservePlayers(teamIndex);
         } else {
             int fieldPlayerIndex = ((fieldPlayerIndex1 != null) ? fieldPlayerIndex1 : fieldPlayerIndex2);
             int reservePlayerIndex = ((reservePlayerIndex1 != null) ? reservePlayerIndex1 : reservePlayerIndex2);
             swapFieldAndReservePlayer(teamIndex, fieldPlayerIndex, reservePlayerIndex);
+            updateFieldPlayers(teamIndex);
+            updateReservePlayers(teamIndex);
         }
-        updateFieldPlayers(teamIndex);
     }
 
     protected abstract void swapFieldPlayers(int teamIndex, int playerIndex1, int playerIndex2);

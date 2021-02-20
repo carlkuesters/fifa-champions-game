@@ -5,7 +5,7 @@ import com.carlkuesters.fifachampions.game.Formation;
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
 import com.carlkuesters.fifachampions.game.Player;
 
-public class InitialFormationMenuAppState extends FormationMenuAppState {
+public class InitialFormationMenuAppState extends FormationMenuAppState<Player> {
 
     @Override
     protected Formation getFormation(int teamIndex) {
@@ -25,6 +25,11 @@ public class InitialFormationMenuAppState extends FormationMenuAppState {
     @Override
     protected Player[] getReservePlayers(int teamIndex) {
         return getInitialTeamInfo(teamIndex).getReservePlayers();
+    }
+
+    @Override
+    protected Player getPlayer(Player player) {
+        return player;
     }
 
     @Override

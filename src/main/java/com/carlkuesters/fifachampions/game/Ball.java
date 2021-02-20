@@ -4,6 +4,8 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.util.TempVars;
+
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 
@@ -52,7 +54,7 @@ public class Ball extends PhysicsObject {
                 Team enemyTeam = game.getTeams()[(allyTeam == game.getTeams()[0]) ? 1 : 0];
                 float goalX = (game.getHalfTimeSideFactor() * allyTeam.getSide() * Game.FIELD_HALF_WIDTH);
                 float distanceToGoalPassingAlly = FastMath.abs(goalX - lastTouchedOwner.getPosition().getX());
-                float distanceToGoalSecondLastEnemy = enemyTeam.getPlayers().stream()
+                float distanceToGoalSecondLastEnemy = Arrays.stream(enemyTeam.getPlayers())
                         .map(enemyPlayer -> FastMath.abs(goalX - enemyPlayer.getPosition().getX()))
                         .sorted(Comparator.naturalOrder())
                         .skip(1)
