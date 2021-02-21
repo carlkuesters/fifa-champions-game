@@ -9,12 +9,13 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.util.TempVars;
 import com.carlkuesters.fifachampions.game.cooldowns.SwitchToPlayerCooldown;
+import lombok.Getter;
 
 import java.util.*;
 
 public class Game implements GameLoopListener {
 
-    public Game(Team[] teams) {
+    public Game(Team[] teams, float halfTimeDuration) {
         for (Team team : teams) {
             team.setGame(this);
             for (PlayerObject playerObject : team.getPlayers()) {
@@ -28,8 +29,8 @@ public class Game implements GameLoopListener {
         teams[0].setSide(1);
         teams[1].setSide(-1);
         this.teams = teams;
+        this.halfTimeDuration = halfTimeDuration;
     }
-    public static final float HALFTIME_DURATION = 45;
     public static final float FIELD_HALF_WIDTH = 52.5f;
     public static final float FIELD_HALF_HEIGHT = 33.2f;
     public static final float PENALTY_AREA_WIDTH = 16;
@@ -47,6 +48,8 @@ public class Game implements GameLoopListener {
     private boolean isTimeRunning;
     private float logicTime = 0;
     private int halfTime = 0;
+    @Getter
+    private float halfTimeDuration;
     private float halfTimePassedTime = 0;
     private float halfTimePassedOverTime;
     private float nextOverTimeDuration = 0;
@@ -71,11 +74,11 @@ public class Game implements GameLoopListener {
     public void update(float tpf) {
         logicTime += tpf;
         if (isTimeRunning) {
-            if (halfTimePassedTime < HALFTIME_DURATION) {
+            if (halfTimePassedTime < halfTimeDuration) {
                 halfTimePassedTime += tpf;
-                if (halfTimePassedTime > HALFTIME_DURATION) {
-                    halfTimePassedOverTime = (halfTimePassedTime - HALFTIME_DURATION);
-                    halfTimePassedTime = HALFTIME_DURATION;
+                if (halfTimePassedTime > halfTimeDuration) {
+                    halfTimePassedOverTime = (halfTimePassedTime - halfTimeDuration);
+                    halfTimePassedTime = halfTimeDuration;
                 }
             } else {
                 halfTimePassedOverTime += tpf;

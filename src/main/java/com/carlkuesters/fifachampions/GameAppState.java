@@ -67,7 +67,7 @@ public class GameAppState extends BaseDisplayAppState {
             String trikotName = initialTeamInfo.getTeamInfo().getTrikotNames()[initialTeamInfo.getTrikotIndex()];
             teams[i] = new Team(initialTeamInfo.getTeamInfo(), trikotName, initialTeamInfo.getFieldPlayers(), initialTeamInfo.getReservePlayers(), initialTeamInfo.getFormation());
         }
-        game = new Game(teams);
+        game = new Game(teams, gameCreationInfo.getHalftimeDuration());
         controllers = new HashMap<>();
         for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
             Controller controller = new Controller(game);
@@ -282,7 +282,7 @@ public class GameAppState extends BaseDisplayAppState {
 
         float passedTime = game.getHalfTimePassedTime();
         if (game.getHalfTime() == 1) {
-            passedTime += Game.HALFTIME_DURATION;
+            passedTime += game.getHalfTimeDuration();
         }
         String time = getFormattedTime(passedTime) + " (+" + getFormattedTime(game.getHalfTimePassedOverTime()) + ")";
         lblGoals.setText(game.getGoals()[0] + " : " + game.getGoals()[1] + " --- " + time);
@@ -312,7 +312,7 @@ public class GameAppState extends BaseDisplayAppState {
 
     private String getFormattedTime(float time) {
         int secondsPerHalfTime = (45 * 60);
-        int seconds = (int) ((time / Game.HALFTIME_DURATION) * secondsPerHalfTime);
+        int seconds = (int) ((time / game.getHalfTimeDuration()) * secondsPerHalfTime);
         int minutes = (seconds / 60);
         seconds -= (minutes * 60);
         return getFormattedMinutesOrSeconds(minutes) + ":" + getFormattedMinutesOrSeconds(seconds);
