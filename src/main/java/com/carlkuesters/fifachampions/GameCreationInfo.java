@@ -11,4 +11,5 @@ import java.util.HashMap;
 public class GameCreationInfo {
     private HashMap<Integer, Integer> controllerTeamSides;
     private InitialTeamInfo[] teams;
+    private float halftimeDuration = 240;
 }

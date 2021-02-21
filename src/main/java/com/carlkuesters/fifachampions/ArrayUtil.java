@@ -1,5 +1,7 @@
 package com.carlkuesters.fifachampions;
 
+import java.util.Objects;
+
 public class ArrayUtil {
 
     public static <T> void swap(T[] array, int index1, int index2) {
@@ -14,7 +16,7 @@ public class ArrayUtil {
 
     public static <T> int getIndex(T[] array, T object) {
         for (int i = 0; i < array.length; i++) {
-            if (array[i] == object) {
+            if (Objects.equals(array[i], object)) {
                 return i;
             }
         }
