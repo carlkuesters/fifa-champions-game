@@ -7,6 +7,8 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.cooldowns.UnownedBallPickupCooldown;
+import lombok.Getter;
+import lombok.Setter;
 
 public class PlayerObject extends PhysicsObject {
 
@@ -30,6 +32,9 @@ public class PlayerObject extends PhysicsObject {
     private float remainingFallingDuration;
     private boolean isGoalkeeperJumping;
     private PlayerAnimation animation;
+    @Getter
+    @Setter
+    private boolean markedForSwitch;
 
     @Override
     public void update(float tpf) {

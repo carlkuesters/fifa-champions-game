@@ -19,6 +19,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     private int playerImageBigHeight = 60;
     private int formationLeftAndRightColumnWidth = 25;
     private int formationTrikotImageSize = 30;
+    private FormationMenuGroup[] menuGroups = new FormationMenuGroup[2];
     private FieldPlayerContainer[][] fieldPlayers = new FieldPlayerContainer[2][11];
     private ReservePlayerContainer[][] reservePlayers = new ReservePlayerContainer[2][20];
     private HashMap<MenuElement, Integer> fieldPlayerElementIndices = new HashMap<>();
@@ -45,6 +46,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
             },
             (element1, element2) -> swapPlayers(teamIndex, element1, element2)
         );
+        menuGroups[teamIndex] = menuGroup;
 
         int containerX = getContainerX(side);
         Container container = new Container();
@@ -236,13 +238,14 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         Formation formation = getFormation(teamIndex);
         P[] fieldPlayers = getFieldPlayers(teamIndex);
         for (int playerIndex = 0; playerIndex < fieldPlayers.length; playerIndex++) {
-            updateFieldPlayer(teamIndex, playerIndex, getPlayer(fieldPlayers[playerIndex]), formation.getLocation(playerIndex));
+            P playerObject = fieldPlayers[playerIndex];
+            updateFieldPlayer(teamIndex, playerIndex, getPlayer(playerObject), isMarkedForSwitch(playerObject), formation.getLocation(playerIndex));
         }
     }
 
     protected abstract P[] getFieldPlayers(int teamIndex);
 
-    private void updateFieldPlayer(int teamIndex, int playerIndex, Player player, Vector2f formationLocation) {
+    private void updateFieldPlayer(int teamIndex, int playerIndex, Player player, boolean markedForSwitch, Vector2f formationLocation) {
         String name = player.getName();
         int skill = 99;
 
@@ -252,6 +255,8 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         float x = getFormationPlayerX(teamIndex, formationLocation.getY());
         float y = getFormationPlayerY(formationLocation.getX());
         fieldPlayerContainer.getContainer().setLocalTranslation(x, y, 1);
+
+        menuGroups[teamIndex].setMarkedForSwitch(fieldPlayerContainer.getMenuElement(), markedForSwitch);
 
         fieldPlayerElementIndices.put(fieldPlayerContainer.getMenuElement(), playerIndex);
     }
@@ -274,7 +279,8 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     private void updateReservePlayers(int teamIndex) {
         P[] reservePlayers = getReservePlayers(teamIndex);
         for (int playerIndex = 0; playerIndex < reservePlayers.length; playerIndex++) {
-            updateReservePlayer(teamIndex, playerIndex, getPlayer(reservePlayers[playerIndex]));
+            P playerObject = reservePlayers[playerIndex];
+            updateReservePlayer(teamIndex, playerIndex, getPlayer(playerObject), isMarkedForSwitch(playerObject));
         }
     }
 
@@ -282,7 +288,9 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
     protected abstract Player getPlayer(P playerObject);
 
-    private void updateReservePlayer(int teamIndex, int playerIndex, Player player) {
+    protected abstract boolean isMarkedForSwitch(P playerObject);
+
+    private void updateReservePlayer(int teamIndex, int playerIndex, Player player, boolean markedForSwitch) {
         String name = player.getName();
         String position = "XX";
         int skill = 99;
@@ -291,6 +299,8 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         reservePlayerContainer.getLblPosition().setText(position);
         reservePlayerContainer.getLblSkill().setText("" + skill);
         reservePlayerContainer.getLblName().setText(name);
+
+        menuGroups[teamIndex].setMarkedForSwitch(reservePlayerContainer.getMenuElement(), markedForSwitch);
 
         reservePlayerElementIndices.put(reservePlayerContainer.getMenuElement(), playerIndex);
     }

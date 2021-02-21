@@ -8,6 +8,19 @@ public class ArrayUtil {
         array[index2] = tmp;
     }
 
+    public static <T> void swap(T[] array1, T object1, T[] array2, T object2) {
+        swap(array1, getIndex(array1, object1), array2, getIndex(array2, object2));
+    }
+
+    public static <T> int getIndex(T[] array, T object) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == object) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+
     public static <T> void swap(T[] array1, int index1, T[] array2, int index2) {
         T tmp = array1[index1];
         array1[index1] = array2[index2];

@@ -4,6 +4,7 @@ import com.carlkuesters.fifachampions.Main;
 import com.carlkuesters.fifachampions.game.Formation;
 import com.jme3.math.ColorRGBA;
 
+import java.util.HashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -15,11 +16,13 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
         this.getFormation = getFormation;
         this.setFormation = setFormation;
         this.swapPlayers = swapPlayers;
+        markedForSwitchElements = new HashMap<>();
     }
     private Supplier<Formation> getFormation;
     private Consumer<Formation> setFormation;
     private MenuElement selectedElement;
     private BiConsumer<MenuElement, MenuElement> swapPlayers;
+    private HashMap<MenuElement, Boolean> markedForSwitchElements;
 
     @Override
     public void secondaryNavigateLeft(int joyId) {
@@ -82,7 +85,19 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
     protected ColorRGBA getBackgroundColor(MenuElement element) {
         if (element == selectedElement) {
             return ColorRGBA.Blue;
+        } else if (isMarkedForSwitch(element)) {
+            return ColorRGBA.Green;
         }
         return super.getBackgroundColor(element);
+    }
+
+    public void setMarkedForSwitch(MenuElement menuElement, boolean markedForSwitch) {
+        markedForSwitchElements.put(menuElement, markedForSwitch);
+        updateBackgroundColor(menuElement);
+    }
+
+    private boolean isMarkedForSwitch(MenuElement menuElement) {
+        Boolean isMarkedForSwitch = markedForSwitchElements.get(menuElement);
+        return ((isMarkedForSwitch != null) && isMarkedForSwitch);
     }
 }

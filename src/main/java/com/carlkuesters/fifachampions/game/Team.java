@@ -4,6 +4,8 @@ import com.jme3.math.Vector2f;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedList;
+
 public class Team {
 
     public Team(TeamInfo teamInfo, String trikotName, Player[] players, Player[] reservePlayers, Formation formation) {
@@ -18,6 +20,7 @@ public class Team {
             this.reservePlayers[i]  = new PlayerObject(this, reservePlayers[i]);
         }
         this.formation = formation;
+        playerSwitches = new LinkedList<>();
     }
     @Getter
     private TeamInfo teamInfo;
@@ -31,6 +34,8 @@ public class Team {
     private PlayerObject[] reservePlayers;
     @Setter
     private Formation formation;
+    @Getter
+    private LinkedList<PlayerSwitch> playerSwitches;
 
     public void setGame(Game game) {
         this.game = game;
@@ -99,5 +104,17 @@ public class Team {
     private Vector2f getIdealLocation_FormationOnly(int playerIndex) {
         Vector2f formationLocation = formation.getLocation(playerIndex).mult(game.getHalfTimeSideFactor() * side);
         return new Vector2f(Game.FIELD_HALF_WIDTH * formationLocation.getX(), Game.FIELD_HALF_HEIGHT * formationLocation.getY());
+    }
+
+    public void addPlayerSwitch(PlayerSwitch playerSwitch) {
+        playerSwitch.getFieldPlayer().setMarkedForSwitch(true);
+        playerSwitch.getReservePlayer().setMarkedForSwitch(true);
+        playerSwitches.add(playerSwitch);
+    }
+
+    public void removePlayerSwitch(PlayerSwitch playerSwitch) {
+        playerSwitches.remove(playerSwitch);
+        playerSwitch.getFieldPlayer().setMarkedForSwitch(false);
+        playerSwitch.getReservePlayer().setMarkedForSwitch(false);
     }
 }

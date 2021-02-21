@@ -2,10 +2,7 @@ package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.ArrayUtil;
 import com.carlkuesters.fifachampions.GameAppState;
-import com.carlkuesters.fifachampions.game.Formation;
-import com.carlkuesters.fifachampions.game.Player;
-import com.carlkuesters.fifachampions.game.PlayerObject;
-import com.carlkuesters.fifachampions.game.Team;
+import com.carlkuesters.fifachampions.game.*;
 
 public class PauseFormationMenuAppState extends FormationMenuAppState<PlayerObject> {
 
@@ -35,6 +32,11 @@ public class PauseFormationMenuAppState extends FormationMenuAppState<PlayerObje
     }
 
     @Override
+    protected boolean isMarkedForSwitch(PlayerObject playerObject) {
+        return playerObject.isMarkedForSwitch();
+    }
+
+    @Override
     protected void swapFieldPlayers(int teamIndex, int playerIndex1, int playerIndex2) {
         PlayerObject[] playerObjects = getFieldPlayers(teamIndex);
         ArrayUtil.swap(playerObjects, playerIndex1, playerIndex2);
@@ -50,8 +52,7 @@ public class PauseFormationMenuAppState extends FormationMenuAppState<PlayerObje
     protected void swapFieldAndReservePlayer(int teamIndex, int fieldPlayerIndex, int reservePlayerIndex) {
         PlayerObject[] fieldPlayers = getFieldPlayers(teamIndex);
         PlayerObject[] reservePlayers = getReservePlayers(teamIndex);
-        // TODO: Trigger on next situation, copy position, etc.
-        ArrayUtil.swap(fieldPlayers, fieldPlayerIndex, reservePlayers, reservePlayerIndex);
+        getTeam(teamIndex).addPlayerSwitch(new PlayerSwitch(fieldPlayers[fieldPlayerIndex], reservePlayers[reservePlayerIndex]));
     }
 
     private Team getTeam(int teamIndex) {

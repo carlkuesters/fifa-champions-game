@@ -90,11 +90,10 @@ public class GameAppState extends BaseDisplayAppState {
 
         for (Team team : game.getTeams()) {
             for (PlayerObject playerObject : team.getPlayers()) {
-                PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager());
-                String trikotName = ((playerObject.getPlayer() instanceof Goalkeeper) ? "thinstripes" : playerObject.getTeam().getTrikotName());
-                playerVisual.setTrikot(trikotName);
-                rootNode.attachChild(playerVisual.getWrapperNode());
-                playerVisuals.put(playerObject, playerVisual);
+                createPlayerVisual(playerObject);
+            }
+            for (PlayerObject playerObject : team.getReservePlayers()) {
+                createPlayerVisual(playerObject);
             }
         }
 
@@ -182,6 +181,14 @@ public class GameAppState extends BaseDisplayAppState {
         mainApplication.getGuiNode().attachChild(guiNode);
     }
 
+    private PlayerVisual createPlayerVisual(PlayerObject playerObject) {
+        PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager());
+        String trikotName = ((playerObject.getPlayer() instanceof Goalkeeper) ? "thinstripes" : playerObject.getTeam().getTrikotName());
+        playerVisual.setTrikot(trikotName);
+        playerVisuals.put(playerObject, playerVisual);
+        return playerVisual;
+    }
+
     @Override
     public void update(float tpf) {
         super.update(tpf);
@@ -192,17 +199,14 @@ public class GameAppState extends BaseDisplayAppState {
         }
         game.update(tpf);
 
-        for (Entry<PlayerObject, PlayerVisual> playerEntry : playerVisuals.entrySet()) {
-            PlayerObject playerObject = playerEntry.getKey();
-            PlayerVisual playerVisual = playerEntry.getValue();
-            updateTransform(playerObject, playerVisual.getModelNode());
-            // Run Animation
-            float velocity = playerObject.getVelocity().length();
-            PlayerAnimation playerAnimation = playerObject.getAnimation();
-            if (isNullOrDefaultRunAnimation(playerAnimation)) {
-                playerAnimation = getPlayerDefaultRunAnimation(velocity);
+        for (Team team : game.getTeams()) {
+            for (PlayerObject playerObject : team.getPlayers()) {
+                updatePlayerVisual(playerObject);
+                rootNode.attachChild(playerVisuals.get(playerObject).getWrapperNode());
             }
-            playerVisual.playAnimation(playerAnimation);
+            for (PlayerObject playerObject : team.getReservePlayers()) {
+                rootNode.detachChild(playerVisuals.get(playerObject).getWrapperNode());
+            }
         }
 
         for (Map.Entry<Controller, Node> entry : controllerVisuals.entrySet()) {
@@ -292,6 +296,18 @@ public class GameAppState extends BaseDisplayAppState {
             mainApplication.getStateManager().getState(PauseIngameMenuAppState.class).setEnabled(false);
             mainApplication.getStateManager().getState(GameOverIngameMenuAppState.class).setEnabled(true);
         }
+    }
+
+    private void updatePlayerVisual(PlayerObject playerObject) {
+        PlayerVisual playerVisual = playerVisuals.get(playerObject);
+        updateTransform(playerObject, playerVisual.getModelNode());
+        // Run Animation
+        float velocity = playerObject.getVelocity().length();
+        PlayerAnimation playerAnimation = playerObject.getAnimation();
+        if (isNullOrDefaultRunAnimation(playerAnimation)) {
+            playerAnimation = getPlayerDefaultRunAnimation(velocity);
+        }
+        playerVisual.playAnimation(playerAnimation);
     }
 
     private String getFormattedTime(float time) {

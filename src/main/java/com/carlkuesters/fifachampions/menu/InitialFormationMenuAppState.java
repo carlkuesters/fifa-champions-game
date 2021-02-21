@@ -33,6 +33,11 @@ public class InitialFormationMenuAppState extends FormationMenuAppState<Player> 
     }
 
     @Override
+    protected boolean isMarkedForSwitch(Player playerObject) {
+        return false;
+    }
+
+    @Override
     protected void swapFieldPlayers(int teamIndex, int playerIndex1, int playerIndex2) {
         Player[] fieldPlayers = getFieldPlayers(teamIndex);
         ArrayUtil.swap(fieldPlayers, playerIndex1, playerIndex2);

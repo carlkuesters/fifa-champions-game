@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions.game;
 
+import com.carlkuesters.fifachampions.ArrayUtil;
 import com.carlkuesters.fifachampions.game.cooldowns.UnownedBallPickupCooldown;
 import com.carlkuesters.fifachampions.game.cooldowns.FightCooldown;
 import com.carlkuesters.fifachampions.game.situations.*;
@@ -17,6 +18,9 @@ public class Game implements GameLoopListener {
         for (Team team : teams) {
             team.setGame(this);
             for (PlayerObject playerObject : team.getPlayers()) {
+                playerObject.setGame(this);
+            }
+            for (PlayerObject playerObject : team.getReservePlayers()) {
                 playerObject.setGame(this);
             }
         }
@@ -349,9 +353,25 @@ public class Game implements GameLoopListener {
     }
 
     private void setSituation(Situation situation) {
+        applyPlayerSwitches();
         situation.setGame(this);
         this.situation = situation;
         situation.start();
+    }
+
+    private void applyPlayerSwitches() {
+        for (Team team : teams) {
+            LinkedList<PlayerSwitch> playerSwitches = team.getPlayerSwitches();
+            while (playerSwitches.size() > 0) {
+                PlayerSwitch playerSwitch = playerSwitches.get(0);
+                PlayerObject fieldPlayer = playerSwitch.getFieldPlayer();
+                PlayerObject reservePlayer = playerSwitch.getReservePlayer();
+                reservePlayer.setPosition(fieldPlayer.getPosition());
+                reservePlayer.setRotation(fieldPlayer.getRotation());
+                ArrayUtil.swap(team.getPlayers(), fieldPlayer, team.getReservePlayers(), reservePlayer);
+                team.removePlayerSwitch(playerSwitch);
+            }
+        }
     }
 
     public void continueFromBallSituation() {
