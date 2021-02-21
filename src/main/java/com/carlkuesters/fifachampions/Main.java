@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions;
 
+import com.carlkuesters.fifachampions.cinematics.CinematicAppState;
 import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.formations.Formation433;
 import com.carlkuesters.fifachampions.game.formations.Formation442;
@@ -77,6 +78,7 @@ public class Main extends SimpleApplication {
         flyCam.setEnabled(false);
 
         stateManager.attach(new PostFilterAppState());
+        stateManager.attach(new CinematicAppState());
         stateManager.attach(new StadiumAppState());
         stateManager.attach(new InitialSideSelectionMenuAppState());
         stateManager.attach(new TeamsMenuAppState());

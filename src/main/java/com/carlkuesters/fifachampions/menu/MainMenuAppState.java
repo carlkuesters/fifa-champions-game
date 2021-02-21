@@ -1,5 +1,7 @@
 package com.carlkuesters.fifachampions.menu;
 
+import com.carlkuesters.fifachampions.cinematics.CinematicAppState;
+import com.carlkuesters.fifachampions.cinematics.cinematics.MainMenuCinematic;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
@@ -11,10 +13,12 @@ public class MainMenuAppState extends MenuAppState {
 
     public MainMenuAppState() {
         autoEnabled = true;
+        mainMenuCinematic = new MainMenuCinematic();
     }
     private int buttonWidth;
     private int buttonHeight;
     private ElementsMenuGroup menuGroup;
+    private MainMenuCinematic mainMenuCinematic;
 
     @Override
     protected void initMenu() {
@@ -56,8 +60,12 @@ public class MainMenuAppState extends MenuAppState {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+        // TODO: Why do I have to cast here?
+        CinematicAppState cinematicAppState = (CinematicAppState) getAppState(CinematicAppState.class);
         if (enabled) {
-            mainApplication.getCamera().setLocation(new Vector3f(0, 100, 0));
+            cinematicAppState.playCinematic(mainMenuCinematic);
+        } else {
+            cinematicAppState.stopCinematic();
         }
     }
 

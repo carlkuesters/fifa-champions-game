@@ -67,6 +67,8 @@ public abstract class SideSelectionMenuAppState extends MenuAppState {
             for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
                 updateControllerSide(joystick.getJoyId(), getTeamSide(joystick.getJoyId()));
             }
+            mainApplication.getCamera().setLocation(new Vector3f(0, 1, 5));
+            mainApplication.getCamera().lookAtDirection(new Vector3f(0, 0.05f, -1), Vector3f.UNIT_Y);
         }
     }
 

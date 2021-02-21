@@ -32,12 +32,9 @@ public class GameSettingsMenuAppState extends MenuAppState {
             container,
             menuGroup,
             new Float[] { 120f, 180f, 240f, 300f, 360f, 420f, 480f },
-            halftimeDuration -> "Halbzeitlänge: " + (int) (halftimeDuration / 60) + " Minuten",
-            halftimeDuration -> mainApplication.getGameCreationInfo().setHalftimeDuration(halftimeDuration)
+            halfTimeDuration -> "Halbzeitlänge: " + (int) (halfTimeDuration / 60) + " Minuten",
+            halfTimeDuration -> mainApplication.getGameCreationInfo().setHalftimeDuration(halfTimeDuration)
         );
-        addButton(container, menuGroup, "Eintrag #4", this::startGame);
-        addButton(container, menuGroup, "Eintrag #5", this::startGame);
-        addButton(container, menuGroup, "Eintrag #6", this::startGame);
 
         guiNode.attachChild(container);
 

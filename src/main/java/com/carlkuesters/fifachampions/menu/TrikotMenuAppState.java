@@ -61,8 +61,6 @@ public class TrikotMenuAppState extends MenuAppState {
         for (PlayerVisual playerVisual : playerVisuals) {
             if (enabled) {
                 mainApplication.getRootNode().attachChild(playerVisual.getWrapperNode());
-                mainApplication.getCamera().setLocation(new Vector3f(0, 1, 5));
-                mainApplication.getCamera().lookAtDirection(new Vector3f(0, 0.05f, -1), Vector3f.UNIT_Y);
                 updateTrikot(0);
                 updateTrikot(1);
             } else {
