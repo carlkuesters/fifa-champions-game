@@ -38,7 +38,6 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         int teamIndex = ((side + 1) / 2);
 
         FormationMenuGroup menuGroup = new FormationMenuGroup(
-            this::back,
             () -> getFormation(teamIndex),
             formation -> {
                 setFormation(teamIndex, formation);

@@ -19,6 +19,7 @@ public class TeamsMenuAppState extends MenuAppState {
 
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
+
         InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
         TeamInfo teamInfo = initialTeamInfo.getTeamInfo();
 
@@ -62,10 +63,9 @@ public class TeamsMenuAppState extends MenuAppState {
         guiNode.attachChild(container);
 
         TeamsMenuGroup menuGroup = new TeamsMenuGroup(
-            () -> openMenu(InitialSideSelectionMenuAppState.class),
-            mainApplication.getGameCreationInfo(),
-            this::updateTeam,
-            joyId -> openMenu(TrikotMenuAppState.class)
+            initialTeamInfo,
+            () -> updateTeam(teamIndex),
+            () -> openMenu(TrikotMenuAppState.class)
         );
         addMenuGroup(menuGroup);
     }
@@ -74,5 +74,10 @@ public class TeamsMenuAppState extends MenuAppState {
         InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
         String teamName = initialTeamInfo.getTeamInfo().getName();
         lblTeamNames[teamIndex].setText(teamName);
+    }
+
+    @Override
+    protected void back() {
+        openMenu(InitialSideSelectionMenuAppState.class);
     }
 }

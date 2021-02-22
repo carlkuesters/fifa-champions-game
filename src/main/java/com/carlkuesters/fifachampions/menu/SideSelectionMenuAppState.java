@@ -11,16 +11,12 @@ import java.util.HashMap;
 
 public abstract class SideSelectionMenuAppState extends MenuAppState {
 
+    private HashMap<Integer, MenuGroup> controllerMenuGroups = new HashMap<>();
     private HashMap<Integer, IconComponent> controllerIcons = new HashMap<>();
 
     @Override
     protected void initMenu() {
         addTitle("Seitenauswahl");
-
-        SideSelectionMenuGroup menuGroup = new SideSelectionMenuGroup(this::back, this::getTeamSide, (joyId, teamSide) -> {
-            setTeamSide(joyId, teamSide);
-            updateControllerSide(joyId, teamSide);
-        }, this::confirm);
 
         int containerWidth = 600;
         int containerHeight = 400;
@@ -39,6 +35,15 @@ public abstract class SideSelectionMenuAppState extends MenuAppState {
         containerOuter.addChild(containerInner);
 
         for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
+            SideSelectionMenuGroup menuGroup = new SideSelectionMenuGroup(
+                () -> getTeamSide(joystick.getJoyId()),
+                teamSide -> {
+                    setTeamSide(joystick.getJoyId(), teamSide);
+                    updateControllerSide(joystick.getJoyId(), teamSide);
+                },
+                this::confirm
+            );
+
             Container row = new Container();
             row.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
             row.setInsets(new Insets3f(0, rowPadding, 0, rowPadding));
@@ -53,11 +58,18 @@ public abstract class SideSelectionMenuAppState extends MenuAppState {
             row.addChild(controllerLogo);
 
             containerInner.addChild(row);
+
+            addMenuGroup(menuGroup);
+
+            controllerMenuGroups.put(joystick.getJoyId(), menuGroup);
         }
 
         guiNode.attachChild(containerOuter);
+    }
 
-        addMenuGroup(menuGroup);
+    @Override
+    protected MenuGroup getMenuGroup(int joyId) {
+        return controllerMenuGroups.get(joyId);
     }
 
     @Override
@@ -74,17 +86,15 @@ public abstract class SideSelectionMenuAppState extends MenuAppState {
 
     private void updateControllerSide(int joyId, int teamSide) {
         HAlignment hAlignment;
-        if (teamSide == 1) {
+        if (teamSide == -1) {
             hAlignment = HAlignment.Left;
-        } else if (teamSide == -1) {
+        } else if (teamSide == 1) {
             hAlignment = HAlignment.Right;
         } else {
             hAlignment = HAlignment.Center;
         }
         controllerIcons.get(joyId).setHAlignment(hAlignment);
     }
-
-    protected abstract void back();
 
     protected abstract int getTeamSide(int joyId);
 

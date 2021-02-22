@@ -73,9 +73,9 @@ public class GameAppState extends BaseDisplayAppState {
             Controller controller = new Controller(game);
             Team controllerTeam = null;
             int teamSide = gameCreationInfo.getControllerTeamSides().get(joystick.getJoyId());
-            if (teamSide == 1) {
+            if (teamSide == -1) {
                 controllerTeam = game.getTeams()[0];
-            } else if (teamSide == -1) {
+            } else if (teamSide == 1) {
                 controllerTeam = game.getTeams()[1];
             }
             controller.setTeam(controllerTeam);

@@ -19,7 +19,7 @@ public class GameSettingsMenuAppState extends MenuAppState {
     protected void initMenu() {
         addTitle("Einstellungen");
 
-        ElementsMenuGroup menuGroup = new ElementsMenuGroup(() -> openMenu(TrikotMenuAppState.class));
+        ElementsMenuGroup menuGroup = new ElementsMenuGroup();
 
         int containerX = ((totalWidth / 2) - (containerWidth / 2));
         int containerY = (totalHeight - 200);
@@ -50,7 +50,7 @@ public class GameSettingsMenuAppState extends MenuAppState {
         Button button = addButton(container, "");
         LabelCarousel<T> labelCarousel = new LabelCarousel<>(button, values, getText);
         menuGroup.addElement(new MenuElement(button, () -> {
-            CarouselUtil.changeValue(labelCarousel, -1, 1);
+            CarouselUtil.changeValue(labelCarousel, 1);
             setCurrentValue.accept(labelCarousel.getValue());
         }));
         return labelCarousel;
@@ -68,6 +68,11 @@ public class GameSettingsMenuAppState extends MenuAppState {
     private void startGame() {
         close();
         mainApplication.getStateManager().attach(new GameAppState());
+    }
+
+    @Override
+    protected void back() {
+        openMenu(TrikotMenuAppState.class);
     }
 
     @Override

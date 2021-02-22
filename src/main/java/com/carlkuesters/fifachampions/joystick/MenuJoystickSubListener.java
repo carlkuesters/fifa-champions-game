@@ -9,9 +9,11 @@ import java.util.function.Function;
 
 public class MenuJoystickSubListener {
 
-    public MenuJoystickSubListener(Function<Integer, MenuGroup> getControllerMenuGroup) {
+    public MenuJoystickSubListener(Runnable back, Function<Integer, MenuGroup> getControllerMenuGroup) {
+        this.back = back;
         this.getControllerMenuGroup = getControllerMenuGroup;
     }
+    private Runnable back;
     private Function<Integer, MenuGroup> getControllerMenuGroup;
     private HashMap<Integer, float[]> axes = new HashMap<>();
 
@@ -25,9 +27,9 @@ public class MenuJoystickSubListener {
                 if (value != values[0]) {
                     values[0] = value;
                     if (value > 0) {
-                        menuGroup.primaryNavigateRight(evt.getJoyIndex());
+                        menuGroup.primaryNavigateRight();
                     } else if (value < 0) {
-                        menuGroup.primaryNavigateLeft(evt.getJoyIndex());
+                        menuGroup.primaryNavigateLeft();
                     }
                 }
 
@@ -35,9 +37,9 @@ public class MenuJoystickSubListener {
                 if (value != values[1]) {
                     values[1] = value;
                     if (value > 0) {
-                        menuGroup.primaryNavigateUp(evt.getJoyIndex());
+                        menuGroup.primaryNavigateUp();
                     } else if (value < 0) {
-                        menuGroup.primaryNavigateDown(evt.getJoyIndex());
+                        menuGroup.primaryNavigateDown();
                     }
                 }
             }
@@ -46,21 +48,25 @@ public class MenuJoystickSubListener {
 
     public void onJoyButtonEvent(JoyButtonEvent evt) {
         MenuGroup menuGroup = getControllerMenuGroup.apply(evt.getJoyIndex());
-        if ((menuGroup != null) && evt.isPressed()) {
+        if (evt.isPressed()) {
+            if (menuGroup != null) {
+                switch (evt.getButtonIndex()) {
+                    case 0:
+                    case 1:
+                        menuGroup.confirm();
+                        break;
+                    case 4:
+                        menuGroup.secondaryNavigateLeft();
+                        break;
+                    case 5:
+                        menuGroup.secondaryNavigateRight();
+                        break;
+                }
+            }
             switch (evt.getButtonIndex()) {
-                case 0:
-                case 1:
-                    menuGroup.confirm(evt.getJoyIndex());
-                    break;
-                case 4:
-                    menuGroup.secondaryNavigateLeft(evt.getJoyIndex());
-                    break;
-                case 5:
-                    menuGroup.secondaryNavigateRight(evt.getJoyIndex());
-                    break;
                 case 2:
                 case 9:
-                    menuGroup.back();
+                    back.run();
                     break;
             }
         }

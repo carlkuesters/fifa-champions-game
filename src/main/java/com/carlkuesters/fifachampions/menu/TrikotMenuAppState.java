@@ -42,10 +42,9 @@ public class TrikotMenuAppState extends MenuAppState {
         guiNode.attachChild(container);
 
         TrikotMenuGroup menuGroup = new TrikotMenuGroup(
-            () -> openMenu(TeamsMenuAppState.class),
-            mainApplication.getGameCreationInfo(),
-            this::updateTrikot,
-            joyId -> openMenu(GameSettingsMenuAppState.class)
+            mainApplication.getGameCreationInfo().getTeams()[teamIndex],
+            () -> updateTrikot(teamIndex),
+            () -> openMenu(GameSettingsMenuAppState.class)
         );
         addMenuGroup(menuGroup);
 
@@ -74,5 +73,10 @@ public class TrikotMenuAppState extends MenuAppState {
         String trikotName = initialTeamInfo.getTeamInfo().getTrikotNames()[initialTeamInfo.getTrikotIndex()];
         lblTrikotNames[teamIndex].setText(trikotName);
         playerVisuals[teamIndex].setTrikot(trikotName);
+    }
+
+    @Override
+    protected void back() {
+        openMenu(TeamsMenuAppState.class);
     }
 }

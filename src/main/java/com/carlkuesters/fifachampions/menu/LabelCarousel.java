@@ -18,17 +18,17 @@ public class LabelCarousel<T> implements Carousel {
     private int currentValueIndex;
 
     @Override
-    public int getCarouselValue(int joyId) {
+    public int getCarouselValue() {
         return currentValueIndex;
     }
 
     @Override
-    public void setCarouselValue(int joyId, int value) {
+    public void setCarouselValue(int value) {
         setValueByIndex(value);
     }
 
     @Override
-    public int getCarouselMaximumValue(int joyId) {
+    public int getCarouselMaximumValue() {
         return (values.length - 1);
     }
 

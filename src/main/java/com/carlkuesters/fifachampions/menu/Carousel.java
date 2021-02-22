@@ -2,9 +2,9 @@ package com.carlkuesters.fifachampions.menu;
 
 public interface Carousel {
 
-    int getCarouselValue(int joyId);
+    int getCarouselValue();
 
-    void setCarouselValue(int joyId, int value);
+    void setCarouselValue(int value);
 
-    int getCarouselMaximumValue(int joyId);
+    int getCarouselMaximumValue();
 }

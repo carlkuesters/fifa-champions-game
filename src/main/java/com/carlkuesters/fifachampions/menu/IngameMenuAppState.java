@@ -23,7 +23,7 @@ public class IngameMenuAppState extends MenuAppState {
 
         addGameInfo();
 
-        menuGroup = new ElementsMenuGroup(this::close);
+        menuGroup = new ElementsMenuGroup();
         addMenuGroup(menuGroup);
     }
 
@@ -121,5 +121,10 @@ public class IngameMenuAppState extends MenuAppState {
     protected void endGame() {
         mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(GameAppState.class));
         openMenu(MainMenuAppState.class);
+    }
+
+    @Override
+    protected void back() {
+        close();
     }
 }

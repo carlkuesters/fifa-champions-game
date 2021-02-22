@@ -3,11 +3,6 @@ package com.carlkuesters.fifachampions.menu;
 public class InitialSideSelectionMenuAppState extends SideSelectionMenuAppState {
 
     @Override
-    protected void back() {
-        openMenu(MainMenuAppState.class);
-    }
-
-    @Override
     protected int getTeamSide(int joyId) {
         return mainApplication.getGameCreationInfo().getControllerTeamSides().get(joyId);
     }
@@ -20,5 +15,10 @@ public class InitialSideSelectionMenuAppState extends SideSelectionMenuAppState 
     @Override
     protected void confirm() {
         openMenu(TeamsMenuAppState.class);
+    }
+
+    @Override
+    protected void back() {
+        openMenu(MainMenuAppState.class);
     }
 }

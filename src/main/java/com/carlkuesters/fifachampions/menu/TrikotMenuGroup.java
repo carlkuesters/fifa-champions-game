@@ -1,28 +1,26 @@
 package com.carlkuesters.fifachampions.menu;
 
-import com.carlkuesters.fifachampions.GameCreationInfo;
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
-
-import java.util.function.Consumer;
 
 public class TrikotMenuGroup extends GameCreationCarouselMenuGroup {
 
-    public TrikotMenuGroup(Runnable back, GameCreationInfo gameCreationInfo, Consumer<Integer> updateTeam, Consumer<Integer> confirm) {
-        super(back, gameCreationInfo, updateTeam, confirm);
+    public TrikotMenuGroup(InitialTeamInfo initialTeamInfo, Runnable updateTeam, Runnable confirm) {
+        super(initialTeamInfo, updateTeam, confirm);
     }
 
     @Override
-    protected int getValue(InitialTeamInfo initialTeamInfo) {
+    public int getCarouselValue() {
         return initialTeamInfo.getTrikotIndex();
     }
 
     @Override
-    protected void setValue(InitialTeamInfo initialTeamInfo, int value) {
+    public void setCarouselValue(int value) {
         initialTeamInfo.setTrikotIndex(value);
+        super.setCarouselValue(value);
     }
 
     @Override
-    protected int getMaximumValue(InitialTeamInfo initialTeamInfo) {
+    public int getCarouselMaximumValue() {
         return (initialTeamInfo.getTeamInfo().getTrikotNames().length - 1);
     }
 }

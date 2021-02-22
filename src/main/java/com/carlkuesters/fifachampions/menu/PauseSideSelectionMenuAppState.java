@@ -7,23 +7,18 @@ import com.carlkuesters.fifachampions.game.Team;
 public class PauseSideSelectionMenuAppState extends SideSelectionMenuAppState {
 
     @Override
-    protected void back() {
-        openMenu(PauseIngameMenuAppState.class);
-    }
-
-    @Override
     protected int getTeamSide(int joyId) {
         Team team = getController(joyId).getTeam();
-        return ((team != null) ? team.getSide() : 0);
+        return ((team != null) ? (-1 * team.getSide()) : 0);
     }
 
     @Override
     protected void setTeamSide(int joyId, int teamSide) {
         Controller controller = getController(joyId);
         Team team = null;
-        if (teamSide == 1) {
+        if (teamSide == -1) {
             team = controller.getGame().getTeams()[0];
-        } else if (teamSide == -1) {
+        } else if (teamSide == 1) {
             team = controller.getGame().getTeams()[1];
         }
         controller.setTeam(team);
@@ -38,5 +33,10 @@ public class PauseSideSelectionMenuAppState extends SideSelectionMenuAppState {
     @Override
     protected void confirm() {
         back();
+    }
+
+    @Override
+    protected void back() {
+        openMenu(PauseIngameMenuAppState.class);
     }
 }

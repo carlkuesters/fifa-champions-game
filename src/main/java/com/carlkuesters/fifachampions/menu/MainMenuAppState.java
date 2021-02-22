@@ -38,7 +38,7 @@ public class MainMenuAppState extends MenuAppState {
         logo.setLocalTranslation(new Vector3f(marginX, totalHeight - logoMarginY, 0));
         guiNode.attachChild(logo);
 
-        menuGroup = new ElementsMenuGroup(() -> {});
+        menuGroup = new ElementsMenuGroup();
         addButton(new Vector3f(marginX, (totalHeight / 2f), 0), "Anstoß", () -> openMenu(InitialSideSelectionMenuAppState.class));
         addButton(new Vector3f(marginX + buttonWidth + buttonsMarginBetween, (totalHeight / 2f), 0), "Einstellungen", () -> System.out.println("Einstellungen"));
         addButton(new Vector3f(marginX, (totalHeight / 2f) - buttonHeight - buttonsMarginBetween, 0), "Test", () -> System.out.println("Test"));
@@ -71,5 +71,10 @@ public class MainMenuAppState extends MenuAppState {
 
     private void closeApplication() {
         System.exit(0);
+    }
+
+    @Override
+    protected void back() {
+        // THere is no back in main menu :)
     }
 }

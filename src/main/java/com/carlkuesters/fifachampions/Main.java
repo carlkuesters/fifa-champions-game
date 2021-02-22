@@ -59,7 +59,7 @@ public class Main extends SimpleApplication {
             generateInitialTeamInfo(1)
         });
         HashMap<Integer, Integer> controllerTeamSides = new HashMap<>();
-        int teamSide = 1;
+        int teamSide = -1;
         for (Joystick joystick : inputManager.getJoysticks()) {
             controllerTeamSides.put(joystick.getJoyId(), teamSide);
             teamSide *= -1;

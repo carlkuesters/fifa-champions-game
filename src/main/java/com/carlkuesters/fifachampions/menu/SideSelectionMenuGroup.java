@@ -1,42 +1,41 @@
 package com.carlkuesters.fifachampions.menu;
 
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class SideSelectionMenuGroup extends MenuGroup {
 
-    public SideSelectionMenuGroup(Runnable back, Function<Integer, Integer> getTeamSide, BiConsumer<Integer, Integer> setTeamSide, Runnable confirm) {
-        super(back);
+    public SideSelectionMenuGroup(Supplier<Integer> getTeamSide, Consumer<Integer> setTeamSide, Runnable confirm) {
         this.getTeamSide = getTeamSide;
         this.setTeamSide = setTeamSide;
         this.confirm = confirm;
     }
-    private Function<Integer, Integer> getTeamSide;
-    private BiConsumer<Integer, Integer> setTeamSide;
+    private Supplier<Integer> getTeamSide;
+    private Consumer<Integer> setTeamSide;
     private Runnable confirm;
 
     @Override
-    public void primaryNavigateLeft(int joyId) {
-        super.primaryNavigateLeft(joyId);
-        switchSide(joyId, 1);
+    public void primaryNavigateLeft() {
+        super.primaryNavigateLeft();
+        switchSide(-1);
     }
 
     @Override
-    public void primaryNavigateRight(int joyId) {
-        super.primaryNavigateRight(joyId);
-        switchSide(joyId, -1);
+    public void primaryNavigateRight() {
+        super.primaryNavigateRight();
+        switchSide(1);
     }
 
-    private void switchSide(int joyId, int direction) {
-        int oldTeamSide = getTeamSide.apply(joyId);
+    private void switchSide(int direction) {
+        int oldTeamSide = getTeamSide.get();
         int newTeamSide = Math.max(-1, Math.min(oldTeamSide + direction, 1));
         if (newTeamSide != oldTeamSide) {
-            setTeamSide.accept(joyId, newTeamSide);
+            setTeamSide.accept(newTeamSide);
         }
     }
 
     @Override
-    public void confirm(int joyId) {
+    public void confirm() {
         confirm.run();
     }
 }

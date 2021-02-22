@@ -11,8 +11,7 @@ import java.util.function.Supplier;
 
 public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
 
-    public FormationMenuGroup(Runnable back, Supplier<Formation> getFormation, Consumer<Formation> setFormation, BiConsumer<MenuElement, MenuElement> swapPlayers) {
-        super(back);
+    public FormationMenuGroup(Supplier<Formation> getFormation, Consumer<Formation> setFormation, BiConsumer<MenuElement, MenuElement> swapPlayers) {
         this.getFormation = getFormation;
         this.setFormation = setFormation;
         this.swapPlayers = swapPlayers;
@@ -25,19 +24,19 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
     private HashMap<MenuElement, Boolean> markedForSwitchElements;
 
     @Override
-    public void secondaryNavigateLeft(int joyId) {
-        super.secondaryNavigateLeft(joyId);
-        CarouselUtil.changeValue(this, joyId, -1);
+    public void secondaryNavigateLeft() {
+        super.secondaryNavigateLeft();
+        CarouselUtil.changeValue(this, -1);
     }
 
     @Override
-    public void secondaryNavigateRight(int joyId) {
-        super.secondaryNavigateRight(joyId);
-        CarouselUtil.changeValue(this, joyId, 1);
+    public void secondaryNavigateRight() {
+        super.secondaryNavigateRight();
+        CarouselUtil.changeValue(this, 1);
     }
 
     @Override
-    public int getCarouselValue(int joyId) {
+    public int getCarouselValue() {
         Formation formation = getFormation.get();
         for (int i = 0; i < Main.FORMATIONS.length; i++) {
             if (formation == Main.FORMATIONS[i]) {
@@ -48,17 +47,17 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
     }
 
     @Override
-    public void setCarouselValue(int joyId, int value) {
+    public void setCarouselValue(int value) {
         setFormation.accept(Main.FORMATIONS[value]);
     }
 
     @Override
-    public int getCarouselMaximumValue(int joyId) {
+    public int getCarouselMaximumValue() {
         return (Main.FORMATIONS.length - 1);
     }
 
     @Override
-    public void confirm(int joyId) {
+    public void confirm() {
         MenuElement activeElement = getActiveElement();
         if (selectedElement == null) {
             setSelectedElement(activeElement);

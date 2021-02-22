@@ -12,8 +12,7 @@ import java.util.LinkedList;
 
 public class ElementsMenuGroup extends MenuGroup {
 
-    public ElementsMenuGroup(Runnable back) {
-        super(back);
+    public ElementsMenuGroup() {
         elements = new LinkedList<>();
         defaultElementBackgroundColors = new HashMap<>();
     }
@@ -39,26 +38,26 @@ public class ElementsMenuGroup extends MenuGroup {
     }
 
     @Override
-    public void primaryNavigateLeft(int joyId) {
-        super.primaryNavigateLeft(joyId);
+    public void primaryNavigateLeft() {
+        super.primaryNavigateLeft();
         primaryNavigate(new Vector3f(-1, 0, 0));
     }
 
     @Override
-    public void primaryNavigateRight(int joyId) {
-        super.primaryNavigateRight(joyId);
+    public void primaryNavigateRight() {
+        super.primaryNavigateRight();
         primaryNavigate(new Vector3f(1, 0, 0));
     }
 
     @Override
-    public void primaryNavigateUp(int joyId) {
-        super.primaryNavigateUp(joyId);
+    public void primaryNavigateUp() {
+        super.primaryNavigateUp();
         primaryNavigate(new Vector3f(0, 1, 0));
     }
 
     @Override
-    public void primaryNavigateDown(int joyId) {
-        super.primaryNavigateDown(joyId);
+    public void primaryNavigateDown() {
+        super.primaryNavigateDown();
         primaryNavigate(new Vector3f(0, -1, 0));
     }
 
@@ -137,11 +136,11 @@ public class ElementsMenuGroup extends MenuGroup {
     }
 
     @Override
-    public void confirm(int joyId) {
+    public void confirm() {
         if (activeElement != null) {
             activeElement.getAction().run();
         } else {
-            super.confirm(joyId);
+            super.confirm();
         }
     }
 }
