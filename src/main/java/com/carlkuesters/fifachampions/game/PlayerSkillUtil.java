@@ -2,7 +2,7 @@ package com.carlkuesters.fifachampions.game;
 
 public class PlayerSkillUtil {
 
-    public static float getValue(int skill, float minimum, float maximum) {
-        return (minimum + ((skill / 100f) * maximum));
+    public static float getValue(float worstValue, float bestValue, int skill) {
+        return (worstValue + ((skill / 100f) * (bestValue - worstValue)));
     }
 }

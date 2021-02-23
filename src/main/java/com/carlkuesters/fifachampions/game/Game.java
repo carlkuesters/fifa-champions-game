@@ -189,20 +189,17 @@ public class Game implements GameLoopListener {
                     if (!goalkeeper.isGoalkeeperJumping()) {
                         PhysicsPrecomputationResult ballInGoalResult = precomputeBallTransformUntilInsideGoal(team);
                         if (ballInGoalResult != null) {
-                            // TODO: Minimum time depending on player skill
-                            float reactionTime = 0.25f;
+                            float reactionTime = PlayerSkillUtil.getValue(1, 0.2f, goalkeeper.getPlayer().getGoalkeeperSkills().getReflexes());
                             if (ballInGoalResult.getPassedTime() < 1) {
                                 Vector3f goalLinePosition = ballInGoalResult.getPosition().clone();
                                 goalLinePosition.setX(-1 * getHalfTimeSideFactor() * team.getSide() * FIELD_HALF_WIDTH);
-                                // TODO: Depending on player skill
-                                float maximumWrongPositionPrediction = 1.2f;
+                                float maximumWrongPositionPrediction = PlayerSkillUtil.getValue(2, 1, goalkeeper.getPlayer().getGoalkeeperSkills().getAgility());
                                 float wrongPredictionY = (FastMath.nextRandomFloat() * maximumWrongPositionPrediction);
                                 float wrongPredictionZ = (FastMath.nextRandomFloat() * maximumWrongPositionPrediction);
                                 goalLinePosition.addLocal(0, wrongPredictionY, wrongPredictionZ);
                                 GoalkeeperJump goalkeeperJump = goalkeeper.getGoalkeeperJump(goalLinePosition, ballInGoalResult.getPassedTime());
 
-                                // TODO: Depending on player skill
-                                float maximumJumpStrength = 20;
+                                float maximumJumpStrength = PlayerSkillUtil.getValue(5, 20, goalkeeper.getPlayer().getGoalkeeperSkills().getJumpStrength());
                                 // Last effort jump at maximum jump strength for visual effect
                                 if (ballInGoalResult.getPassedTime() < reactionTime) {
                                     goalkeeperJump.getInitialVelocity().normalizeLocal().multLocal(maximumJumpStrength);
