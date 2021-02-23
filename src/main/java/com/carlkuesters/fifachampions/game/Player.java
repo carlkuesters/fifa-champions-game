@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class Player {
     private String name;
-    private String position;
+    private PlayerPosition position;
     private FieldPlayerSkills fieldPlayerSkills;
     private GoalkeeperSkills goalkeeperSkills;
 }

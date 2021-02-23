@@ -2,6 +2,7 @@ package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.game.Formation;
 import com.carlkuesters.fifachampions.game.Player;
+import com.carlkuesters.fifachampions.game.PlayerPosition;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
@@ -246,7 +247,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
     private void updateFieldPlayer(int teamIndex, int playerIndex, Player player, boolean markedForSwitch, Vector2f formationLocation) {
         String name = player.getName();
-        int skill = player.getFieldPlayerSkills().getAverageSkill();
+        int skill = ((playerIndex == 0) ? player.getGoalkeeperSkills().getAverageSkill() : player.getFieldPlayerSkills().getAverageSkill());
 
         FieldPlayerContainer fieldPlayerContainer = fieldPlayers[teamIndex][playerIndex];
         fieldPlayerContainer.getLblName().setText(name);
@@ -291,11 +292,11 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
     private void updateReservePlayer(int teamIndex, int playerIndex, Player player, boolean markedForSwitch) {
         String name = player.getName();
-        String position = player.getPosition();
-        int skill = player.getFieldPlayerSkills().getAverageSkill();
+        PlayerPosition position = player.getPosition();
+        int skill = ((position == PlayerPosition.TW) ? player.getGoalkeeperSkills().getAverageSkill() : player.getFieldPlayerSkills().getAverageSkill());
 
         ReservePlayerContainer reservePlayerContainer = reservePlayers[teamIndex][playerIndex];
-        reservePlayerContainer.getLblPosition().setText(position);
+        reservePlayerContainer.getLblPosition().setText(position.name());
         reservePlayerContainer.getLblSkill().setText("" + skill);
         reservePlayerContainer.getLblName().setText(name);
 
