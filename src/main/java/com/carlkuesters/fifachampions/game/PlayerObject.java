@@ -288,6 +288,10 @@ public class PlayerObject extends PhysicsObject {
         return controller;
     }
 
+    public boolean isGoalkeeper() {
+        return (this == team.getGoalkeeper());
+    }
+
     public void setTargetLocation(Vector2f targetLocation) {
         if (targetLocation == null) {
             this.targetLocation = null;

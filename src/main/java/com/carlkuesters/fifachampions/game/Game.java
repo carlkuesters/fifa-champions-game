@@ -457,7 +457,7 @@ public class Game implements GameLoopListener {
         float minimumDistanceToBallSquared = Float.MAX_VALUE;
         SwitchToPlayerCooldown switchToNearestPlayerCooldown = null;
         for (PlayerObject playerObject : controller.getTeam().getPlayers()) {
-            if ((playerObject.getController() == null) && (!(playerObject.getPlayer() instanceof Goalkeeper))) {
+            if ((playerObject.getController() == null) && (!playerObject.isGoalkeeper())) {
                 SwitchToPlayerCooldown switchToPlayerCooldown = new SwitchToPlayerCooldown(playerObject);
                 if (cooldownManager.isNotOnCooldown(switchToPlayerCooldown)) {
                     float distanceToBallSquared = playerObject.getPosition().distanceSquared(ball.getPosition());

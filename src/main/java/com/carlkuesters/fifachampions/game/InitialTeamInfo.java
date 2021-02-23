@@ -1,6 +1,6 @@
 package com.carlkuesters.fifachampions.game;
 
-import com.carlkuesters.fifachampions.Main;
+import com.carlkuesters.fifachampions.game.content.Teams;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +25,6 @@ public class InitialTeamInfo {
     }
 
     public TeamInfo getTeamInfo() {
-        return Main.TEAMS[teamIndex];
+        return Teams.TEAMS[teamIndex];
     }
 }

@@ -143,7 +143,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         topRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
         topRow.setBackground(null);
 
-        Label lblPosition = new Label("XX");
+        Label lblPosition = new Label("");
         lblPosition.setTextHAlignment(HAlignment.Center);
         lblPosition.setTextVAlignment(VAlignment.Center);
         lblPosition.setFontSize(12);
@@ -157,7 +157,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         playerImage.setBackground(playerIcon);
         topRow.addChild(playerImage);
 
-        Label lblSkill = new Label("99");
+        Label lblSkill = new Label("");
         lblSkill.setTextHAlignment(HAlignment.Center);
         lblSkill.setTextVAlignment(VAlignment.Center);
         lblSkill.setFontSize(12);
@@ -165,7 +165,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
         container.addChild(topRow);
 
-        Label lblName = new Label("XXXXXX");
+        Label lblName = new Label("");
         lblName.setTextHAlignment(HAlignment.Center);
         lblName.setTextVAlignment(VAlignment.Center);
         lblName.setFontSize(12);
@@ -185,7 +185,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         topRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
         topRow.setBackground(null);
 
-        Label lblSkill = new Label("99");
+        Label lblSkill = new Label("");
         lblSkill.setPreferredSize(new Vector3f(formationLeftAndRightColumnWidth, 0, 0));
         lblSkill.setTextHAlignment(HAlignment.Center);
         lblSkill.setTextVAlignment(VAlignment.Bottom);
@@ -206,7 +206,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
         container.addChild(topRow);
 
-        Label lblName = new Label("Playername");
+        Label lblName = new Label("");
         lblName.setTextHAlignment(HAlignment.Center);
         lblName.setTextVAlignment(VAlignment.Center);
         lblName.setFontSize(12);
@@ -246,7 +246,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
     private void updateFieldPlayer(int teamIndex, int playerIndex, Player player, boolean markedForSwitch, Vector2f formationLocation) {
         String name = player.getName();
-        int skill = 99;
+        int skill = player.getFieldPlayerSkills().getAverageSkill();
 
         FieldPlayerContainer fieldPlayerContainer = fieldPlayers[teamIndex][playerIndex];
         fieldPlayerContainer.getLblName().setText(name);
@@ -291,8 +291,8 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
     private void updateReservePlayer(int teamIndex, int playerIndex, Player player, boolean markedForSwitch) {
         String name = player.getName();
-        String position = "XX";
-        int skill = 99;
+        String position = player.getPosition();
+        int skill = player.getFieldPlayerSkills().getAverageSkill();
 
         ReservePlayerContainer reservePlayerContainer = reservePlayers[teamIndex][playerIndex];
         reservePlayerContainer.getLblPosition().setText(position);

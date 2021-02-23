@@ -1,7 +1,7 @@
 package com.carlkuesters.fifachampions.menu;
 
-import com.carlkuesters.fifachampions.Main;
 import com.carlkuesters.fifachampions.game.Formation;
+import com.carlkuesters.fifachampions.game.content.Formations;
 import com.jme3.math.ColorRGBA;
 
 import java.util.HashMap;
@@ -38,8 +38,8 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
     @Override
     public int getCarouselValue() {
         Formation formation = getFormation.get();
-        for (int i = 0; i < Main.FORMATIONS.length; i++) {
-            if (formation == Main.FORMATIONS[i]) {
+        for (int i = 0; i < Formations.FORMATIONS.length; i++) {
+            if (formation == Formations.FORMATIONS[i]) {
                 return i;
             }
         }
@@ -48,12 +48,12 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
 
     @Override
     public void setCarouselValue(int value) {
-        setFormation.accept(Main.FORMATIONS[value]);
+        setFormation.accept(Formations.FORMATIONS[value]);
     }
 
     @Override
     public int getCarouselMaximumValue() {
-        return (Main.FORMATIONS.length - 1);
+        return (Formations.FORMATIONS.length - 1);
     }
 
     @Override

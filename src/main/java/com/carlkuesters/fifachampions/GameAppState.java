@@ -183,7 +183,7 @@ public class GameAppState extends BaseDisplayAppState {
 
     private PlayerVisual createPlayerVisual(PlayerObject playerObject) {
         PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager());
-        String trikotName = ((playerObject.getPlayer() instanceof Goalkeeper) ? "thinstripes" : playerObject.getTeam().getTrikotName());
+        String trikotName = (playerObject.isGoalkeeper() ? "thinstripes" : playerObject.getTeam().getTrikotName());
         playerVisual.setTrikot(trikotName);
         playerVisuals.put(playerObject, playerVisual);
         return playerVisual;

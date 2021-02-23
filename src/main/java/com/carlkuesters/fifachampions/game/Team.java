@@ -62,7 +62,7 @@ public class Team {
             if (players[i] == playerObject) {
                 Vector2f formationLocation = getIdealLocation_FormationOnly(i);
                 Vector2f idealLocation = new Vector2f(formationLocation);
-                if (!(playerObject.getPlayer() instanceof Goalkeeper)) {
+                if (!playerObject.isGoalkeeper()) {
 
                     boolean isBallOwned = (game.getBall().getOwner() != null);
                     boolean isBallAllied = (isBallOwned && (game.getBall().getOwner().getTeam() == this));

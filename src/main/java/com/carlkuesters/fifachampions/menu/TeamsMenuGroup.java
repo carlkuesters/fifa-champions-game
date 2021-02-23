@@ -1,7 +1,7 @@
 package com.carlkuesters.fifachampions.menu;
 
-import com.carlkuesters.fifachampions.Main;
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
+import com.carlkuesters.fifachampions.game.content.Teams;
 
 public class TeamsMenuGroup extends GameCreationCarouselMenuGroup {
 
@@ -22,6 +22,6 @@ public class TeamsMenuGroup extends GameCreationCarouselMenuGroup {
 
     @Override
     public int getCarouselMaximumValue() {
-        return (Main.TEAMS.length - 1);
+        return (Teams.TEAMS.length - 1);
     }
 }
