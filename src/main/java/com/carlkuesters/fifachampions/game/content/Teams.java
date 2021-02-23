@@ -2,7 +2,7 @@ package com.carlkuesters.fifachampions.game.content;
 
 import com.carlkuesters.fifachampions.game.Player;
 import com.carlkuesters.fifachampions.game.TeamInfo;
-import com.carlkuesters.fifachampions.game.formations.Formation442;
+import com.carlkuesters.fifachampions.game.content.formations.Formation442;
 
 import static com.carlkuesters.fifachampions.game.content.Players.*;
 

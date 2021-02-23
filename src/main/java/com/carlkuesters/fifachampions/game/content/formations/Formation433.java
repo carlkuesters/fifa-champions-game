@@ -1,4 +1,4 @@
-package com.carlkuesters.fifachampions.game.formations;
+package com.carlkuesters.fifachampions.game.content.formations;
 
 import com.carlkuesters.fifachampions.game.Formation;
 import com.jme3.math.Vector2f;
