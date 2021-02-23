@@ -172,13 +172,14 @@ public class Game implements GameLoopListener {
                         } else {
                             FightCooldown fightCooldown = new FightCooldown(ball.getOwner(), playerNearBall);
                             if (cooldownManager.isNotOnCooldown(fightCooldown)) {
-                                PlayerObject ballWinner = (Math.random() < 0.5 ? ball.getOwner() : playerNearBall);
-
-                                // TESTING: Team #0 always wins
-                                ballWinner = ((ball.getOwner().getTeam().getSide() == 1) ? ball.getOwner() : playerNearBall);
-
-                                cooldownManager.putOnCooldown(fightCooldown);
+                                boolean isBallOwnerWinning = PlayerSkillUtil.isWinning(
+                                    ball.getOwner().getPlayer(),
+                                    playerNearBall.getPlayer(),
+                                    player -> player.getFieldPlayerSkills().getFootDuel()
+                                );
+                                PlayerObject ballWinner = (isBallOwnerWinning ? ball.getOwner() : playerNearBall);
                                 ball.setOwner(ballWinner, false);
+                                cooldownManager.putOnCooldown(fightCooldown);
                             }
                         }
                     }

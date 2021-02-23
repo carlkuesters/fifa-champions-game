@@ -8,7 +8,7 @@ import lombok.Getter;
 public class FieldPlayerSkills {
 
     private int acceleration;
-    private int maximumVelocity;
+    private int maximumSpeed;
     private int stamina;
     private int ballControl;
     private int shootingStrength;
@@ -18,6 +18,6 @@ public class FieldPlayerSkills {
     private int tricks;
 
     public int getAverageSkill() {
-        return ((acceleration + maximumVelocity + stamina + ballControl + shootingStrength + shootingAccuracy + footDuel + headerDuel + tricks) / 9);
+        return ((acceleration + maximumSpeed + stamina + ballControl + shootingStrength + shootingAccuracy + footDuel + headerDuel + tricks) / 9);
     }
 }

@@ -48,7 +48,15 @@ public class PlayerObject extends PhysicsObject {
             Vector2f effectiveTargetLocation = targetLocation;
             float oldTargetDistanceSquared = Float.MAX_VALUE;
             if ((remainingFallingDuration == 0) && (!isGoalkeeperJumping)) {
-                float speed = ((forcedSpeed != null) ? forcedSpeed : (isSprinting ? 10 : 6));
+                float speed;
+                if (forcedSpeed != null) {
+                    speed = forcedSpeed;
+                } else {
+                    speed = PlayerSkillUtil.getValue(3, 6, player.getFieldPlayerSkills().getMaximumSpeed());
+                    if (isSprinting) {
+                        speed *= 1.667f;
+                    }
+                }
                 boolean wantsToMove = true;
                 if (isPressuring) {
                     Vector3f ballPosition = game.getBall().getPosition();
@@ -150,7 +158,7 @@ public class PlayerObject extends PhysicsObject {
     }
 
     public void shoot(float strength) {
-        float effectiveStrength = (18 + (11 * strength));
+        float effectiveStrength = (18 + (strength * PlayerSkillUtil.getValue(0, 11, player.getFieldPlayerSkills().getShootingStrength())));
         float effectiveSlope = (2 + (11 * strength));
         Vector3f ballVelocity = getDirection().mult(effectiveStrength).addLocal(0, effectiveSlope, 0);
         shoot(ballVelocity);
@@ -162,7 +170,7 @@ public class PlayerObject extends PhysicsObject {
     }
 
     public void header(float strength) {
-        float effectiveStrength = (14 + (9 * strength));
+        float effectiveStrength = (14 + (strength * PlayerSkillUtil.getValue(0, 9, player.getFieldPlayerSkills().getShootingStrength())));
         Vector3f ballVelocity = getDirection().mult(effectiveStrength);
         accelerateBall(ballVelocity, true);
     }
@@ -170,7 +178,7 @@ public class PlayerObject extends PhysicsObject {
     public void flank(float strength) {
         game.continueFromBallSituation();
         Vector3f passDirection = getPreparedPassDirection(0);
-        float effectiveStrength = (12 + (12 * strength));
+        float effectiveStrength = (12 + (strength * PlayerSkillUtil.getValue(0, 12, player.getFieldPlayerSkills().getShootingStrength())));
         float effectiveSlope = (5 + (6 * strength));
         Vector3f ballVelocity = passDirection.mult(effectiveStrength).add(0, effectiveSlope, 0);
         accelerateBall(ballVelocity, true);
