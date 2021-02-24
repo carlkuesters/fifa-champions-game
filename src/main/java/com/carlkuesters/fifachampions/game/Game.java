@@ -121,8 +121,8 @@ public class Game implements GameLoopListener {
                             if (!playerNearStraddler.isFalling()) {
                                 playerNearStraddler.collapse();
                                 if (playerNearStraddler.getTeam() != straddler.getTeam()) {
-                                    boolean isFoul = (Math.random() < 0.5);
-                                    if (isFoul) {
+                                    float foulChance = PlayerSkillUtil.getValue(0.9f, 0.5f, straddler.getPlayer().getFieldPlayerSkills().getFootDuel());
+                                    if (Math.random() < foulChance) {
                                         // TESTING: Turn around foul
                                         PlayerObject tmp = straddler;
                                         straddler = playerNearStraddler;
