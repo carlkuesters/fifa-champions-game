@@ -17,13 +17,14 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     private int containerMarginBetween = 400;
     private int containerY;
     private int containerWidth;
-    private int playerImageBigHeight = 60;
+    private int playerDetailsImageSize = 60;
     private int formationLeftAndRightColumnWidth = 25;
     private int formationTrikotImageSize = 30;
     private FormationMenuGroup[] menuGroups = new FormationMenuGroup[2];
+    private PlayerDetailsContainer[][] playerDetails = new PlayerDetailsContainer[2][2];
     private FieldPlayerContainer[][] fieldPlayers = new FieldPlayerContainer[2][11];
-    private ReservePlayerContainer[][] reservePlayers = new ReservePlayerContainer[2][20];
     private HashMap<MenuElement, Integer> fieldPlayerElementIndices = new HashMap<>();
+    private ReservePlayerContainer[][] reservePlayers = new ReservePlayerContainer[2][20];
     private HashMap<MenuElement, Integer> reservePlayerElementIndices = new HashMap<>();
 
     @Override
@@ -44,6 +45,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
                 setFormation(teamIndex, formation);
                 updateFieldPlayers(teamIndex);
             },
+            selectedElement -> updatePlayerDetails(teamIndex, selectedElement, 1),
             (element1, element2) -> swapPlayers(teamIndex, element1, element2)
         );
         menuGroups[teamIndex] = menuGroup;
@@ -56,10 +58,15 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         playerDetailsRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
         playerDetailsRow.setBackground(null);
 
-        Container containerPlayerDetailsLeft = createPlayerDetailsBig();
-        playerDetailsRow.addChild(containerPlayerDetailsLeft);
-        Container containerPlayerDetailsRight = createPlayerDetailsBig();
-        playerDetailsRow.addChild(containerPlayerDetailsRight);
+        PlayerDetailsContainer playerDetailsLeft = createPlayerDetails();
+        playerDetailsRow.addChild(playerDetailsLeft.getContainer());
+        playerDetails[teamIndex][0] = playerDetailsLeft;
+        updatePlayerDetails(teamIndex, 0, null, false);
+
+        PlayerDetailsContainer playerDetailsRight = createPlayerDetails();
+        playerDetailsRow.addChild(playerDetailsRight.getContainer());
+        playerDetails[teamIndex][1] = playerDetailsRight;
+        updatePlayerDetails(teamIndex, 1, null, false);
 
         container.addChild(playerDetailsRow);
 
@@ -77,9 +84,11 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
             reservePlayersRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
             reservePlayersRow.setBackground(null);
             for (int x = 0; x < 5; x++) {
-                ReservePlayerContainer reservePlayerContainer = createReservePlayer(menuGroup);
+                ReservePlayerContainer reservePlayerContainer = createReservePlayer();
                 reservePlayersRow.addChild(reservePlayerContainer.getContainer());
                 reservePlayers[teamIndex][reservePlayerIndex] = reservePlayerContainer;
+                reservePlayerElementIndices.put(reservePlayerContainer.getMenuElement(), reservePlayerIndex);
+                menuGroup.addElement(reservePlayerContainer.getMenuElement());
                 reservePlayerIndex++;
             }
             reservePlayersContainer.addChild(reservePlayersRow);
@@ -89,9 +98,11 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         guiNode.attachChild(container);
 
         for (int i = 0; i < fieldPlayers[teamIndex].length; i++) {
-            FieldPlayerContainer fieldPlayerContainer = createFieldPlayer(menuGroup);
+            FieldPlayerContainer fieldPlayerContainer = createFieldPlayer();
             guiNode.attachChild(fieldPlayerContainer.getContainer());
             fieldPlayers[teamIndex][i] = fieldPlayerContainer;
+            fieldPlayerElementIndices.put(fieldPlayerContainer.getMenuElement(), i);
+            menuGroup.addElement(fieldPlayerContainer.getMenuElement());
         }
 
         addMenuGroup(menuGroup);
@@ -105,13 +116,13 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         return containerX;
     }
 
-    private Container createPlayerDetailsBig() {
+    private PlayerDetailsContainer createPlayerDetails() {
         Container container = new Container();
         container.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
 
         Panel playerImage = new Panel();
         IconComponent playerIcon = new IconComponent("textures/player_face.png");
-        playerIcon.setIconSize(new Vector2f(playerImageBigHeight, playerImageBigHeight));
+        playerIcon.setIconSize(new Vector2f(playerDetailsImageSize, playerDetailsImageSize));
         playerIcon.setHAlignment(HAlignment.Center);
         playerIcon.setVAlignment(VAlignment.Center);
         playerImage.setBackground(playerIcon);
@@ -119,25 +130,28 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
         Container skillsColumn = new Container();
         skillsColumn.setBackground(null);
-        for (int y = 0; y < 3; y++) {
+        Label[][] lblSkills = new Label[3][3];
+        for (int y = 0; y < lblSkills.length; y++) {
             Container skillsRow = new Container();
             skillsRow.setBackground(null);
             skillsRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
-            for (int x = 0; x < 3; x++) {
-                Label lblSkill = new Label("XXX: 99");
+            for (int x = 0; x < lblSkills[y].length; x++) {
+                // Use this placeholder text, so the hidden right side has width and the layout isn't messed up
+                Label lblSkill = new Label("XXX: XX");
                 lblSkill.setTextHAlignment(HAlignment.Center);
                 lblSkill.setTextVAlignment(VAlignment.Center);
                 lblSkill.setFontSize(12);
                 skillsRow.addChild(lblSkill);
+                lblSkills[y][x] = lblSkill;
             }
             skillsColumn.addChild(skillsRow);
         }
         container.addChild(skillsColumn);
 
-        return container;
+        return new PlayerDetailsContainer(container, lblSkills);
     }
 
-    private ReservePlayerContainer createReservePlayer(FormationMenuGroup menuGroup) {
+    private ReservePlayerContainer createReservePlayer() {
         Container container = new Container();
 
         Container topRow = new Container();
@@ -173,12 +187,11 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         container.addChild(lblName);
 
         MenuElement menuElement = new MenuElement(container, this::confirm);
-        menuGroup.addElement(menuElement);
 
         return new ReservePlayerContainer(container, lblPosition, lblSkill, lblName, menuElement);
     }
 
-    private FieldPlayerContainer createFieldPlayer(FormationMenuGroup menuGroup) {
+    private FieldPlayerContainer createFieldPlayer() {
         Container container = new Container();
         container.setBackground(null);
 
@@ -214,7 +227,6 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         container.addChild(lblName);
 
         MenuElement menuElement = new MenuElement(container, this::confirm);
-        menuGroup.addElement(menuElement);
 
         return new FieldPlayerContainer(container, lblSkill, lblName, menuElement);
     }
@@ -228,9 +240,59 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         super.setEnabled(enabled);
         if (enabled) {
             for (int teamIndex = 0; teamIndex < 2; teamIndex++) {
+                int _teamIndex = teamIndex;
+                menuGroups[teamIndex].setOnElementHovered(element -> updatePlayerDetails(_teamIndex, element, 0));
                 updateFieldPlayers(teamIndex);
                 updateReservePlayers(teamIndex);
             }
+        }
+    }
+
+    private void updatePlayerDetails(int teamIndex, MenuElement menuElement, int detailsIndex) {
+        Player player = null;
+        boolean useGoalkeeperStats = false;
+        if (menuElement != null) {
+            Integer fieldPlayerIndex = fieldPlayerElementIndices.get(menuElement);
+            if (fieldPlayerIndex != null) {
+                player = getPlayer(getFieldPlayers(teamIndex)[fieldPlayerIndex]);
+                useGoalkeeperStats = (fieldPlayerIndex == 0);
+            } else {
+                int reservePlayerIndex = reservePlayerElementIndices.get(menuElement);
+                player = getPlayer(getReservePlayers(teamIndex)[reservePlayerIndex]);
+                useGoalkeeperStats = (player.getPosition() == PlayerPosition.TW);
+            }
+        }
+        updatePlayerDetails(teamIndex, detailsIndex, player, useGoalkeeperStats);
+    }
+
+    private void updatePlayerDetails(int teamIndex, int detailsIndex, Player player, boolean useGoalkeeperStats) {
+        PlayerDetailsContainer playerDetailsContainer = playerDetails[teamIndex][detailsIndex];
+        Label[][] lblSkills = playerDetailsContainer.getLblSkills();
+        if (player != null) {
+            if (useGoalkeeperStats) {
+                lblSkills[0][0].setText("BEW: " + player.getGoalkeeperSkills().getAgility());
+                lblSkills[0][1].setText("SPR: " + player.getGoalkeeperSkills().getJumpStrength());
+                lblSkills[0][2].setText("REF: " + player.getGoalkeeperSkills().getReflexes());
+                lblSkills[1][0].setText("FST: " + player.getGoalkeeperSkills().getBallCling());
+                lblSkills[1][1].setText("");
+                lblSkills[1][2].setText("");
+                lblSkills[2][0].setText("");
+                lblSkills[2][1].setText("");
+                lblSkills[2][2].setText("");
+            } else {
+                lblSkills[0][0].setText("BES: " + player.getFieldPlayerSkills().getAcceleration());
+                lblSkills[0][1].setText("GES: " + player.getFieldPlayerSkills().getMaximumSpeed());
+                lblSkills[0][2].setText("KND: " + player.getFieldPlayerSkills().getStamina());
+                lblSkills[1][0].setText("BKT: " + player.getFieldPlayerSkills().getBallControl());
+                lblSkills[1][1].setText("SST; " + player.getFieldPlayerSkills().getShootingStrength());
+                lblSkills[1][2].setText("SGN: " + player.getFieldPlayerSkills().getShootingAccuracy());
+                lblSkills[2][0].setText("ZWK: " + player.getFieldPlayerSkills().getFootDuel());
+                lblSkills[2][1].setText("KOP: " + player.getFieldPlayerSkills().getHeaderDuel());
+                lblSkills[2][2].setText("TRK: " + player.getFieldPlayerSkills().getTricks());
+            }
+            playerDetailsContainer.getContainer().setAlpha(1);
+        } else {
+            playerDetailsContainer.getContainer().setAlpha(0);
         }
     }
 
@@ -257,8 +319,6 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         fieldPlayerContainer.getContainer().setLocalTranslation(x, y, 1);
 
         menuGroups[teamIndex].setMarkedForSwitch(fieldPlayerContainer.getMenuElement(), markedForSwitch);
-
-        fieldPlayerElementIndices.put(fieldPlayerContainer.getMenuElement(), playerIndex);
     }
 
     private float getFormationPlayerX(int teamIndex, float formationY) {
@@ -270,7 +330,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     }
 
     private float getFormationPlayerY(float formationX) {
-        int startY = (containerY - playerImageBigHeight);
+        int startY = (containerY - playerDetailsImageSize);
         int maximumDistanceY = (containerWidth - (formationTrikotImageSize + 20));
         float progressY = (1 - ((formationX + 1) / 2));
         return (startY - (progressY * maximumDistanceY));
@@ -301,8 +361,6 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         reservePlayerContainer.getLblName().setText(name);
 
         menuGroups[teamIndex].setMarkedForSwitch(reservePlayerContainer.getMenuElement(), markedForSwitch);
-
-        reservePlayerElementIndices.put(reservePlayerContainer.getMenuElement(), playerIndex);
     }
 
     private void swapPlayers(int teamIndex, MenuElement element1, MenuElement element2) {

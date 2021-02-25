@@ -11,16 +11,19 @@ import java.util.function.Supplier;
 
 public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
 
-    public FormationMenuGroup(Supplier<Formation> getFormation, Consumer<Formation> setFormation, BiConsumer<MenuElement, MenuElement> swapPlayers) {
+    public FormationMenuGroup(Supplier<Formation> getFormation, Consumer<Formation> setFormation, Consumer<MenuElement> onElementSelected, BiConsumer<MenuElement, MenuElement> swapPlayers) {
         this.getFormation = getFormation;
         this.setFormation = setFormation;
         this.swapPlayers = swapPlayers;
+        this.onElementSelected = onElementSelected;
         markedForSwitchElements = new HashMap<>();
     }
     private Supplier<Formation> getFormation;
     private Consumer<Formation> setFormation;
     private MenuElement selectedElement;
     private BiConsumer<MenuElement, MenuElement> swapPlayers;
+    private Consumer<MenuElement> onElementSelected;
+    private Consumer<MenuElement> onElementHovered;
     private HashMap<MenuElement, Boolean> markedForSwitchElements;
 
     @Override
@@ -56,6 +59,22 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
         return (Formations.FORMATIONS.length - 1);
     }
 
+    public void setOnElementHovered(Consumer<MenuElement> onElementHovered) {
+        this.onElementHovered = onElementHovered;
+        MenuElement activeElement = getActiveElement();
+        if (activeElement != null) {
+            onElementHovered.accept(activeElement);
+        }
+    }
+
+    @Override
+    public void setActiveElement(MenuElement newActiveElement) {
+        super.setActiveElement(newActiveElement);
+        if (onElementHovered != null) {
+            onElementHovered.accept(newActiveElement);
+        }
+    }
+
     @Override
     public void confirm() {
         MenuElement activeElement = getActiveElement();
@@ -78,6 +97,7 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
         if (selectedElement != null) {
             updateBackgroundColor(selectedElement);
         }
+        onElementSelected.accept(selectedElement);
     }
 
     @Override

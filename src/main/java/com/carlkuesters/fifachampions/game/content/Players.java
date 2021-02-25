@@ -10,7 +10,7 @@ public class Players {
 
     public static final Player TIMO = new Player(
         "Timo", ST,
-        new FieldPlayerSkills(85, 90, 88, 88, 94, 92, 90, 86, 83),
+        new FieldPlayerSkills(85, 89, 88, 88, 94, 92, 90, 86, 83),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player CARL = new Player(
