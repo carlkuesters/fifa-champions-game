@@ -19,7 +19,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     private int containerWidth;
     private int playerDetailsImageSize = 60;
     private int formationLeftAndRightColumnWidth = 25;
-    private int formationTrikotImageSize = 30;
+    private int formationTrikotImageSize = 40;
     private FormationMenuGroup[] menuGroups = new FormationMenuGroup[2];
     private PlayerDetailsContainer[][] playerDetails = new PlayerDetailsContainer[2][2];
     private FieldPlayerContainer[][] fieldPlayers = new FieldPlayerContainer[2][11];
@@ -203,7 +203,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         lblSkill.setPreferredSize(new Vector3f(formationLeftAndRightColumnWidth, 0, 0));
         lblSkill.setTextHAlignment(HAlignment.Center);
         lblSkill.setTextVAlignment(VAlignment.Bottom);
-        lblSkill.setFontSize(12);
+        lblSkill.setFontSize(14);
         topRow.addChild(lblSkill);
 
         Panel trikotImage = new Panel();
@@ -223,7 +223,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         Label lblName = new Label("");
         lblName.setTextHAlignment(HAlignment.Center);
         lblName.setTextVAlignment(VAlignment.Center);
-        lblName.setFontSize(12);
+        lblName.setFontSize(14);
         container.addChild(lblName);
 
         MenuElement menuElement = new MenuElement(container, this::confirm);
@@ -330,8 +330,11 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     }
 
     private float getFormationPlayerY(float formationX) {
-        int startY = (containerY - playerDetailsImageSize);
-        int maximumDistanceY = (containerWidth - (formationTrikotImageSize + 20));
+        // - 6 because of visual aesthetics
+        int startY = (containerY - (playerDetailsImageSize - 6));
+        // + 20 because of the player name below the image
+        // + 2 because of visual aesthetics
+        int maximumDistanceY = (containerWidth - (formationTrikotImageSize + 20 + 2));
         float progressY = (1 - ((formationX + 1) / 2));
         return (startY - (progressY * maximumDistanceY));
     }
