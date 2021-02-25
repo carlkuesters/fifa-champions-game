@@ -13,15 +13,15 @@ public class Teams {
         new String[] { "amaranth", "red", "striped", "thinstripes", "yellow" },
         new Player[] {
             TIMO,
-            CARL, CARL, CARL, CARL,
-            STEFFEN, STEFFEN, STEFFEN, STEFFEN,
-            TIMO, TIMO
+            SAMY, MARCO, MARKUS, CARL,
+            STEFFEN, FELIX, JANNIK, DENNIS,
+            TIMO, MIRCO
         },
         new Player[] {
-            TIMO, TIMO, TIMO, TIMO, TIMO,
-            TIMO, TIMO, TIMO, TIMO, TIMO,
-            TIMO, TIMO, TIMO, TIMO, TIMO,
-            TIMO, TIMO, TIMO, TIMO, TIMO,
+            ANDI_HUG, FABI_HUCK, FABIAN_KERN, MARIA, MATZE,
+            STEFAN, ANSELM, LUDIN, ALEX, OTT,
+            O2, ANDI_FRITZ, MARTIN, SCHLATTI, FRIEDRICH,
+            TOBI, CHRIS, FABIAN_BUNGUS, MIMI, PHILIPP,
         },
         new Formation442()
     );

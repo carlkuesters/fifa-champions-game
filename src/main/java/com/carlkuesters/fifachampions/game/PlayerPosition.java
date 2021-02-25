@@ -6,7 +6,9 @@ public enum PlayerPosition {
     IV,
     RV,
     LM,
+    ZDM,
     ZM,
+    ZOM,
     RM,
     ST
 }

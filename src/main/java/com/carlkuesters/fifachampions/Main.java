@@ -42,8 +42,8 @@ public class Main extends SimpleApplication {
 
         gameCreationInfo = new GameCreationInfo();
         gameCreationInfo.setTeams(new InitialTeamInfo[] {
-            generateInitialTeamInfo(0),
-            generateInitialTeamInfo(1)
+            generateInitialTeamInfo(),
+            generateInitialTeamInfo()
         });
         HashMap<Integer, Integer> controllerTeamSides = new HashMap<>();
         int teamSide = -1;
@@ -80,9 +80,9 @@ public class Main extends SimpleApplication {
         stateManager.attach(new MainMenuAppState());
     }
 
-    private InitialTeamInfo generateInitialTeamInfo(int teamIndex) {
+    private InitialTeamInfo generateInitialTeamInfo() {
         InitialTeamInfo initialTeamInfo = new InitialTeamInfo();
-        initialTeamInfo.setTeam(teamIndex);
+        initialTeamInfo.setTeam(0);
         return initialTeamInfo;
     }
 }
