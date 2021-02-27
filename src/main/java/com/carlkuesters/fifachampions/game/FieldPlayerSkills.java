@@ -18,6 +18,6 @@ public class FieldPlayerSkills {
     private int tricks;
 
     public int getAverageSkill() {
-        return ((acceleration + maximumSpeed + stamina + ballControl + shootingStrength + shootingAccuracy + footDuel + headerDuel + tricks) / 9);
+        return PlayerSkillUtil.getAverage(acceleration, maximumSpeed, stamina, ballControl, shootingStrength, shootingAccuracy, footDuel, headerDuel, tricks);
     }
 }

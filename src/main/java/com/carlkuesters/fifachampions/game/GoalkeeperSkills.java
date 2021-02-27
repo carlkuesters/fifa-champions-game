@@ -13,6 +13,6 @@ public class GoalkeeperSkills {
     private int ballCling;
 
     public int getAverageSkill() {
-        return ((agility + jumpStrength + reflexes + ballCling) / 4);
+        return PlayerSkillUtil.getAverage(agility, jumpStrength, reflexes, ballCling);
     }
 }

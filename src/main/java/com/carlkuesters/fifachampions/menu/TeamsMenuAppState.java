@@ -1,6 +1,5 @@
 package com.carlkuesters.fifachampions.menu;
 
-import com.carlkuesters.fifachampions.game.InitialTeamInfo;
 import com.carlkuesters.fifachampions.game.TeamInfo;
 import com.jme3.math.Vector2f;
 import com.simsilica.lemur.*;
@@ -8,7 +7,10 @@ import com.simsilica.lemur.component.IconComponent;
 
 public class TeamsMenuAppState extends MenuAppState {
 
-    private Label[] lblTeamNames = new Label[2];
+    private Label[] lblsTeamName = new Label[2];
+    private Label[] lblsOffense = new Label[2];
+    private Label[] lblsMiddlefield = new Label[2];
+    private Label[] lblsDefense = new Label[2];
 
     @Override
     protected void initMenu() {
@@ -19,9 +21,6 @@ public class TeamsMenuAppState extends MenuAppState {
 
     private void addSide(int side) {
         int teamIndex = ((side + 1) / 2);
-
-        InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
-        TeamInfo teamInfo = initialTeamInfo.getTeamInfo();
 
         int containerMarginOutside = 150;
         int containerMarginBetween = 400;
@@ -34,10 +33,10 @@ public class TeamsMenuAppState extends MenuAppState {
         Container container = new Container();
         container.setLocalTranslation(containerX, containerY, 0);
 
-        Label lblTeamName = new Label(teamInfo.getName());
+        Label lblTeamName = new Label("");
         lblTeamName.setFontSize(20);
         container.addChild(lblTeamName);
-        lblTeamNames[teamIndex] = lblTeamName;
+        lblsTeamName[teamIndex] = lblTeamName;
 
         Panel teamImage = new Panel();
         IconComponent teamIconComponent = new IconComponent("textures/logo.png");
@@ -45,35 +44,42 @@ public class TeamsMenuAppState extends MenuAppState {
         teamImage.setBackground(teamIconComponent);
         container.addChild(teamImage);
 
-        Label lblDefense = new Label("Defense: XX");
-        lblDefense.setFontSize(20);
-        lblDefense.setTextHAlignment(HAlignment.Center);
-        container.addChild(lblDefense);
-
-        Label lblOffense = new Label("Offense: XX");
+        Label lblOffense = new Label("");
         lblOffense.setFontSize(20);
         lblOffense.setTextHAlignment(HAlignment.Center);
         container.addChild(lblOffense);
+        lblsOffense[teamIndex] = lblOffense;
 
-        Label lblMiddlefield = new Label("Midlefield: XX");
+        Label lblMiddlefield = new Label("");
         lblMiddlefield.setFontSize(20);
         lblMiddlefield.setTextHAlignment(HAlignment.Center);
         container.addChild(lblMiddlefield);
+        lblsMiddlefield[teamIndex] = lblMiddlefield;
+
+        Label lblDefense = new Label("");
+        lblDefense.setFontSize(20);
+        lblDefense.setTextHAlignment(HAlignment.Center);
+        container.addChild(lblDefense);
+        lblsDefense[teamIndex] = lblDefense;
 
         guiNode.attachChild(container);
 
         TeamsMenuGroup menuGroup = new TeamsMenuGroup(
-            initialTeamInfo,
+            mainApplication.getGameCreationInfo().getTeams()[teamIndex],
             () -> updateTeam(teamIndex),
             () -> openMenu(TrikotMenuAppState.class)
         );
         addMenuGroup(menuGroup);
+
+        updateTeam(teamIndex);
     }
 
     private void updateTeam(int teamIndex) {
-        InitialTeamInfo initialTeamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex];
-        String teamName = initialTeamInfo.getTeamInfo().getName();
-        lblTeamNames[teamIndex].setText(teamName);
+        TeamInfo teamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex].getTeamInfo();
+        lblsTeamName[teamIndex].setText(teamInfo.getName());
+        lblsOffense[teamIndex].setText("Offense: " + teamInfo.getAverageSkill_Offense());
+        lblsMiddlefield[teamIndex].setText("Midlefield: " + teamInfo.getAverageSkill_Middlefield());
+        lblsDefense[teamIndex].setText("Defense: " + teamInfo.getAverageSkill_Defense());
     }
 
     @Override

@@ -4,6 +4,14 @@ import java.util.function.Function;
 
 public class PlayerSkillUtil {
 
+    public static int getAverage(int... skills) {
+        float sum = 0;
+        for (int skill : skills) {
+            sum += skill;
+        }
+        return Math.round(sum / skills.length);
+    }
+
     public static float getValue(float worstValue, float bestValue, int skill) {
         return (worstValue + ((skill / 100f) * (bestValue - worstValue)));
     }
