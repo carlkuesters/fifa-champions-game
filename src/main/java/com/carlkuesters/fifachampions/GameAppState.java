@@ -28,7 +28,6 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class GameAppState extends BaseDisplayAppState {
 
@@ -179,6 +178,13 @@ public class GameAppState extends BaseDisplayAppState {
 
         mainApplication.getRootNode().attachChild(rootNode);
         mainApplication.getGuiNode().attachChild(guiNode);
+
+        // TODO: Why do I have to cast here?
+        PauseIngameMenuAppState pauseIngameMenuAppState = (PauseIngameMenuAppState) getAppState(PauseIngameMenuAppState.class);
+        for (int teamIndex = 0; teamIndex < teams.length; teamIndex++) {
+            TeamInfo teamInfo = game.getTeams()[teamIndex].getTeamInfo();
+            pauseIngameMenuAppState.setTeam(teamIndex, teamInfo);
+        }
     }
 
     private PlayerVisual createPlayerVisual(PlayerObject playerObject) {

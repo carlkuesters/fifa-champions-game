@@ -1,6 +1,7 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.GameAppState;
+import com.carlkuesters.fifachampions.game.TeamInfo;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
@@ -13,7 +14,9 @@ public class IngameMenuAppState extends MenuAppState {
     protected int containerHeight = 600;
     protected int marginBetween = 20;
     protected int yStart;
+    private int teamLogoSize = 150;
     private ElementsMenuGroup menuGroup;
+    private Panel[] panTeamLogo = new Panel[2];
     private Label lblTime = new Label("");
     private Label lblScore = new Label("");
 
@@ -39,14 +42,9 @@ public class IngameMenuAppState extends MenuAppState {
         rowTeams.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
         rowTeams.setBackground(null);
 
-        int logoSize = 150;
         Panel teamLogoLeft = new Panel();
-        IconComponent logoIconComponentLeft = new IconComponent("textures/logo.png");
-        logoIconComponentLeft.setHAlignment(HAlignment.Center);
-        logoIconComponentLeft.setVAlignment(VAlignment.Center);
-        logoIconComponentLeft.setIconSize(new Vector2f(logoSize, logoSize));
-        teamLogoLeft.setBackground(logoIconComponentLeft);
         rowTeams.addChild(teamLogoLeft);
+        panTeamLogo[0] = teamLogoLeft;
 
         Container containerScoreMiddle = new Container();
         containerScoreMiddle.setBackground(null);
@@ -61,12 +59,8 @@ public class IngameMenuAppState extends MenuAppState {
         rowTeams.addChild(containerScoreMiddle);
 
         Panel teamLogoRight = new Panel();
-        IconComponent logoIconComponentRight = new IconComponent("textures/logo.png");
-        logoIconComponentRight.setHAlignment(HAlignment.Center);
-        logoIconComponentRight.setVAlignment(VAlignment.Center);
-        logoIconComponentRight.setIconSize(new Vector2f(logoSize, logoSize));
-        teamLogoRight.setBackground(logoIconComponentRight);
         rowTeams.addChild(teamLogoRight);
+        panTeamLogo[1] = teamLogoRight;
 
         container.addChild(rowTeams);
 
@@ -108,6 +102,14 @@ public class IngameMenuAppState extends MenuAppState {
         button.setFontSize(20);
         guiNode.attachChild(button);
         menuGroup.addElement(new MenuElement(button, action));
+    }
+
+    public void setTeam(int teamIndex, TeamInfo teamInfo) {
+        IconComponent logoIconComponent = new IconComponent("textures/teams/" + teamInfo.getName() + ".png");
+        logoIconComponent.setHAlignment(HAlignment.Center);
+        logoIconComponent.setVAlignment(VAlignment.Center);
+        logoIconComponent.setIconSize(new Vector2f(teamLogoSize, teamLogoSize));
+        panTeamLogo[teamIndex].setBackground(logoIconComponent);
     }
 
     public void setScore(int goalsTeam1, int goalsTeam2) {
