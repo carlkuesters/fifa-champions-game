@@ -16,6 +16,7 @@ public class ElementsMenuGroup extends MenuGroup {
         elements = new LinkedList<>();
         defaultElementBackgroundColors = new HashMap<>();
     }
+    private static final ColorRGBA COLOR_ACTIVE = new ColorRGBA(1, 1, 1, 0.75f);
     private LinkedList<MenuElement> elements;
     @Getter
     private MenuElement activeElement;
@@ -119,7 +120,7 @@ public class ElementsMenuGroup extends MenuGroup {
 
     protected ColorRGBA getBackgroundColor(MenuElement element) {
         if (element == activeElement) {
-            return ColorRGBA.Red;
+            return COLOR_ACTIVE;
         }
         return defaultElementBackgroundColors.get(element);
     }

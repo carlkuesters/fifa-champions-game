@@ -8,6 +8,7 @@ import com.carlkuesters.fifachampions.game.Team;
 import com.carlkuesters.fifachampions.joystick.MenuJoystickSubListener;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.simsilica.lemur.HAlignment;
@@ -48,6 +49,7 @@ public abstract class MenuAppState extends BaseDisplayAppState {
         lblTitle.setLocalTranslation(new Vector3f((totalWidth / 2f) - (titleWidth / 2f), totalHeight - titleMarginTop, 0));
         lblTitle.setPreferredSize(new Vector3f(titleWidth, 0, 0));
         lblTitle.setTextHAlignment(HAlignment.Center);
+        lblTitle.setColor(ColorRGBA.White);
         guiNode.attachChild(lblTitle);
     }
 

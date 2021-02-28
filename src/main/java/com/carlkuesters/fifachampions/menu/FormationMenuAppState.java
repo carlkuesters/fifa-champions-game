@@ -3,6 +3,7 @@ package com.carlkuesters.fifachampions.menu;
 import com.carlkuesters.fifachampions.game.Formation;
 import com.carlkuesters.fifachampions.game.Player;
 import com.carlkuesters.fifachampions.game.PlayerPosition;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.*;
@@ -156,6 +157,8 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
         Container topRow = new Container();
         topRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
+        // For some reason, the reserve players row is otherwise 10px wider than the formation background image
+        topRow.setPreferredSize(new Vector3f(((containerWidth - 10) / 5f), 40, 0));
         topRow.setBackground(null);
 
         Label lblPosition = new Label("");
@@ -204,6 +207,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         lblSkill.setTextHAlignment(HAlignment.Center);
         lblSkill.setTextVAlignment(VAlignment.Bottom);
         lblSkill.setFontSize(14);
+        lblSkill.setColor(ColorRGBA.White);
         topRow.addChild(lblSkill);
 
         Panel trikotImage = new Panel();
@@ -224,6 +228,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         lblName.setTextHAlignment(HAlignment.Center);
         lblName.setTextVAlignment(VAlignment.Center);
         lblName.setFontSize(14);
+        lblName.setColor(ColorRGBA.White);
         container.addChild(lblName);
 
         MenuElement menuElement = new MenuElement(container, this::confirm);
@@ -330,11 +335,11 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     }
 
     private float getFormationPlayerY(float formationX) {
-        // - 6 because of visual aesthetics
-        int startY = (containerY - (playerDetailsImageSize - 6));
+        // - 10 because of visual aesthetics
+        int startY = (containerY - (playerDetailsImageSize - 10));
         // + 20 because of the player name below the image
-        // + 2 because of visual aesthetics
-        int maximumDistanceY = (containerWidth - (formationTrikotImageSize + 20 + 2));
+        // - 6 because of visual aesthetics
+        int maximumDistanceY = (containerWidth - (formationTrikotImageSize + 20 - 6));
         float progressY = (1 - ((formationX + 1) / 2));
         return (startY - (progressY * maximumDistanceY));
     }

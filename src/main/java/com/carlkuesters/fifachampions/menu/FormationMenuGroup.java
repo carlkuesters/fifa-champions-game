@@ -18,6 +18,8 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
         this.onElementSelected = onElementSelected;
         markedForSwitchElements = new HashMap<>();
     }
+    private static final ColorRGBA COLOR_SELECTED = new ColorRGBA(0, 0, 1, 0.75f);
+    private static final ColorRGBA COLOR_MARKED_FOR_SWITCH = new ColorRGBA(0, 1, 0, 0.75f);
     private Supplier<Formation> getFormation;
     private Consumer<Formation> setFormation;
     private MenuElement selectedElement;
@@ -103,9 +105,9 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
     @Override
     protected ColorRGBA getBackgroundColor(MenuElement element) {
         if (element == selectedElement) {
-            return ColorRGBA.Blue;
+            return COLOR_SELECTED;
         } else if (isMarkedForSwitch(element)) {
-            return ColorRGBA.Green;
+            return COLOR_MARKED_FOR_SWITCH;
         }
         return super.getBackgroundColor(element);
     }
