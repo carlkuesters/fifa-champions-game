@@ -27,6 +27,7 @@ public class Main extends SimpleApplication {
         settings.setWidth(1600);
         settings.setHeight(900);
         settings.setVSync(true);
+        settings.setSamples(8);
         settings.setUseJoysticks(true);
     }
     @Getter

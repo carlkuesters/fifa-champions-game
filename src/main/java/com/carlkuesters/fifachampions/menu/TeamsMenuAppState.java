@@ -7,7 +7,10 @@ import com.simsilica.lemur.component.IconComponent;
 
 public class TeamsMenuAppState extends MenuAppState {
 
+    private int iconMarginX = 50;
+    private int iconSize;
     private Label[] lblsTeamName = new Label[2];
+    private Panel[] pansTeamIcon = new Panel[2];
     private Label[] lblsOffense = new Label[2];
     private Label[] lblsMiddlefield = new Label[2];
     private Label[] lblsDefense = new Label[2];
@@ -25,6 +28,7 @@ public class TeamsMenuAppState extends MenuAppState {
         int containerMarginOutside = 150;
         int containerMarginBetween = 400;
         int containerWidth = ((totalWidth - (2 * containerMarginOutside) - containerMarginBetween) / 2);
+        iconSize = (containerWidth - (2 * iconMarginX));
         int containerX = ((totalWidth / 2) + (side * (containerMarginBetween / 2)));
         if (side == -1) {
             containerX -= containerWidth;
@@ -39,10 +43,9 @@ public class TeamsMenuAppState extends MenuAppState {
         lblsTeamName[teamIndex] = lblTeamName;
 
         Panel teamImage = new Panel();
-        IconComponent teamIconComponent = new IconComponent("textures/logo.png");
-        teamIconComponent.setIconSize(new Vector2f(containerWidth, containerWidth));
-        teamImage.setBackground(teamIconComponent);
+        teamImage.setInsets(new Insets3f(20, iconMarginX, 0, iconMarginX));
         container.addChild(teamImage);
+        pansTeamIcon[teamIndex] = teamImage;
 
         Label lblOffense = new Label("");
         lblOffense.setFontSize(20);
@@ -59,6 +62,7 @@ public class TeamsMenuAppState extends MenuAppState {
         Label lblDefense = new Label("");
         lblDefense.setFontSize(20);
         lblDefense.setTextHAlignment(HAlignment.Center);
+        lblDefense.setInsets(new Insets3f(0, 0, 20, 0));
         container.addChild(lblDefense);
         lblsDefense[teamIndex] = lblDefense;
 
@@ -77,6 +81,9 @@ public class TeamsMenuAppState extends MenuAppState {
     private void updateTeam(int teamIndex) {
         TeamInfo teamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex].getTeamInfo();
         lblsTeamName[teamIndex].setText(teamInfo.getName());
+        IconComponent teamIconComponent = new IconComponent("textures/teams/" + teamInfo.getName() + ".png");
+        teamIconComponent.setIconSize(new Vector2f(iconSize, iconSize));
+        pansTeamIcon[teamIndex].setBackground(teamIconComponent);
         lblsOffense[teamIndex].setText("Offense: " + teamInfo.getAverageSkill_Offense());
         lblsMiddlefield[teamIndex].setText("Midlefield: " + teamInfo.getAverageSkill_Middlefield());
         lblsDefense[teamIndex].setText("Defense: " + teamInfo.getAverageSkill_Defense());
