@@ -7,6 +7,7 @@ import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
 import com.carlkuesters.fifachampions.visuals.MaterialFactory;
+import com.carlkuesters.fifachampions.visuals.PlayerSkins;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
@@ -188,7 +189,7 @@ public class GameAppState extends BaseDisplayAppState {
     }
 
     private PlayerVisual createPlayerVisual(PlayerObject playerObject) {
-        PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager());
+        PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager(), PlayerSkins.get(playerObject.getPlayer()));
         String trikotName = (playerObject.isGoalkeeper() ? "thinstripes" : playerObject.getTeam().getTrikotName());
         playerVisual.setTrikot(trikotName);
         playerVisuals.put(playerObject, playerVisual);

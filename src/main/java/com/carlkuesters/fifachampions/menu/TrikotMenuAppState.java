@@ -1,8 +1,13 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
+import com.carlkuesters.fifachampions.game.content.Players;
+import com.carlkuesters.fifachampions.visuals.PlayerSkin;
+import com.carlkuesters.fifachampions.visuals.PlayerSkins;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.util.TempVars;
 import com.simsilica.lemur.Container;
 import com.simsilica.lemur.HAlignment;
 import com.simsilica.lemur.Label;
@@ -11,6 +16,7 @@ public class TrikotMenuAppState extends MenuAppState {
 
     private Label[] lblTrikotNames = new Label[2];
     private PlayerVisual[] playerVisuals = new PlayerVisual[2];
+    private float playerVisualsAngle;
 
     @Override
     protected void initMenu() {
@@ -48,10 +54,26 @@ public class TrikotMenuAppState extends MenuAppState {
         );
         addMenuGroup(menuGroup);
 
-        PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager());
+        PlayerSkin playerSkin = PlayerSkins.get((side == -1) ? Players.MARKUS : Players.STEFFEN);
+        PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager(), playerSkin);
         playerVisual.getModelNode().setLocalTranslation(side * 1.75f, 0, 0);
         playerVisual.playAnimation(PlayerVisual.IDLE_ANIMATION);
         playerVisuals[teamIndex] = playerVisual;
+    }
+
+    @Override
+    public void update(float tpf) {
+        super.update(tpf);
+        rotatePlayerVisuals(tpf);
+    }
+
+    private void rotatePlayerVisuals(float tpf) {
+        TempVars tempVars = TempVars.get();
+        playerVisualsAngle += tpf;
+        for (int i = 0; i < playerVisuals.length; i++) {
+            playerVisuals[i].getModelNode().setLocalRotation(tempVars.quat1.fromAngleAxis(playerVisualsAngle + (i * FastMath.PI), Vector3f.UNIT_Y));
+        }
+        tempVars.release();
     }
 
     @Override
