@@ -5,6 +5,7 @@ import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PostFilterAppState;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -12,11 +13,14 @@ import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.jme3.texture.Texture;
+import com.jme3.util.SkyFactory;
 
 public class StadiumAppState extends BaseDisplayAppState {
 
@@ -32,11 +36,15 @@ public class StadiumAppState extends BaseDisplayAppState {
         sun.setColor(ColorRGBA.White);
         mainApplication.getRootNode().addLight(sun);
 
+        // TODO: Why do I have to cast here?.
+        PostFilterAppState postFilterAppState = (PostFilterAppState) getAppState(PostFilterAppState.class);
+        postFilterAppState.addFilter(new SSAOFilter(10, 25, 6, 0.1f));
         DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(mainApplication.getAssetManager(), 2048, 3);
         shadowFilter.setLight(sun);
         shadowFilter.setShadowIntensity(0.4f);
-        // TODO: Why do I have to cast here?
-        ((PostFilterAppState) getAppState(PostFilterAppState.class)).addFilter(shadowFilter);
+        postFilterAppState.addFilter(shadowFilter);
+
+        addSky("miramar");
 
         Spatial stadium = mainApplication.getAssetManager().loadModel("models/stadium/stadium.j3o");
         stadium.move(12.765f, 0, -10.06f);
@@ -44,6 +52,11 @@ public class StadiumAppState extends BaseDisplayAppState {
         stadium.scale(1.1775f);
         stadium.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         mainApplication.getRootNode().attachChild(stadium);
+
+        // Some faces at the top of the stadium are wrong, so you would see the sky from inside if back face culling would be enabled
+        for (Geometry geometry : JMonkeyUtil.getAllGeometryChilds(stadium)) {
+            geometry.getMaterial().getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
+        }
 
         if (false) {
             Geometry fieldTestBounds = new Geometry("", new Box(Game.FIELD_HALF_WIDTH, Game.GOAL_HEIGHT / 2, Game.FIELD_HALF_HEIGHT));
@@ -71,5 +84,16 @@ public class StadiumAppState extends BaseDisplayAppState {
                 mainApplication.getRootNode().attachChild(goalTestBounds);
             }
         }
+    }
+
+    private void addSky(String skyName) {
+        AssetManager assetManager = mainApplication.getAssetManager();
+        Texture textureWest = assetManager.loadTexture("textures/skies/" + skyName + "/left.png");
+        Texture textureEast = assetManager.loadTexture("textures/skies/" + skyName + "/right.png");
+        Texture textureNorth = assetManager.loadTexture("textures/skies/" + skyName + "/front.png");
+        Texture textureSouth = assetManager.loadTexture("textures/skies/" + skyName + "/back.png");
+        Texture textureUp = assetManager.loadTexture("textures/skies/" + skyName + "/up.png");
+        Texture textureDown = assetManager.loadTexture("textures/skies/" + skyName + "/down.png");
+        mainApplication.getRootNode().attachChild(SkyFactory.createSky(assetManager, textureWest, textureEast, textureNorth, textureSouth, textureUp, textureDown));
     }
 }
