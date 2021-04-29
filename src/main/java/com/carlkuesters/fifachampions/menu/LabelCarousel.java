@@ -2,6 +2,7 @@ package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.ArrayUtil;
 import com.simsilica.lemur.Label;
+import lombok.Getter;
 
 import java.util.function.Function;
 
@@ -13,6 +14,7 @@ public class LabelCarousel<T> implements Carousel {
         this.getText = getText;
     }
     private Label label;
+    @Getter
     private T[] values;
     private Function<T, String> getText;
     private int currentValueIndex;

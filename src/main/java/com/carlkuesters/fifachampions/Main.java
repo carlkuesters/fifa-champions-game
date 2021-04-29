@@ -68,6 +68,7 @@ public class Main extends SimpleApplication {
         stateManager.attach(new PostFilterAppState());
         stateManager.attach(new CinematicAppState());
         stateManager.attach(new StadiumAppState());
+        stateManager.attach(new MainSettingsMenuAppState());
         stateManager.attach(new InitialSideSelectionMenuAppState());
         stateManager.attach(new TeamsMenuAppState());
         stateManager.attach(new TrikotMenuAppState());
