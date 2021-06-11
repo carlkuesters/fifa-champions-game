@@ -1,11 +1,11 @@
 package com.carlkuesters.fifachampions;
 
 import com.carlkuesters.fifachampions.game.*;
-import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
+import com.carlkuesters.fifachampions.visuals.ControlledPlayerContainer;
 import com.carlkuesters.fifachampions.visuals.MaterialFactory;
 import com.carlkuesters.fifachampions.visuals.PlayerSkins;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
@@ -24,7 +24,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
 import com.simsilica.lemur.*;
-import com.simsilica.lemur.component.IconComponent;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -46,12 +45,7 @@ public class GameAppState extends BaseDisplayAppState {
     private Vector3f targetCameraLocation = new Vector3f();
     private Spatial ballModel;
     private Label lblGoals;
-    private Container playerContainer;
-    private Label optimalStrengthIndicator;
-    private ProgressBar pbrStrength;
-    private float displayedStrength;
-    private float remainingDisplayedStrengthDuration;
-    private PlayerObject displayedStrengthPlayerObject;
+    private ControlledPlayerContainer[] controlledPlayerContainers;
     boolean isFirstFrame = true;
 
     @Override
@@ -164,18 +158,20 @@ public class GameAppState extends BaseDisplayAppState {
         scoreContainer.addChild(lblGoals);
         guiNode.attachChild(scoreContainer);
 
-        optimalStrengthIndicator = new Label("");
-        optimalStrengthIndicator.setBackground(new IconComponent("textures/optimal_strength_indicator.png"));
-        optimalStrengthIndicator.setLocalTranslation(new Vector3f(0, 70, 2));
-        optimalStrengthIndicator.setLocalScale(0.085f);
-        guiNode.attachChild(optimalStrengthIndicator);
-
-        playerContainer = new Container();
-        playerContainer.setLocalTranslation(20, 61, 0);
-        playerContainer.setPreferredSize(new Vector3f(200, 20, 1));
-        pbrStrength = new ProgressBar();
-        playerContainer.addChild(pbrStrength);
-        guiNode.attachChild(playerContainer);
+        controlledPlayerContainers = new ControlledPlayerContainer[2];
+        for (int teamIndex = 0; teamIndex < teams.length; teamIndex++) {
+            ControlledPlayerContainer controlledPlayerContainer = new ControlledPlayerContainer();
+            int marginX = 20;
+            int x ;
+            if (teamIndex == 1) {
+                x = (mainApplication.getContext().getSettings().getWidth() - marginX - ControlledPlayerContainer.WIDTH);
+            } else {
+                x = marginX;
+            }
+            controlledPlayerContainer.getNode().setLocalTranslation(x, 0, 0);
+            guiNode.attachChild(controlledPlayerContainer.getNode());
+            controlledPlayerContainers[teamIndex] = controlledPlayerContainer;
+        }
 
         mainApplication.getRootNode().attachChild(rootNode);
         mainApplication.getGuiNode().attachChild(guiNode);
@@ -244,35 +240,28 @@ public class GameAppState extends BaseDisplayAppState {
             NearFreeKickSituation nearFreeKickSituation = (NearFreeKickSituation) game.getSituation();
             targetInGoalIndicator.setLocalTranslation(nearFreeKickSituation.getTargetInGoalPosition());
             targetInGoalIndicator.setCullHint(Spatial.CullHint.Inherit);
-
-            float optimalStrengthIndicatorX = 11 + (nearFreeKickSituation.getOptimalShootStrength() * 195);
-            optimalStrengthIndicator.setLocalTranslation(optimalStrengthIndicator.getLocalTranslation().setX(optimalStrengthIndicatorX));
-            optimalStrengthIndicator.setCullHint(Spatial.CullHint.Inherit);
         } else {
             targetInGoalIndicator.setCullHint(Spatial.CullHint.Always);
-            optimalStrengthIndicator.setCullHint(Spatial.CullHint.Always);
         }
 
-        // TODO: UI for multiple controllers
-        Controller controller1 = game.getControllers().get(0);
-        if (controller1.getPlayerObject() != null) {
-            ChargedButtonBehaviour chargingButtonBehaviour = controller1.getChargingButtonBehaviour();
-            if (chargingButtonBehaviour != null) {
-                displayedStrength = chargingButtonBehaviour.getCurrentChargeStrength();
-                remainingDisplayedStrengthDuration = 2;
-                displayedStrengthPlayerObject = controller1.getPlayerObject();
-            } else if (remainingDisplayedStrengthDuration > 0) {
-                remainingDisplayedStrengthDuration -= tpf;
-                if ((remainingDisplayedStrengthDuration <= 0) || (controller1.getPlayerObject() != displayedStrengthPlayerObject)) {
-                    displayedStrength = 0;
-                    remainingDisplayedStrengthDuration = 0;
-                    displayedStrengthPlayerObject = null;
+        for (int teamIndex = 0; teamIndex < game.getTeams().length; teamIndex++) {
+            Team team = game.getTeams()[teamIndex];
+            Controller controller = null;
+            for (Controller currentController : game.getControllers()) {
+                if (currentController.getTeam() == team) {
+                    if ((controller == null) || currentController.getPlayerObject().isOwningBall()) {
+                        controller = currentController;
+                    }
                 }
             }
-            pbrStrength.setProgressPercent(displayedStrength);
-            playerContainer.setCullHint(Spatial.CullHint.Inherit);
-        } else {
-            playerContainer.setCullHint(Spatial.CullHint.Always);
+            Float optimalShootStrength = null;
+            if (game.getSituation() instanceof NearFreeKickSituation) {
+                NearFreeKickSituation nearFreeKickSituation = (NearFreeKickSituation) game.getSituation();
+                if (nearFreeKickSituation.getStartingPlayer().getTeam() == team) {
+                    optimalShootStrength = nearFreeKickSituation.getOptimalShootStrength();
+                }
+            }
+            controlledPlayerContainers[teamIndex].update(controller, optimalShootStrength, tpf);
         }
 
         Camera camera = mainApplication.getCamera();
