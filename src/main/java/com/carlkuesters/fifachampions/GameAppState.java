@@ -160,7 +160,7 @@ public class GameAppState extends BaseDisplayAppState {
 
         controlledPlayerContainers = new ControlledPlayerContainer[2];
         for (int teamIndex = 0; teamIndex < teams.length; teamIndex++) {
-            ControlledPlayerContainer controlledPlayerContainer = new ControlledPlayerContainer();
+            ControlledPlayerContainer controlledPlayerContainer = new ControlledPlayerContainer(teamIndex == 0);
             int marginX = 20;
             int x ;
             if (teamIndex == 1) {
