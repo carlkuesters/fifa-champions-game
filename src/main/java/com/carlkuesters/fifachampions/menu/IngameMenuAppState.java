@@ -105,11 +105,11 @@ public class IngameMenuAppState extends MenuAppState {
     }
 
     public void setTeam(int teamIndex, TeamInfo teamInfo) {
-        IconComponent logoIconComponent = new IconComponent("textures/teams/" + teamInfo.getName() + ".png");
-        logoIconComponent.setHAlignment(HAlignment.Center);
-        logoIconComponent.setVAlignment(VAlignment.Center);
-        logoIconComponent.setIconSize(new Vector2f(teamLogoSize, teamLogoSize));
-        panTeamLogo[teamIndex].setBackground(logoIconComponent);
+        IconComponent logoIcon = new IconComponent("textures/teams/" + teamInfo.getName() + ".png");
+        logoIcon.setHAlignment(HAlignment.Center);
+        logoIcon.setVAlignment(VAlignment.Center);
+        logoIcon.setIconSize(new Vector2f(teamLogoSize, teamLogoSize));
+        panTeamLogo[teamIndex].setBackground(logoIcon);
     }
 
     public void setScore(int goalsTeam1, int goalsTeam2) {

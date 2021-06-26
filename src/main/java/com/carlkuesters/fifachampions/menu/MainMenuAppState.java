@@ -32,9 +32,9 @@ public class MainMenuAppState extends MenuAppState {
         int logoWidth = (totalWidth - (2 * marginX));
         int logoHeight = ((totalHeight / 2) - (2 * logoMarginY));
         Panel logo = new Panel();
-        IconComponent logoIconComponent = new IconComponent("textures/header.png");
-        logoIconComponent.setIconSize(new Vector2f(logoWidth, logoHeight));
-        logo.setBackground(logoIconComponent);
+        IconComponent logoIcon = new IconComponent("textures/header.png");
+        logoIcon.setIconSize(new Vector2f(logoWidth, logoHeight));
+        logo.setBackground(logoIcon);
         logo.setLocalTranslation(new Vector3f(marginX, totalHeight - logoMarginY, 0));
         guiNode.attachChild(logo);
 

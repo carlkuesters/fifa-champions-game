@@ -5,10 +5,7 @@ import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
-import com.carlkuesters.fifachampions.visuals.ControlledPlayerContainer;
-import com.carlkuesters.fifachampions.visuals.MaterialFactory;
-import com.carlkuesters.fifachampions.visuals.PlayerSkins;
-import com.carlkuesters.fifachampions.visuals.PlayerVisual;
+import com.carlkuesters.fifachampions.visuals.*;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.Joystick;
@@ -23,7 +20,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
-import com.simsilica.lemur.*;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -44,7 +40,7 @@ public class GameAppState extends BaseDisplayAppState {
     private Node targetInGoalIndicator;
     private Vector3f targetCameraLocation = new Vector3f();
     private Spatial ballModel;
-    private Label lblGoals;
+    private ScoreContainer scoreContainer;
     private ControlledPlayerContainer[] controlledPlayerContainers;
     boolean isFirstFrame = true;
 
@@ -152,11 +148,10 @@ public class GameAppState extends BaseDisplayAppState {
         targetInGoalIndicator.attachChild(targetInGoalIndicatorGeometry);
         rootNode.attachChild(targetInGoalIndicator);
 
-        Container scoreContainer = new Container();
-        scoreContainer.setLocalTranslation(20, mainApplication.getContext().getSettings().getHeight() - 20, 0);
-        lblGoals = new Label("");
-        scoreContainer.addChild(lblGoals);
-        guiNode.attachChild(scoreContainer);
+        scoreContainer = new ScoreContainer();
+        scoreContainer.setTeams(game.getTeams()[0].getTeamInfo(), game.getTeams()[1].getTeamInfo());
+        scoreContainer.getNode().setLocalTranslation(20, mainApplication.getContext().getSettings().getHeight() - 20, 0);
+        guiNode.attachChild(scoreContainer.getNode());
 
         controlledPlayerContainers = new ControlledPlayerContainer[2];
         for (int teamIndex = 0; teamIndex < teams.length; teamIndex++) {
@@ -280,11 +275,12 @@ public class GameAppState extends BaseDisplayAppState {
         if (game.getHalfTime() == 1) {
             passedTime += game.getHalfTimeDuration();
         }
-        String time = getFormattedTime(passedTime) + " (+" + getFormattedTime(game.getHalfTimePassedOverTime()) + ")";
-        lblGoals.setText(game.getGoals()[0] + " : " + game.getGoals()[1] + " --- " + time);
+        String formattedTime = getFormattedTime(passedTime);
+        String formattedOverTime = ((game.getHalfTimePassedOverTime() > 0) ? getFormattedTime(game.getHalfTimePassedOverTime()) : null);
+        scoreContainer.setTimeAndGoals(formattedTime, formattedOverTime, game.getGoals());
         // TODO: Why do I have to cast here?
         PauseIngameMenuAppState pauseIngameMenuAppState = (PauseIngameMenuAppState) getAppState(PauseIngameMenuAppState.class);
-        pauseIngameMenuAppState.setTime(time);
+        pauseIngameMenuAppState.setTime(formattedTime + ((formattedOverTime != null) ? " (+" + formattedOverTime + ")" : ""));
         pauseIngameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
 
         if (game.isGameOver()) {

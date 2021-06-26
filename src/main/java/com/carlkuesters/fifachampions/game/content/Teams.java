@@ -10,6 +10,7 @@ public class Teams {
 
     public static TeamInfo FC_CHAMPIONS = new TeamInfo(
         "Fifa-Champions",
+        "FC",
         new String[] { "amaranth", "red", "striped", "thinstripes", "yellow" },
         new Player[] {
             TIMO,

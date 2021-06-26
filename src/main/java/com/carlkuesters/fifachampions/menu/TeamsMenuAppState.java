@@ -81,9 +81,9 @@ public class TeamsMenuAppState extends MenuAppState {
     private void updateTeam(int teamIndex) {
         TeamInfo teamInfo = mainApplication.getGameCreationInfo().getTeams()[teamIndex].getTeamInfo();
         lblsTeamName[teamIndex].setText(teamInfo.getName());
-        IconComponent teamIconComponent = new IconComponent("textures/teams/" + teamInfo.getName() + ".png");
-        teamIconComponent.setIconSize(new Vector2f(iconSize, iconSize));
-        pansTeamIcon[teamIndex].setBackground(teamIconComponent);
+        IconComponent teamIcon = new IconComponent("textures/teams/" + teamInfo.getName() + ".png");
+        teamIcon.setIconSize(new Vector2f(iconSize, iconSize));
+        pansTeamIcon[teamIndex].setBackground(teamIcon);
         lblsOffense[teamIndex].setText("Offense: " + teamInfo.getAverageSkill_Offense());
         lblsMiddlefield[teamIndex].setText("Midlefield: " + teamInfo.getAverageSkill_Middlefield());
         lblsDefense[teamIndex].setText("Defense: " + teamInfo.getAverageSkill_Defense());

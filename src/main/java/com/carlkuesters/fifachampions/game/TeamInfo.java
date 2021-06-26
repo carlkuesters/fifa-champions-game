@@ -8,6 +8,7 @@ import lombok.Getter;
 public class TeamInfo {
 
     private String name;
+    private String abbreviation;
     private String[] trikotNames;
     private Player[] fieldPlayers;
     private Player[] reservePlayers;
