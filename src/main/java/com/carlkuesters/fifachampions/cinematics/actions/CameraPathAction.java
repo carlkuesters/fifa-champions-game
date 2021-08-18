@@ -1,40 +1,32 @@
 package com.carlkuesters.fifachampions.cinematics.actions;
 
 import com.carlkuesters.fifachampions.cinematics.CinematicAppState;
-import com.carlkuesters.fifachampions.cinematics.CinematicAction;
 import com.jme3.app.SimpleApplication;
-import com.jme3.cinematic.PlayState;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.scene.CameraNode;
+import com.jme3.scene.Spatial;
 
-public class CameraPathAction extends CinematicAction {
+public class CameraPathAction extends MoveAction {
 
     public CameraPathAction(MotionEvent motionEvent) {
-        this.motionEvent = motionEvent;
-    }
-    private MotionEvent motionEvent;
-
-    @Override
-    public void trigger(SimpleApplication simpleApplication) {
-        setMotionEvent(getCameraNode(simpleApplication), motionEvent);
+        super(motionEvent);
     }
 
     @Override
-    public void update(SimpleApplication simpleApplication) {
-        super.update(simpleApplication);
+    public void update(SimpleApplication simpleApplication, float lastTimePerFrame) {
+        super.update(simpleApplication, lastTimePerFrame);
         getCameraNode(simpleApplication).setEnabled(true);
-    }
-
-    @Override
-    protected boolean isFinished(){
-        return (motionEvent.getPlayState() == PlayState.Stopped);
     }
 
     @Override
     public void cleanup(SimpleApplication simpleApplication) {
         super.cleanup(simpleApplication);
         getCameraNode(simpleApplication).setEnabled(false);
-        motionEvent.stop();
+    }
+
+    @Override
+    protected Spatial getSpatial(SimpleApplication simpleApplication) {
+        return getCameraNode(simpleApplication);
     }
 
     private CameraNode getCameraNode(SimpleApplication simpleApplication) {

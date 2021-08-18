@@ -1,6 +1,9 @@
 package com.carlkuesters.fifachampions.game;
 
 import com.carlkuesters.fifachampions.ArrayUtil;
+import com.carlkuesters.fifachampions.cinematics.Cinematic;
+import com.carlkuesters.fifachampions.cinematics.cinematics.GoalCinematic;
+import com.carlkuesters.fifachampions.cinematics.cinematics.OffsideCinematic;
 import com.carlkuesters.fifachampions.game.cooldowns.UnownedBallPickupCooldown;
 import com.carlkuesters.fifachampions.game.cooldowns.FightCooldown;
 import com.carlkuesters.fifachampions.game.situations.*;
@@ -64,6 +67,7 @@ public class Game implements GameLoopListener {
     private int[] goals = new int[2];
     private CameraPerspective cameraPerspective;
     private float cameraPerspectiveRemainingNonSituationDuration;
+    private LinkedList<Cinematic> cinematics = new LinkedList<>();
     private LinkedList<EnqueuedAction> enqueuedActions = new LinkedList<>();
 
     public void start() {
@@ -154,7 +158,14 @@ public class Game implements GameLoopListener {
                 setSituation(nextSituation.getSituation());
                 nextSituation = null;
             }
-        } else if (situation == null) {
+        } else if (situation != null) {
+            if (cinematics.size() > 0) {
+                Cinematic cinematic = cinematics.getFirst();
+                if (cinematic.isFinished()) {
+                    finishActiveCinematic();
+                }
+            }
+        } else {
             cooldownManager.update(tpf);
 
             OutSide outSide = getOutside(ball.getPosition());
@@ -223,6 +234,7 @@ public class Game implements GameLoopListener {
                     goalOutsideTeam = teams[0];
 
                     setNextSituation(new NextSituation(createKickOffSituation(goalOutsideTeam), 4, true));
+                    playCinematic(new GoalCinematic());
                 } else {
                     if (goalOutsideTeam != null) {
                         if (ball.getLastTouchedOwner().getTeam() == goalOutsideTeam) {
@@ -325,6 +337,7 @@ public class Game implements GameLoopListener {
         // TODO: Properly choosing a starting player (based on position?)
         PlayerObject startingPlayer = freeKickTeam.getPlayers()[freeKickTeam.getPlayers().length - 1];
         setNextSituation(new NextSituation(new FarFreeKickSituation(startingPlayer, lastBallTouchPosition), 2, false));
+        playCinematic(new OffsideCinematic(lastBallTouchPosition.getX()));
     }
 
     public PhysicsPrecomputationResult precomputeBallTransformUntilInsideGoal(Team goalTeam) {
@@ -354,9 +367,15 @@ public class Game implements GameLoopListener {
     }
 
     private void setSituation(Situation situation) {
-        applyPlayerSwitches();
         situation.setGame(this);
         this.situation = situation;
+        if (cinematics.isEmpty()) {
+            startSituation();
+        }
+    }
+
+    private void startSituation() {
+        applyPlayerSwitches();
         situation.start();
     }
 
@@ -395,7 +414,7 @@ public class Game implements GameLoopListener {
         TempVars tempVars = TempVars.get();
         float maximumDistanceSquaredXZ = (maximumDistanceXZ * maximumDistanceXZ);
         LinkedList<PlayerObject> nearPlayers = new LinkedList<>();
-        
+
         tempVars.vect2d.set(position.getX(), position.getZ());
         for (Team team : teams) {
             for (PlayerObject playerObject : team.getPlayers()) {
@@ -628,5 +647,20 @@ public class Game implements GameLoopListener {
 
     public CameraPerspective getCameraPerspective() {
         return cameraPerspective;
+    }
+
+    public void playCinematic(Cinematic cinematic) {
+        cinematics.add(0, cinematic);
+    }
+
+    public void finishActiveCinematic() {
+        cinematics.removeFirst();
+        if (cinematics.isEmpty()) {
+            startSituation();
+        }
+    }
+
+    public Cinematic getActiveCinematic() {
+        return (((situation != null) && (cinematics.size() > 0)) ? cinematics.getFirst() : null);
     }
 }

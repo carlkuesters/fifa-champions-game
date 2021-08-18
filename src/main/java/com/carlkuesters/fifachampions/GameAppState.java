@@ -1,5 +1,7 @@
 package com.carlkuesters.fifachampions;
 
+import com.carlkuesters.fifachampions.cinematics.Cinematic;
+import com.carlkuesters.fifachampions.cinematics.CinematicAppState;
 import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
@@ -42,7 +44,7 @@ public class GameAppState extends BaseDisplayAppState {
     private Spatial ballModel;
     private ScoreContainer scoreContainer;
     private ControlledPlayerContainer[] controlledPlayerContainers;
-    boolean isFirstFrame = true;
+    private boolean isFirstFrame = true;
 
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
@@ -197,6 +199,17 @@ public class GameAppState extends BaseDisplayAppState {
         }
         game.update(tpf);
 
+        Cinematic activeCinematic = game.getActiveCinematic();
+        // TODO: Why do I have to cast here?
+        CinematicAppState cinematicAppState = (CinematicAppState) getAppState(CinematicAppState.class);
+        if (activeCinematic != cinematicAppState.getCurrentCinematic()) {
+            if (activeCinematic != null) {
+                cinematicAppState.playCinematic(activeCinematic);
+            } else {
+                cinematicAppState.stopCinematic();
+            }
+        }
+
         for (Team team : game.getTeams()) {
             for (PlayerObject playerObject : team.getPlayers()) {
                 updatePlayerVisual(playerObject);
@@ -259,16 +272,18 @@ public class GameAppState extends BaseDisplayAppState {
             controlledPlayerContainers[teamIndex].update(controller, optimalShootStrength, tpf);
         }
 
-        Camera camera = mainApplication.getCamera();
-        CameraPerspective cameraPerspective = game.getCameraPerspective();
-        if (cameraPerspective != null) {
-            camera.setLocation(cameraPerspective.getPosition());
-            camera.lookAtDirection(cameraPerspective.getDirection(), Vector3f.UNIT_Y);
-        } else {
-            targetCameraLocation.set(0.8f * game.getBall().getPosition().getX(), 0, 0.5f * (game.getBall().getPosition().getZ() + 25));
-            targetCameraLocation.addLocal(0, 20, 20);
-            camera.setLocation(targetCameraLocation);
-            camera.lookAtDirection(new Vector3f(0, -1, -1.25f), Vector3f.UNIT_Y);
+        if (!mainApplication.isFreeCam()) {
+            Camera camera = mainApplication.getCamera();
+            CameraPerspective cameraPerspective = game.getCameraPerspective();
+            if (cameraPerspective != null) {
+                camera.setLocation(cameraPerspective.getPosition());
+                camera.lookAtDirection(cameraPerspective.getDirection(), Vector3f.UNIT_Y);
+            } else {
+                targetCameraLocation.set(0.8f * game.getBall().getPosition().getX(), 0, 0.5f * (game.getBall().getPosition().getZ() + 25));
+                targetCameraLocation.addLocal(0, 20, 20);
+                camera.setLocation(targetCameraLocation);
+                camera.lookAtDirection(new Vector3f(0, -1, -1.25f), Vector3f.UNIT_Y);
+            }
         }
 
         float passedTime = game.getHalfTimePassedTime();

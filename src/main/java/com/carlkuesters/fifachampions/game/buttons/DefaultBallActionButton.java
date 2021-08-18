@@ -5,11 +5,13 @@ import com.carlkuesters.fifachampions.game.ControllerButtonBehaviour;
 import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 import com.carlkuesters.fifachampions.game.Situation;
+import com.carlkuesters.fifachampions.game.buttons.behaviours.SkipCinematicButtonBehaviour;
 
 import java.util.HashMap;
 
 public class DefaultBallActionButton extends ControllerButton {
 
+    private ControllerButtonBehaviour behaviourSkipCinematic = new SkipCinematicButtonBehaviour();
     private HashMap<Class<? extends Situation>, ControllerButtonBehaviour> behavioursWithOwnedBallSituation = new HashMap<>();
     private ControllerButtonBehaviour behaviourWithUnownedBallNoSituation;
     private ControllerButtonBehaviour behaviourWithSelfOwnedBallNoSituation;
@@ -37,7 +39,9 @@ public class DefaultBallActionButton extends ControllerButton {
         Game game = controller.getPlayerObject().getGame();
         PlayerObject ballOwner = game.getBall().getOwner();
         Situation situation = game.getSituation();
-        if (situation == null) {
+        if (game.getActiveCinematic() != null) {
+            return behaviourSkipCinematic;
+        } else if (situation == null) {
             if (ballOwner == null) {
                 return behaviourWithUnownedBallNoSituation;
             } else if (ballOwner == controller.getPlayerObject()) {

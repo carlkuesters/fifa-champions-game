@@ -1,7 +1,7 @@
 package com.carlkuesters.fifachampions.cinematics;
 
+import com.jme3.app.SimpleApplication;
 import lombok.Getter;
-import lombok.Setter;
 
 public class CinematicPart {
 
@@ -14,6 +14,14 @@ public class CinematicPart {
     @Getter
     private CinematicAction cinematicAction;
     @Getter
-    @Setter
     private boolean triggered;
+
+    public void reset(SimpleApplication simpleApplication) {
+        triggered = false;
+    }
+
+    public void trigger(SimpleApplication simpleApplication) {
+        cinematicAction.trigger(simpleApplication);
+        triggered = true;
+    }
 }

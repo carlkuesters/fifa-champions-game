@@ -34,6 +34,8 @@ public class Main extends SimpleApplication {
     private GameCreationInfo gameCreationInfo;
     @Getter
     private JoystickListener joystickListener;
+    @Getter
+    private boolean freeCam = false;
 
     @Override
     public void simpleInitApp() {
@@ -63,7 +65,8 @@ public class Main extends SimpleApplication {
 
         cam.setFrustumPerspective(45, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000);
         flyCam.setMoveSpeed(100);
-        flyCam.setEnabled(false);
+        flyCam.setDragToRotate(true);
+        flyCam.setEnabled(freeCam);
 
         stateManager.attach(new PostFilterAppState());
         stateManager.attach(new CinematicAppState());

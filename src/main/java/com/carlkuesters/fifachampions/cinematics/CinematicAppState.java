@@ -9,6 +9,7 @@ import lombok.Getter;
 
 public class CinematicAppState extends BaseDisplayAppState {
 
+    @Getter
     private Cinematic currentCinematic;
     @Getter
     private CameraNode cameraNode;
@@ -24,7 +25,7 @@ public class CinematicAppState extends BaseDisplayAppState {
 
     public void playCinematic(Cinematic cinematic){
         stopCinematic();
-        cinematic.reset();
+        cinematic.reset(mainApplication);
         currentCinematic = cinematic;
     }
 
@@ -35,9 +36,9 @@ public class CinematicAppState extends BaseDisplayAppState {
             currentCinematic.update(lastTimePerFrame, mainApplication);
             if (currentCinematic.isFinished()) {
                 if (currentCinematic.isLoop()) {
-                    currentCinematic.reset();
+                    currentCinematic.reset(mainApplication);
                 } else {
-                    currentCinematic = null;
+                    stopCinematic();
                 }
             }
         }
