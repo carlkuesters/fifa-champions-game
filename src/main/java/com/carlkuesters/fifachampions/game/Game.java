@@ -2,8 +2,7 @@ package com.carlkuesters.fifachampions.game;
 
 import com.carlkuesters.fifachampions.ArrayUtil;
 import com.carlkuesters.fifachampions.cinematics.Cinematic;
-import com.carlkuesters.fifachampions.cinematics.cinematics.GoalCinematic;
-import com.carlkuesters.fifachampions.cinematics.cinematics.OffsideCinematic;
+import com.carlkuesters.fifachampions.cinematics.cinematics.*;
 import com.carlkuesters.fifachampions.game.cooldowns.UnownedBallPickupCooldown;
 import com.carlkuesters.fifachampions.game.cooldowns.FightCooldown;
 import com.carlkuesters.fifachampions.game.situations.*;
@@ -70,12 +69,13 @@ public class Game implements GameLoopListener {
     private LinkedList<Cinematic> cinematics = new LinkedList<>();
     private LinkedList<EnqueuedAction> enqueuedActions = new LinkedList<>();
 
-    public void start() {
-        setSituation(createKickOffSituation(teams[0]));
-    }
-
     @Override
     public void update(float tpf) {
+        if (logicTime == 0) {
+            playCinematic(new GameIntroCinematic());
+            setSituation(createKickOffSituation(teams[0]));
+        }
+
         logicTime += tpf;
         if (isTimeRunning) {
             if (halfTimePassedTime < halfTimeDuration) {

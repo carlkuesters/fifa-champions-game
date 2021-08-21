@@ -19,7 +19,9 @@ public class Cinematic {
     protected CinematicPart[] parts;
     @Getter
     private SimpleApplication simpleApplication;
+    @Getter
     protected Node rootNode;
+    @Getter
     protected Node guiNode;
     private boolean initialized;
     private boolean started;
@@ -80,11 +82,15 @@ public class Cinematic {
     }
 
     public boolean isFinished() {
-        for (CinematicPart part : parts) {
-            if ((!part.isTriggered()) || (!part.getAction().isFinished())) {
-                return false;
+        // Parts have to be initialized (aka cinematic has to have been started)
+        if (parts != null) {
+            for (CinematicPart part : parts) {
+                if ((!part.isTriggered()) || (!part.getAction().isFinished())) {
+                    return false;
+                }
             }
+            return true;
         }
-        return true;
+        return false;
     }
 }

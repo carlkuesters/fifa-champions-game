@@ -78,8 +78,6 @@ public class GameAppState extends BaseDisplayAppState {
             stateManager.getState(PauseIngameMenuAppState.class).setEnabled(true);
         }));
 
-        game.start();
-
         for (Team team : game.getTeams()) {
             for (PlayerObject playerObject : team.getPlayers()) {
                 createPlayerVisual(playerObject);
