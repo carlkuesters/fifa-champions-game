@@ -17,8 +17,8 @@ public class Ball extends PhysicsObject {
     }
     private PlayerObject owner;
     private PlayerObject lastTouchedOwner;
-    private Vector3f lastTouchedPosition = new Vector3f();
-    private LinkedList<PlayerObject> lastTouchedOffsidePlayers = new LinkedList<>();
+    private Vector3f lastTouchPosition = new Vector3f();
+    private LinkedList<OffsidePlayer> lastTouchOffsidePlayers = new LinkedList<>();
     private Vector3f lastPosition = new Vector3f();
     private float rotationProgressInRadians;
 
@@ -45,8 +45,8 @@ public class Ball extends PhysicsObject {
     public void accelerate(Vector3f velocity, boolean canTriggerOffside) {
         this.owner = null;
         this.velocity.set(velocity);
-        lastTouchedPosition.set(position);
-        lastTouchedOffsidePlayers.clear();
+        lastTouchPosition.set(position);
+        lastTouchOffsidePlayers.clear();
         if (canTriggerOffside) {
             Team allyTeam = lastTouchedOwner.getTeam();
             // Trigger offside only from already inside enemy side
@@ -64,7 +64,7 @@ public class Ball extends PhysicsObject {
                     if (allyPlayer != owner) {
                         float distanceToGoalAlly = FastMath.abs(goalX - allyPlayer.getPosition().getX());
                         if ((distanceToGoalAlly < distanceToGoalSecondLastEnemy) && (distanceToGoalAlly < distanceToGoalPassingAlly)) {
-                            lastTouchedOffsidePlayers.add(allyPlayer);
+                            lastTouchOffsidePlayers.add(new OffsidePlayer(allyPlayer, allyPlayer.getPosition()));
                         }
                     }
                 }
@@ -82,11 +82,14 @@ public class Ball extends PhysicsObject {
                 placeInFrontOfOwner(position, velocity);
                 velocity.set(0, 0);
             }
-            if (canTriggerOffside && lastTouchedOffsidePlayers.contains(owner)) {
-                game.onOffside(owner, lastTouchedPosition);
+            if (canTriggerOffside) {
+                OffsidePlayer offsidePlayer = lastTouchOffsidePlayers.stream().filter(op -> op.getPlayerObject() == owner).findAny().orElse(null);
+                if (offsidePlayer != null) {
+                    game.onOffside(owner, lastTouchPosition, offsidePlayer);
+                }
             }
         }
-        lastTouchedOffsidePlayers.clear();
+        lastTouchOffsidePlayers.clear();
     }
 
     private void placeInFrontOfOwner(Vector3f position, Vector3f velocity) {

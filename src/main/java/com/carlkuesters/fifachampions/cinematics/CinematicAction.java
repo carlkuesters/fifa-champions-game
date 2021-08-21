@@ -1,16 +1,20 @@
 package com.carlkuesters.fifachampions.cinematics;
 
-import com.jme3.app.SimpleApplication;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.scene.Spatial;
 import lombok.Getter;
 
 public class CinematicAction {
 
+    protected Cinematic cinematic;
     @Getter
     private boolean cleanuped = true;
 
-    public void trigger(SimpleApplication simpleApplication) {
+    public void reset(Cinematic cinematic) {
+        this.cinematic = cinematic;
+    }
+
+    public void trigger() {
         cleanuped = false;
     }
 
@@ -24,9 +28,9 @@ public class CinematicAction {
         newMotionEvent.play();
     }
 
-    public void update(SimpleApplication simpleApplication, float lastTimePerFrame) {
+    public void update(float lastTimePerFrame) {
         if (isFinished()) {
-            cleanup(simpleApplication);
+            cleanup();
         }
     }
 
@@ -34,7 +38,7 @@ public class CinematicAction {
         return true;
     }
 
-    public void cleanup(SimpleApplication simpleApplication) {
+    public void cleanup() {
         cleanuped = true;
     }
 }

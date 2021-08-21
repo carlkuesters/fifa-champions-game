@@ -1,27 +1,27 @@
 package com.carlkuesters.fifachampions.cinematics;
 
-import com.jme3.app.SimpleApplication;
 import lombok.Getter;
 
 public class CinematicPart {
 
-    public CinematicPart(float startTime, CinematicAction cinematicAction) {
+    public CinematicPart(float startTime, CinematicAction action) {
         this.startTime = startTime;
-        this.cinematicAction = cinematicAction;
+        this.action = action;
     }
     @Getter
     private float startTime;
     @Getter
-    private CinematicAction cinematicAction;
+    private CinematicAction action;
     @Getter
     private boolean triggered;
 
-    public void reset(SimpleApplication simpleApplication) {
+    public void reset(Cinematic cinematic) {
+        action.reset(cinematic);
         triggered = false;
     }
 
-    public void trigger(SimpleApplication simpleApplication) {
-        cinematicAction.trigger(simpleApplication);
+    public void trigger() {
+        action.trigger();
         triggered = true;
     }
 }

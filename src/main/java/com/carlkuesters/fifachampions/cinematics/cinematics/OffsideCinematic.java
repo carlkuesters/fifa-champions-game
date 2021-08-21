@@ -55,7 +55,7 @@ public class OffsideCinematic extends Cinematic {
                 setRotation(new Quaternion(-5.996786E-8f, 0.9966429f, -0.08187138f, -4.7628244E-8f));
                 setSpeed(1.5f);
             }})),
-            new CinematicPart(1.5f, new AttachSpatialAction(line)),
+            new CinematicPart(1.5f, new AttachSpatialAction(rootNode, line)),
             new CinematicPart(1.5f, new AlphaFadeAction(lineMaterial, 0, 1, 1)),
             new CinematicPart(5, new AlphaFadeAction(lineMaterial, 1, 0, 1)),
             new CinematicPart(6, new DetachSpatialAction(line)),

@@ -1,19 +1,20 @@
 package com.carlkuesters.fifachampions.cinematics.actions;
 
 import com.carlkuesters.fifachampions.cinematics.CinematicAction;
-import com.jme3.app.SimpleApplication;
 import com.jme3.scene.Spatial;
 
 public class DetachSpatialAction extends CinematicAction {
 
-    public DetachSpatialAction(Spatial spatial) {
-        this.spatial = spatial;
+    public DetachSpatialAction(Spatial... spatials) {
+        this.spatials = spatials;
     }
-    private Spatial spatial;
+    private Spatial[] spatials;
 
     @Override
-    public void trigger(SimpleApplication simpleApplication) {
-        super.trigger(simpleApplication);
-        simpleApplication.getRootNode().detachChild(spatial);
+    public void trigger() {
+        super.trigger();
+        for (Spatial spatial : spatials) {
+            spatial.getParent().detachChild(spatial);
+        }
     }
 }

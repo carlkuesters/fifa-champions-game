@@ -33,7 +33,7 @@ public class CinematicAppState extends BaseDisplayAppState {
     public void update(float lastTimePerFrame){
         super.update(lastTimePerFrame);
         if (currentCinematic != null) {
-            currentCinematic.update(lastTimePerFrame, mainApplication);
+            currentCinematic.update(lastTimePerFrame);
             if (currentCinematic.isFinished()) {
                 if (currentCinematic.isLoop()) {
                     currentCinematic.reset(mainApplication);
@@ -46,7 +46,7 @@ public class CinematicAppState extends BaseDisplayAppState {
 
     public void stopCinematic() {
         if (currentCinematic != null) {
-            currentCinematic.stop(mainApplication);
+            currentCinematic.stop();
             currentCinematic = null;
         }
     }

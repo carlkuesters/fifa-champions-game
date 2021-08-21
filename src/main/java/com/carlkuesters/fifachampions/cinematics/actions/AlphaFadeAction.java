@@ -1,7 +1,6 @@
 package com.carlkuesters.fifachampions.cinematics.actions;
 
 import com.carlkuesters.fifachampions.cinematics.CinematicAction;
-import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -21,8 +20,8 @@ public class AlphaFadeAction extends CinematicAction {
     private float passedTime;
 
     @Override
-    public void update(SimpleApplication simpleApplication, float lastTimePerFrame) {
-        super.update(simpleApplication, lastTimePerFrame);
+    public void update(float lastTimePerFrame) {
+        super.update(lastTimePerFrame);
         passedTime += lastTimePerFrame;
         float alpha = FastMath.interpolateLinear((passedTime / duration), startValue, endValue);
         ColorRGBA color = (ColorRGBA) material.getParam("Color").getValue();

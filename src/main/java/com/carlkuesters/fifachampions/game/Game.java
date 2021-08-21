@@ -332,12 +332,12 @@ public class Game implements GameLoopListener {
         return (Math.signum(ball.getPosition().get(axis)) == Math.signum(ball.getVelocity().get(axis)));
     }
 
-    public void onOffside(PlayerObject offsidePlayerObject, Vector3f lastBallTouchPosition) {
+    public void onOffside(PlayerObject offsidePlayerObject, Vector3f lastBallTouchPosition, OffsidePlayer offsidePlayer) {
         Team freeKickTeam = ((offsidePlayerObject.getTeam() == teams[0]) ? teams[1] : teams[0]);
         // TODO: Properly choosing a starting player (based on position?)
         PlayerObject startingPlayer = freeKickTeam.getPlayers()[freeKickTeam.getPlayers().length - 1];
         setNextSituation(new NextSituation(new FarFreeKickSituation(startingPlayer, lastBallTouchPosition), 2, false));
-        playCinematic(new OffsideCinematic(lastBallTouchPosition.getX()));
+        playCinematic(new OffsideCinematic(offsidePlayer.getOffsidePosition().getX()));
     }
 
     public PhysicsPrecomputationResult precomputeBallTransformUntilInsideGoal(Team goalTeam) {
