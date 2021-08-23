@@ -9,7 +9,6 @@ import com.jme3.audio.AudioData;
 import com.jme3.audio.AudioNode;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
-import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
@@ -25,35 +24,46 @@ public class GameIntroCinematic extends Cinematic {
         audioNode.setVolume(0.5f);
         rootNode.attachChild(audioNode);
 
-        // TODO: Replace with actual intro, currently reusing the main menu stuff for testing purposes
-        parts = new CinematicPart[] {
-            new CinematicPart(0, new PlayAudioAction(audioNode)),
-            new CinematicPart(0, new CameraPathAction(new MotionEvent() {{
-                setPath(new MotionPath() {{
-                    addWayPoint(new Vector3f(-85, 25, -50));
-                    addWayPoint(new Vector3f(40, 17, 20));
-                }});
-                setDirectionType(Direction.Path);
-                setSpeed(0.5f);
-            }})),
-            new CinematicPart(16, new CameraPathAction(new MotionEvent() {{
-                setPath(new MotionPath() {{
-                    addWayPoint(new Vector3f(35, 6, -45));
-                    addWayPoint(new Vector3f(-59, 6, -6));
-                }});
-                setDirectionType(Direction.Rotation);
-                setRotation(new Quaternion().fromAngleAxis(0, Vector3f.UNIT_Y));
-                setSpeed(0.5f);
-            }})),
-            new CinematicPart(36, new CameraPathAction(new MotionEvent() {{
-                setPath(new MotionPath() {{
-                    addWayPoint(new Vector3f(-50, 95, -20));
-                    addWayPoint(new Vector3f(50, 95, 10));
-                }});
-                setDirectionType(Direction.Rotation);
-                setRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_X));
-                setSpeed(0.5f);
-            }}))
-        };
+        addPart(new CinematicPart(0, new PlayAudioAction(audioNode)));
+        CinematicPart cameraPart1 = addPart(new CinematicPart(0, new CameraPathAction(new MotionEvent() {{
+            setPath(new MotionPath() {{
+                addWayPoint(new Vector3f(39, 11, 29));
+                addWayPoint(new Vector3f(25, 22, 29));
+            }});
+            setDirectionType(Direction.LookAt);
+            setLookAt(new Vector3f(0, 10, 0), Vector3f.UNIT_Y);
+            setSpeed(1);
+        }})));
+        CinematicPart cameraPart2 = addPart(new CinematicPart(cameraPart1, new CameraPathAction(new MotionEvent() {{
+            setPath(new MotionPath() {{
+                addWayPoint(new Vector3f(48, 22, -43));
+                addWayPoint(new Vector3f(-35, 19, -54));
+                addWayPoint(new Vector3f(-50, 13, -14));
+            }});
+            setDirectionType(Direction.Rotation);
+            setRotation(new Quaternion(0.030663978f, -0.723667f, 0.032254815f, 0.68871284f));
+            setSpeed(1);
+        }})));
+        CinematicPart cameraPart3 = addPart(new CinematicPart(cameraPart2, new CameraPathAction(new MotionEvent() {{
+            setPath(new MotionPath() {{
+                addWayPoint(new Vector3f(0, 3, 36));
+                addWayPoint(new Vector3f(0, 6, -22));
+            }});
+            setDirectionType(Direction.Rotation);
+            setRotation(new Quaternion(0.027416293f, -0.008860216f, 2.664796E-4f, 0.99958473f));
+            setSpeed(1);
+        }})));
+        addPart(new CinematicPart(cameraPart3, new CameraPathAction(new MotionEvent() {{
+            setPath(new MotionPath() {{
+                addWayPoint(new Vector3f(-81, 58, 44));
+                addWayPoint(new Vector3f(-42, 35, -55));
+                addWayPoint(new Vector3f(41, 7, -28));
+                addWayPoint(new Vector3f(14, 4, 26));
+                addWayPoint(new Vector3f(0, 20, 32.5f));
+            }});
+            setDirectionType(Direction.LookAt);
+            setLookAt(new Vector3f(0, -6, 0), Vector3f.UNIT_Y);
+            setSpeed(1);
+        }})));
     }
 }

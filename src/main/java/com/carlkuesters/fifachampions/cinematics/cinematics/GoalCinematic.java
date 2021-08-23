@@ -38,17 +38,15 @@ public class GoalCinematic extends Cinematic {
         label.setFontSize(32);
         label.setColor(ColorRGBA.White);
 
-        parts = new CinematicPart[] {
-            new CinematicPart(0, new CameraPathAction(new MotionEvent() {{
-                setPath(new MotionPath() {{
-                    addWayPoint(new Vector3f(-26, 5, 17));
-                    addWayPoint(new Vector3f(-26, 5, -17));
-                }});
-                setLookAt(new Vector3f(-1 * Game.FIELD_HALF_WIDTH, (Game.GOAL_HEIGHT / 2), 0), Vector3f.UNIT_Y);
-                setDirectionType(Direction.LookAt);
-                setSpeed(2);
-            }})),
-            new CinematicPart(0, new AttachSpatialAction(guiNode, container, label)),
-        };
+        addPart(new CinematicPart(0, new CameraPathAction(new MotionEvent() {{
+            setPath(new MotionPath() {{
+                addWayPoint(new Vector3f(-26, 5, 17));
+                addWayPoint(new Vector3f(-26, 5, -17));
+            }});
+            setLookAt(new Vector3f(-1 * Game.FIELD_HALF_WIDTH, (Game.GOAL_HEIGHT / 2), 0), Vector3f.UNIT_Y);
+            setDirectionType(Direction.LookAt);
+            setSpeed(2);
+        }})));
+        addPart(new CinematicPart(0, new AttachSpatialAction(guiNode, container, label)));
     }
 }

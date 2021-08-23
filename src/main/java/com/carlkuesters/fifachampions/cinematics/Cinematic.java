@@ -4,24 +4,16 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.scene.Node;
 import lombok.Getter;
 
+import java.util.LinkedList;
+
 public class Cinematic {
 
-    public Cinematic() {
-        // Used if the parts are too complex to be directly set in the super constructor
-    }
-
-    public Cinematic(boolean loop, CinematicPart[] parts) {
-        this.loop = loop;
-        this.parts = parts;
-    }
     @Getter
     protected boolean loop;
-    protected CinematicPart[] parts;
+    private LinkedList<CinematicPart> parts = new LinkedList<>();
     @Getter
     private SimpleApplication simpleApplication;
-    @Getter
     protected Node rootNode;
-    @Getter
     protected Node guiNode;
     private boolean initialized;
     private boolean started;
@@ -44,6 +36,11 @@ public class Cinematic {
         initialized = true;
     }
 
+    protected CinematicPart addPart(CinematicPart part) {
+        parts.add(part);
+        return part;
+    }
+
     public void update(float lastTimePerFrame) {
         if (!started) {
             start();
@@ -57,7 +54,7 @@ public class Cinematic {
                 } else if (!action.isCleanuped()) {
                     action.cleanup();
                 }
-            } else if (time >= part.getStartTime()) {
+            } else if (part.shouldBeTriggered(time)) {
                 part.trigger();
             }
         }
@@ -83,7 +80,7 @@ public class Cinematic {
 
     public boolean isFinished() {
         // Parts have to be initialized (aka cinematic has to have been started)
-        if (parts != null) {
+        if (parts.size() > 0) {
             for (CinematicPart part : parts) {
                 if ((!part.isTriggered()) || (!part.getAction().isFinished())) {
                     return false;
