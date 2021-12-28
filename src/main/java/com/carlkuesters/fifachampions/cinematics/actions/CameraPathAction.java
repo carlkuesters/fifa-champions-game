@@ -5,7 +5,7 @@ import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Spatial;
 
-public class CameraPathAction extends MoveAction {
+public class CameraPathAction extends AbstractMoveAction {
 
     public CameraPathAction(MotionEvent motionEvent) {
         super(motionEvent);

@@ -15,11 +15,6 @@ import lombok.Getter;
 
 public class PlayerVisual {
 
-    public static final PlayerAnimation RUN_ANIMATION_FAST = new PlayerAnimation("run_fast", 0.7f);
-    public static final PlayerAnimation RUN_ANIMATION_MEDIUM = new PlayerAnimation("run_medium", 1.17f);
-    public static final PlayerAnimation RUN_ANIMATION_SLOW = new PlayerAnimation("run_slow", 1.59f);
-    public static final PlayerAnimation IDLE_ANIMATION = new PlayerAnimation("idle", 4);
-
     public PlayerVisual(AssetManager assetManager, PlayerSkin playerSkin) {
         this.assetManager = assetManager;
         Node playerModel = (Node) assetManager.loadModel("models/player/player.j3o");
@@ -77,6 +72,10 @@ public class PlayerVisual {
             skeletonControl.getAttachmentsNode("Bip001 Head").attachChild(hairWrapper);
         }
     }
+    public static final PlayerAnimation RUN_ANIMATION_FAST = new PlayerAnimation("run_fast", 0.7f);
+    public static final PlayerAnimation RUN_ANIMATION_MEDIUM = new PlayerAnimation("run_medium", 1.17f);
+    public static final PlayerAnimation RUN_ANIMATION_SLOW = new PlayerAnimation("run_slow", 1.59f);
+    public static final PlayerAnimation IDLE_ANIMATION = new PlayerAnimation("idle", 4);
     private AssetManager assetManager;
     private Material materialBody;
     @Getter
@@ -90,8 +89,13 @@ public class PlayerVisual {
     }
 
     public void playAnimation(PlayerAnimation playerAnimation) {
+        playAnimation(playerAnimation, 0);
+    }
+
+    public void playAnimation(PlayerAnimation playerAnimation, float startTime) {
         if (!playerAnimation.getName().equals(animChannel.getAnimationName())) {
             animChannel.setAnim(playerAnimation.getName());
+            animChannel.setTime(startTime);
         }
         animChannel.setSpeed(animChannel.getAnimMaxTime() / playerAnimation.getLoopDuration());
         animChannel.setLoopMode(playerAnimation.getLoopMode());

@@ -1,33 +1,18 @@
 package com.carlkuesters.fifachampions.cinematics.actions;
 
-import com.carlkuesters.fifachampions.cinematics.CinematicAction;
-import com.jme3.cinematic.PlayState;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.scene.Spatial;
 
-public abstract class MoveAction extends CinematicAction {
+public class MoveAction extends AbstractMoveAction {
 
-    public MoveAction(MotionEvent motionEvent) {
-        this.motionEvent = motionEvent;
+    public MoveAction(Spatial spatial, MotionEvent motionEvent) {
+        super(motionEvent);
+        this.spatial = spatial;
     }
-    private MotionEvent motionEvent;
+    private Spatial spatial;
 
     @Override
-    public void trigger() {
-        super.trigger();
-        setMotionEvent(getSpatial(), motionEvent);
-    }
-
-    protected abstract Spatial getSpatial();
-
-    @Override
-    protected boolean isFinished(){
-        return (motionEvent.getPlayState() == PlayState.Stopped);
-    }
-
-    @Override
-    public void cleanup() {
-        super.cleanup();
-        motionEvent.stop();
+    protected Spatial getSpatial() {
+        return spatial;
     }
 }
