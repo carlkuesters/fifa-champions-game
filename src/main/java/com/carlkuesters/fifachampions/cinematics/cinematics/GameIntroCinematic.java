@@ -90,21 +90,20 @@ public class GameIntroCinematic extends Cinematic {
         // Stadion QuickCut 1
         CinematicPart cameraPart4 = addPart(new CinematicPart(8.4f + 10.2f + 11.5f + 5.2f, new CameraPathAction(new MotionEvent() {{
             setPath(new MotionPath() {{
-                addWayPoint(new Vector3f(39, 11, 29));
-                addWayPoint(new Vector3f(25, 22, 29));
+                addWayPoint(new Vector3f(20, 1.5f, 2));
+                addWayPoint(new Vector3f(0, 2.5f, 0));
             }});
-            setDirectionType(Direction.LookAt);
-            setLookAt(new Vector3f(0, 10, 0), Vector3f.UNIT_Y);
+            setDirectionType(Direction.Path);
             setInitialDuration(1.8f);
         }})));
         // Stadion QuickCut 2
         CinematicPart cameraPart5 = addPart(new CinematicPart(cameraPart4, new CameraPathAction(new MotionEvent() {{
             setPath(new MotionPath() {{
-                addWayPoint(new Vector3f(39, 11, 29));
-                addWayPoint(new Vector3f(25, 22, 29));
+                addWayPoint(new Vector3f(-20, 20, -15));
+                addWayPoint(new Vector3f(20, 10, -15));
             }});
             setDirectionType(Direction.LookAt);
-            setLookAt(new Vector3f(0, 10, 0), Vector3f.UNIT_Y);
+            setLookAt(new Vector3f(0, 2, 0), Vector3f.UNIT_Y);
             setInitialDuration(2.2f);
         }})));
         // Stadion QuickCut 3
