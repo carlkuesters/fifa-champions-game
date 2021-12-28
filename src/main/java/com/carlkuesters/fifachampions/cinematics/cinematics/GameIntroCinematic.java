@@ -139,11 +139,11 @@ public class GameIntroCinematic extends Cinematic {
         // Stadion 3
         CinematicPart cameraPart9 = addPart(new CinematicPart(cameraPart8, new CameraPathAction(new MotionEvent() {{
             setPath(new MotionPath() {{
-                addWayPoint(new Vector3f(0, 3, 36));
-                addWayPoint(new Vector3f(0, 6, -22));
+                addWayPoint(new Vector3f(-55, 8, 36));
+                addWayPoint(new Vector3f(49, 8, 40));
             }});
-            setDirectionType(Direction.Rotation);
-            setRotation(new Quaternion(0.027416293f, -0.008860216f, 2.664796E-4f, 0.99958473f));
+            setDirectionType(Direction.LookAt);
+            setLookAt(new Vector3f(0, 11, -40), Vector3f.UNIT_Y);
             setInitialDuration(4.2f);
         }})));
         // Stadion End
