@@ -70,6 +70,7 @@ public abstract class MenuAppState extends BaseDisplayAppState {
     }
 
     private Integer getControllerTeamIndex(int joyId) {
+        // TODO: Why do I have to cast here?
         GameAppState gameAppState = (GameAppState) getAppState(GameAppState.class);
         if (gameAppState != null) {
             Controller controller = gameAppState.getControllers().get(joyId);
