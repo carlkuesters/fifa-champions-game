@@ -46,14 +46,14 @@ public class StadiumAppState extends BaseDisplayAppState {
 
         addSky("miramar");
 
-        Spatial stadium = mainApplication.getAssetManager().loadModel("models/stadium/stadium.j3o");
+        Spatial stadium = mainApplication.getAssetManager().loadModel("models/stadium/stadium_fixed.j3o");
         stadium.move(12.765f, 0, -10.06f);
         stadium.rotate(0, FastMath.HALF_PI, 0);
         stadium.scale(1.1775f);
         stadium.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         mainApplication.getRootNode().attachChild(stadium);
 
-        // Some faces at the top of the stadium are wrong, so you would see the sky from inside if back face culling would be enabled
+        // Some faces (e.g. roof and flags) should be rendered from both sides, for now we simply disable culling for all
         for (Geometry geometry : JMonkeyUtil.getAllGeometryChilds(stadium)) {
             geometry.getMaterial().getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
         }
