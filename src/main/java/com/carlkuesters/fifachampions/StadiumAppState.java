@@ -8,6 +8,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
+import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -16,7 +17,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Spatial;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.texture.Texture;
@@ -46,12 +47,24 @@ public class StadiumAppState extends BaseDisplayAppState {
 
         addSky("miramar");
 
-        Spatial stadium = mainApplication.getAssetManager().loadModel("models/stadium/stadium_fixed.j3o");
+        Node stadium = (Node) mainApplication.getAssetManager().loadModel("models/stadium/stadium_fixed.j3o");
         stadium.move(12.765f, 0, -10.06f);
         stadium.rotate(0, FastMath.HALF_PI, 0);
         stadium.scale(1.1775f);
         stadium.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         mainApplication.getRootNode().attachChild(stadium);
+
+        String[] audienceGeometryNames = new String[] { "stadium_fixed-geom-3", "stadium_fixed-geom-4" };
+        for (String audienceGeometryName : audienceGeometryNames) {
+            Geometry geometry = (Geometry) stadium.getChild(audienceGeometryName);
+            Material oldMaterial = geometry.getMaterial();
+            Material newMaterial = new Material(mainApplication.getAssetManager(), "materials/audience.j3md");
+            for (MatParam matParam : oldMaterial.getParams()) {
+                newMaterial.setParam(matParam.getName(), matParam.getVarType(), matParam.getValue());
+            }
+            newMaterial.getAdditionalRenderState().setBlendMode(oldMaterial.getAdditionalRenderState().getBlendMode());
+            geometry.setMaterial(newMaterial);
+        }
 
         // Some faces (e.g. roof and flags) should be rendered from both sides, for now we simply disable culling for all
         for (Geometry geometry : JMonkeyUtil.getAllGeometryChilds(stadium)) {
