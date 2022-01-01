@@ -1,5 +1,4 @@
-// This file is copied and adapted from Common/MatDefs/Light/Lighting.frag - Changes:
-// - Color adaptions at end
+// This file is copied and adapted from Common/MatDefs/Light/Lighting.frag
 
 #import "Common/ShaderLib/GLSLCompat.glsllib"
 #import "Common/ShaderLib/Parallax.glsllib"
@@ -19,7 +18,7 @@ varying vec4 DiffuseSum;
 varying vec3 SpecularSum;
 
 // Fifa-Champions adaption
-varying float TestSum;
+flat varying int vertexIndex;
 
 #ifndef VERTEX_LIGHTING
 uniform vec4 g_LightDirection;
@@ -78,7 +77,12 @@ uniform ENVMAP m_EnvMap;
 #endif
 #endif
 
-// Fifa-Champions adaption
+// Fifa-Champions
+uniform float m_Time;
+#define TWO_PI 6.283185307
+#define EPSILON 0.03
+
+// Fifa-Champions
 float rand(float seed) {
     return fract(sin(dot(vec3(seed), vec3(12.9898, 78.233, 53.539))) * 43758.5453);
 }
@@ -109,6 +113,15 @@ void main(){
     newTexCoord = texCoord;
     #endif
 
+    // Fifa-Champions
+    int quadIndex = (vertexIndex / 6);
+    int personIndex = int(texCoord.x / 0.125);
+    float personFactor = rand(rand(quadIndex) + personIndex);
+    float jumpOffset = (personFactor * TWO_PI);
+    float jumpSpeed = ((1 + personFactor) * 3);
+    float jumpProgress = ((sin(jumpOffset + (m_Time * jumpSpeed)) + 1) / 2);
+    newTexCoord.y *= (1 + jumpProgress);
+
     #ifdef DIFFUSEMAP
     vec4 diffuseColor = texture2D(m_DiffuseMap, newTexCoord);
     #else
@@ -117,7 +130,16 @@ void main(){
 
     float alpha = DiffuseSum.a * diffuseColor.a;
     #ifdef ALPHAMAP
-    alpha = alpha * texture2D(m_AlphaMap, newTexCoord).r;
+
+    // Fifa-Champions
+    // Because of floating point errors, there are thin artifact lines at the very top and the edges between persons, so we set alpha there to 0
+    float personProgressX = (mod(texCoord.x, 0.125) / 0.125);
+    if ((newTexCoord.y < (1 - EPSILON)) && (personProgressX > EPSILON) && (personProgressX < (1 - EPSILON))) {
+        alpha *= texture2D(m_AlphaMap, newTexCoord).r;
+    } else {
+        alpha = 0;
+    }
+
     #endif
     #ifdef DISCARD_ALPHA
     if(alpha < m_AlphaDiscardThreshold){
@@ -219,9 +241,4 @@ void main(){
     SpecularSum2.rgb * specularColor.rgb * vec3(light.y);
     #endif
     gl_FragColor.a = alpha;
-
-    // TODO: Fifa-Champions adaption
-    int personIndex = int(texCoord.x / 8);
-    float offset = rand(rand(TestSum) + personIndex);
-    gl_FragColor = vec4(offset, offset, offset, 1);
 }

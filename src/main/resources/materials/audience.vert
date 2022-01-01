@@ -1,5 +1,4 @@
-// This file is copied and adapted from Common/MatDefs/Light/Lighting.frag - Changes:
-// - Vertex id passing to fragment shader
+// This file is copied and adapted from Common/MatDefs/Light/Lighting.frag
 
 #import "Common/ShaderLib/GLSLCompat.glsllib"
 #import "Common/ShaderLib/Instancing.glsllib"
@@ -29,8 +28,8 @@ varying vec3 AmbientSum;
 varying vec4 DiffuseSum;
 varying vec3 SpecularSum;
 
-// Fifa-Champions adaption
-varying float TestSum;
+// Fifa-Champions
+flat varying int vertexIndex;
 
 attribute vec3 inPosition;
 attribute vec2 inTexCoord;
@@ -176,6 +175,6 @@ void main(){
         computeRef(modelSpacePos);
     #endif
 
-    // Fifa-Champions adaption
-    TestSum = gl_VertexID;
+    // Fifa-Champions
+    vertexIndex = gl_VertexID;
 }

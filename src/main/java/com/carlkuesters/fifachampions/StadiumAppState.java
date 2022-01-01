@@ -3,6 +3,7 @@ package com.carlkuesters.fifachampions;
 import com.carlkuesters.fifachampions.game.BaseDisplayAppState;
 import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PostFilterAppState;
+import com.carlkuesters.fifachampions.visuals.TimeMaterialParamControl;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
@@ -54,7 +55,7 @@ public class StadiumAppState extends BaseDisplayAppState {
         stadium.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         mainApplication.getRootNode().attachChild(stadium);
 
-        String[] audienceGeometryNames = new String[] { "stadium_fixed-geom-3", "stadium_fixed-geom-4" };
+        String[] audienceGeometryNames = new String[] { "stadium_fixed-geom-3", "stadium_fixed-geom-4", "stadium_fixed-geom-9" };
         for (String audienceGeometryName : audienceGeometryNames) {
             Geometry geometry = (Geometry) stadium.getChild(audienceGeometryName);
             Material oldMaterial = geometry.getMaterial();
@@ -64,6 +65,7 @@ public class StadiumAppState extends BaseDisplayAppState {
             }
             newMaterial.getAdditionalRenderState().setBlendMode(oldMaterial.getAdditionalRenderState().getBlendMode());
             geometry.setMaterial(newMaterial);
+            geometry.addControl(new TimeMaterialParamControl("Time"));
         }
 
         // Some faces (e.g. roof and flags) should be rendered from both sides, for now we simply disable culling for all

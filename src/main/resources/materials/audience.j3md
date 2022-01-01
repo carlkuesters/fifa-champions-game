@@ -1,7 +1,4 @@
-// This file is copied and adapted from Common/MatDefs/Light/Lighting.j3md - Changes:
-// - Delete singlepass light technique
-// - Change vertex shader of multipass light technique materials/audience.vert
-// - Change fragment shader of multipass light technique to materials/audience.frag
+// This file is copied and adapted from Common/MatDefs/Light/Lighting.j3md
 
 MaterialDef Phong Lighting {
 
@@ -120,12 +117,18 @@ MaterialDef Phong Lighting {
         Boolean UseInstancing
 
         Boolean BackfaceShadows : false
+
+        // Fifa-Champions
+        Float Time
     }
+
+    // Fifa-Champions - Deleted SinglePass technique
 
     Technique {
 
         LightMode MultiPass
 
+        // Fifa-Champions
         VertexShader GLSL100 GLSL150:   materials/audience.vert
         FragmentShader GLSL100 GLSL150: materials/audience.frag
 
