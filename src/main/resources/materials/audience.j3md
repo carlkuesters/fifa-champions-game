@@ -120,6 +120,7 @@ MaterialDef Phong Lighting {
 
         // Fifa-Champions
         Float Time
+        Float Speed
     }
 
     // Fifa-Champions - Deleted SinglePass technique

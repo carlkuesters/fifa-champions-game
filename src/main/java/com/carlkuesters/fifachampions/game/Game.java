@@ -67,6 +67,8 @@ public class Game implements GameLoopListener {
     private CameraPerspective cameraPerspective;
     private float cameraPerspectiveRemainingNonSituationDuration;
     private LinkedList<Cinematic> cinematics = new LinkedList<>();
+    @Getter
+    private boolean audienceHyped;
     private LinkedList<EnqueuedAction> enqueuedActions = new LinkedList<>();
 
     @Override
@@ -143,6 +145,7 @@ public class Game implements GameLoopListener {
                                                 setNextSituation(new NextSituation(new FarFreeKickSituation(playerNearStraddler, foulPosition), 2, true));
                                             }
                                         }
+                                        audienceHyped = true;
                                     }
                                 }
                             }
@@ -235,6 +238,7 @@ public class Game implements GameLoopListener {
 
                     setNextSituation(new NextSituation(createKickOffSituation(goalOutsideTeam), 4, true));
                     playCinematic(new GoalCinematic());
+                    audienceHyped = true;
                 } else {
                     if (goalOutsideTeam != null) {
                         if (ball.getLastTouchedOwner().getTeam() == goalOutsideTeam) {
@@ -369,6 +373,7 @@ public class Game implements GameLoopListener {
     private void setSituation(Situation situation) {
         situation.setGame(this);
         this.situation = situation;
+        audienceHyped = false;
         if (cinematics.isEmpty()) {
             startSituation();
         }

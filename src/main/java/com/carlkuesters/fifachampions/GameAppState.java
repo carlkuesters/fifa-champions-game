@@ -124,6 +124,7 @@ public class GameAppState extends BaseDisplayAppState {
 
         if (synchronizeVisuals) {
             updateTransform(game.getBall(), ballVisual.getBallModel());
+            setAudienceHyped(game.isAudienceHyped());
         }
     }
 
@@ -180,5 +181,12 @@ public class GameAppState extends BaseDisplayAppState {
         super.cleanup();
         mainApplication.getRootNode().detachChild(rootNode);
         mainApplication.getJoystickListener().setGameSubListener(null);
+        setAudienceHyped(false);
+    }
+
+    private void setAudienceHyped(boolean hyped) {
+        // TODO: Why do I have to cast here?
+        StadiumAppState stadiumAppState = (StadiumAppState) getAppState(StadiumAppState.class);
+        stadiumAppState.setAudienceHyped(hyped);
     }
 }

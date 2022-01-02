@@ -26,6 +26,8 @@ import com.jme3.util.SkyFactory;
 
 public class StadiumAppState extends BaseDisplayAppState {
 
+    private Material[] audienceMaterials;
+
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
@@ -56,8 +58,9 @@ public class StadiumAppState extends BaseDisplayAppState {
         mainApplication.getRootNode().attachChild(stadium);
 
         String[] audienceGeometryNames = new String[] { "stadium_fixed-geom-3", "stadium_fixed-geom-4", "stadium_fixed-geom-9" };
-        for (String audienceGeometryName : audienceGeometryNames) {
-            Geometry geometry = (Geometry) stadium.getChild(audienceGeometryName);
+        audienceMaterials = new Material[audienceGeometryNames.length];
+        for (int i = 0; i < audienceGeometryNames.length; i++) {
+            Geometry geometry = (Geometry) stadium.getChild(audienceGeometryNames[i]);
             Material oldMaterial = geometry.getMaterial();
             Material newMaterial = new Material(mainApplication.getAssetManager(), "materials/audience.j3md");
             for (MatParam matParam : oldMaterial.getParams()) {
@@ -66,7 +69,9 @@ public class StadiumAppState extends BaseDisplayAppState {
             newMaterial.getAdditionalRenderState().setBlendMode(oldMaterial.getAdditionalRenderState().getBlendMode());
             geometry.setMaterial(newMaterial);
             geometry.addControl(new TimeMaterialParamControl("Time"));
+            audienceMaterials[i] = newMaterial;
         }
+        setAudienceHyped(false);
 
         // Some faces (e.g. roof and flags) should be rendered from both sides, for now we simply disable culling for all
         for (Geometry geometry : JMonkeyUtil.getAllGeometryChilds(stadium)) {
@@ -110,5 +115,12 @@ public class StadiumAppState extends BaseDisplayAppState {
         Texture textureUp = assetManager.loadTexture("textures/skies/" + skyName + "/up.png");
         Texture textureDown = assetManager.loadTexture("textures/skies/" + skyName + "/down.png");
         mainApplication.getRootNode().attachChild(SkyFactory.createSky(assetManager, textureWest, textureEast, textureNorth, textureSouth, textureUp, textureDown));
+    }
+
+    public void setAudienceHyped(boolean hyped) {
+        float speed = (hyped ? 10 : 5);
+        for (Material audienceMaterial : audienceMaterials) {
+            audienceMaterial.setFloat("Speed", speed);
+        }
     }
 }

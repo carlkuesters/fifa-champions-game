@@ -79,6 +79,7 @@ uniform ENVMAP m_EnvMap;
 
 // Fifa-Champions
 uniform float m_Time;
+uniform float m_Speed;
 #define TWO_PI 6.283185307
 #define EPSILON 0.03
 
@@ -118,7 +119,7 @@ void main(){
     int personIndex = int(texCoord.x / 0.125);
     float personFactor = rand(rand(quadIndex) + personIndex);
     float jumpOffset = (personFactor * TWO_PI);
-    float jumpSpeed = ((1 + personFactor) * 3);
+    float jumpSpeed = ((1 + personFactor) * m_Speed);
     float jumpProgress = ((sin(jumpOffset + (m_Time * jumpSpeed)) + 1) / 2);
     newTexCoord.y *= (1 + jumpProgress);
 
