@@ -10,11 +10,11 @@ public class PlayerSkins {
 
     private static HashMap<Player, PlayerSkin> skins = new HashMap<>();
     static {
-        skins.put(Players.TIMO, new PlayerSkin("timo", "timo", new ColorRGBA(0.55f, 0.35f, 0.1f, 1)));
+        skins.put(Players.TIMO, new PlayerSkin("timo", "general_2", new ColorRGBA(0.55f, 0.35f, 0.1f, 1)));
         skins.put(Players.CARL, new PlayerSkin("carl", null, null));
         skins.put(Players.STEFFEN, new PlayerSkin("steffen", null, null));
         skins.put(Players.FELIX, new PlayerSkin("felix", null, null));
-        skins.put(Players.MARCO, new PlayerSkin("default", null, null));
+        skins.put(Players.MARCO, new PlayerSkin("marco", "general_2", new ColorRGBA(0.1f, 0.08f, 0.06f, 1)));
         skins.put(Players.ANDI_HUG, new PlayerSkin("default", null, null));
         skins.put(Players.MARKUS, new PlayerSkin("markus", "markus", new ColorRGBA(0.1f, 0.08f, 0.06f, 1)));
         skins.put(Players.FABI_HUCK, new PlayerSkin("default", null, null));
@@ -22,7 +22,7 @@ public class PlayerSkins {
         skins.put(Players.MARIA, new PlayerSkin("default", null, null));
         skins.put(Players.JANNIK, new PlayerSkin("default", null, null));
         skins.put(Players.MATZE, new PlayerSkin("default", null, null));
-        skins.put(Players.STEFAN, new PlayerSkin("stefan", "stefan", new ColorRGBA(0.12f, 0.08f, 0.06f, 1)));
+        skins.put(Players.STEFAN, new PlayerSkin("stefan", "general_1", new ColorRGBA(0.12f, 0.08f, 0.06f, 1)));
         skins.put(Players.ANSELM, new PlayerSkin("default", null, null));
         skins.put(Players.LUDIN, new PlayerSkin("default", null, null));
         skins.put(Players.SAMY, new PlayerSkin("default", null, null));
