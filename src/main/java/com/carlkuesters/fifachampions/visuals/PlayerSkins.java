@@ -18,7 +18,7 @@ public class PlayerSkins {
         skins.put(Players.ANDI_HUG, new PlayerSkin("andi_hug", "general_2", new ColorRGBA(0.1f, 0.1f, 0.1f, 1)));
         skins.put(Players.MARKUS, new PlayerSkin("markus", "markus", new ColorRGBA(0.1f, 0.08f, 0.06f, 1)));
         skins.put(Players.FABI_HUCK, new PlayerSkin("fabi_huck", null, null));
-        skins.put(Players.FABIAN_KERN, new PlayerSkin("default", null, null));
+        skins.put(Players.FABIAN_KERN, new PlayerSkin("fabian_kern", "general_2", new ColorRGBA(0.25f, 0.12f, 0.12f, 1)));
         skins.put(Players.MARIA, new PlayerSkin("default", null, null));
         skins.put(Players.JANNIK, new PlayerSkin("default", null, null));
         skins.put(Players.MATZE, new PlayerSkin("default", null, null));
