@@ -36,7 +36,7 @@ public class PlayerSkins {
         skins.put(Players.SCHLATTI, new PlayerSkin("default", null, null));
         skins.put(Players.FRIEDRICH, new PlayerSkin("default", null, null));
         skins.put(Players.TOBI, new PlayerSkin("default", null, null));
-        skins.put(Players.CHRIS, new PlayerSkin("default", null, null));
+        skins.put(Players.CHRIS, new PlayerSkin("chris", null, null));
         skins.put(Players.FABIAN_BUNGUS, new PlayerSkin("default", null, null));
         skins.put(Players.MIMI, new PlayerSkin("default", null, null));
         skins.put(Players.JANINA, new PlayerSkin("default", null, null));
