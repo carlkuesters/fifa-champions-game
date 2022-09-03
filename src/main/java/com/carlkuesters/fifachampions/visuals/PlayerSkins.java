@@ -40,7 +40,7 @@ public class PlayerSkins {
         skins.put(Players.FABIAN_BUNGUS, new PlayerSkin("fabian_bungus", "general_1", new ColorRGBA(0.5f, 0.33f, 0.1f, 1)));
         skins.put(Players.MIMI, new PlayerSkin("default", null, null));
         skins.put(Players.JANINA, new PlayerSkin("default", null, null));
-        skins.put(Players.PHILIPP, new PlayerSkin("default", null, null));
+        skins.put(Players.PHILIPP, new PlayerSkin("philipp", "general_1", new ColorRGBA(0.1f, 0.1f, 0.1f, 1)));
     }
 
     public static PlayerSkin get(Player player) {
