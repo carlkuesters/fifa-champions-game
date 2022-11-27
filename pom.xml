@@ -2,88 +2,88 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.carlkuesters</groupId>
-    <artifactId>fifachampions</artifactId>
+    <groupId>com.carlkuesters.fifachampions</groupId>
+    <artifactId>fifa-champions-parent</artifactId>
     <version>1.0.0</version>
+    <packaging>pom</packaging>
     <name>FIFA-Champions</name>
     <description>A 3D football game written for me and my friends, featuring ourselves as players.</description>
-
+    <modules>
+        <module>fifa-champions-application</module>
+        <module>fifa-champions-game</module>
+        <module>fifa-champions-shared</module>
+    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.jdom>2.0.6</version.jdom>
-        <version.jme3>3.2.1-stable</version.jme3>
+        <version.jme3>3.2.2-stable</version.jme3>
+        <version.fifa-champions>1.0.0</version.fifa-champions>
         <version.groovy>3.0.6</version.groovy>
-        <version.lemur>1.11.0</version.lemur>
-        <version.lemur-proto>1.10.0</version.lemur-proto>
-        <version.lombok>1.18.10</version.lombok>
+        <version.lemur>1.16.0</version.lemur>
+        <version.lemur-proto>1.13.0</version.lemur-proto>
+        <version.lombok>1.18.24</version.lombok>
         <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <!--jMonkeyEngine-->
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-core</artifactId>
-            <version>${version.jme3}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-lwjgl</artifactId>
-            <version>${version.jme3}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-desktop</artifactId>
-            <version>${version.jme3}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-effects</artifactId>
-            <version>${version.jme3}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-niftygui</artifactId>
-            <version>${version.jme3}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-jogg</artifactId>
-            <version>${version.jme3}</version>
-        </dependency>
-        <!--Lemur-->
-        <dependency>
-            <groupId>com.simsilica</groupId>
-            <artifactId>lemur</artifactId>
-            <version>${version.lemur}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.simsilica</groupId>
-            <artifactId>lemur-proto</artifactId>
-            <version>${version.lemur-proto}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>${version.groovy}</version>
-            <type>pom</type>
-        </dependency>
-        <!--Lombok-->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${version.lombok}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.carlkuesters.fifachampions</groupId>
+                <artifactId>fifa-champions-game</artifactId>
+                <version>${version.fifa-champions}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlkuesters.fifachampions</groupId>
+                <artifactId>fifa-champions-shared</artifactId>
+                <version>${version.fifa-champions}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmonkeyengine</groupId>
+                <artifactId>jme3-core</artifactId>
+                <version>${version.jme3}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmonkeyengine</groupId>
+                <artifactId>jme3-lwjgl</artifactId>
+                <version>${version.jme3}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmonkeyengine</groupId>
+                <artifactId>jme3-desktop</artifactId>
+                <version>${version.jme3}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmonkeyengine</groupId>
+                <artifactId>jme3-effects</artifactId>
+                <version>${version.jme3}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmonkeyengine</groupId>
+                <artifactId>jme3-niftygui</artifactId>
+                <version>${version.jme3}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmonkeyengine</groupId>
+                <artifactId>jme3-jogg</artifactId>
+                <version>${version.jme3}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.simsilica</groupId>
+                <artifactId>lemur</artifactId>
+                <version>${version.lemur}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.simsilica</groupId>
+                <artifactId>lemur-proto</artifactId>
+                <version>${version.lemur-proto}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${version.lombok}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
@@ -126,5 +126,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
