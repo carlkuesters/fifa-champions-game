@@ -439,19 +439,21 @@ public class Game implements GameLoopListener {
         return nearPlayers;
     }
 
-    public float getDistanceToNearestOpponent(Team alliedTeam, Vector3f position) {
+    public PlayerObject getNearestOpponent(Team alliedTeam, Vector3f position) {
         float minimumDistance = Float.MAX_VALUE;
+        PlayerObject nearestOpponent = null;
         for (Team team : teams) {
             for (PlayerObject playerObject2 : team.getPlayers()) {
                 if (playerObject2.getTeam() != alliedTeam) {
                     float distance = playerObject2.getPosition().distance(position);
                     if (distance < minimumDistance) {
                         minimumDistance = distance;
+                        nearestOpponent = playerObject2;
                     }
                 }
             }
         }
-        return minimumDistance;
+        return nearestOpponent;
     }
 
     public AnticipatedPlayer getTargetedPlayer(Team team, PlayerObject playerObject, float inRunFactor) {

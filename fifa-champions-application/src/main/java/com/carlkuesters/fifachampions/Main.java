@@ -41,6 +41,7 @@ public class Main extends SimpleApplication {
     public void simpleInitApp() {
         assetManager.registerLocator("../assets/", FileLocator.class);
 
+        setPauseOnLostFocus(false);
         setDisplayStatView(false);
 
         gameCreationInfo = new GameCreationInfo();

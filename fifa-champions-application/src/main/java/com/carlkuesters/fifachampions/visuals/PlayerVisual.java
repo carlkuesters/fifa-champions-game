@@ -26,7 +26,9 @@ public class PlayerVisual {
         playerModel.move(0, (playerModelOffsetForFeetsOnGround - halfPlayerModelHeight), 0);
         playerModel.rotate(0, -1 * FastMath.HALF_PI, 0);
         AnimControl animControl = playerModel.getControl(AnimControl.class);
-        animChannel = animControl.createChannel();
+        AnimChannel animChannel = animControl.createChannel();
+        playerVisualAnimationControl = new PlayerVisualAnimationControl(animChannel);
+        playerModel.addControl(playerVisualAnimationControl);
         // Head
         Material materialHead = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         materialHead.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/" + playerSkin.getFaceName() + ".png"));
@@ -82,7 +84,7 @@ public class PlayerVisual {
     private Node modelNode;
     @Getter
     private Node wrapperNode;
-    private AnimChannel animChannel;
+    private PlayerVisualAnimationControl playerVisualAnimationControl;
 
     public void setTrikot(String trikotName) {
         materialBody.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/WSP_body_" + trikotName + "_D.png"));
@@ -93,11 +95,6 @@ public class PlayerVisual {
     }
 
     public void playAnimation(PlayerAnimation playerAnimation, float startTime) {
-        if (!playerAnimation.getName().equals(animChannel.getAnimationName())) {
-            animChannel.setAnim(playerAnimation.getName());
-            animChannel.setTime(startTime);
-        }
-        animChannel.setSpeed(animChannel.getAnimMaxTime() / playerAnimation.getLoopDuration());
-        animChannel.setLoopMode(playerAnimation.getLoopMode());
+        playerVisualAnimationControl.playAnimation(playerAnimation, startTime);
     }
 }

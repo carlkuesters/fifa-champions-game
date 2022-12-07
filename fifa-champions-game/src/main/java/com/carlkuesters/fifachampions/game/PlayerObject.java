@@ -52,7 +52,7 @@ public class PlayerObject extends PhysicsObject {
                 if (forcedSpeed != null) {
                     speed = forcedSpeed;
                 } else {
-                    speed = PlayerSkillUtil.getValue(3, 6, player.getFieldPlayerSkills().getMaximumSpeed());
+                    speed = PlayerSkillUtil.getValue(3, 5.5f, player.getFieldPlayerSkills().getMaximumSpeed());
                     if (isSprinting) {
                         speed *= 1.667f;
                     }
