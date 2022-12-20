@@ -321,7 +321,6 @@ public class Game implements GameLoopListener {
                 idealLocation = playerObject.getTeam().getIdealLocation(playerObject);
             }
             playerObject.setTargetLocation(idealLocation);
-            playerObject.lookAt_XZ(ball.getPosition());
         }
         playerObject.update(tpf);
     }

@@ -16,13 +16,15 @@ public class PlayerObject extends PhysicsObject {
         this.team = team;
         this.player = player;
     }
-    private static final float MINIMUM_ROTATED_WALK_DIRECTION = 0.001f;
     private Team team;
     private Player player;
     private Controller controller;
-    private Vector2f targetWalkDirection = new Vector2f();
+    private Vector2f currentDirection = new Vector2f();
+    private Vector2f targetDirection = new Vector2f(0, 1);
     private Vector2f targetLocation = new Vector2f();
-    private Vector3f lastWalkTurnedPosition = new Vector3f();
+    private float targetSpeedFactor = 1;
+    @Getter
+    private boolean isTurning;
     private boolean canMove = true;
     private float remainingFreezeTime;
     private Float forcedSpeed;
@@ -44,35 +46,62 @@ public class PlayerObject extends PhysicsObject {
                 remainingFreezeTime = 0;
             }
         }
+        isTurning = false;
         if (canMove && (remainingFreezeTime == 0)) {
+            // Effective target location and direction
             Vector2f effectiveTargetLocation = targetLocation;
-            float oldTargetDistanceSquared = Float.MAX_VALUE;
+            if (isPressuring) {
+                Vector3f ballPosition = game.getBall().getPosition();
+                Vector3f positionNearBall = ballPosition.add(position.subtract(ballPosition).normalizeLocal().multLocal(1.5f));
+                effectiveTargetLocation = MathUtil.convertTo2D_XZ(positionNearBall);
+            }
+            Vector2f oldTargetDistance = null;
+            Float oldTargetDistanceSquared = null;
+            if (effectiveTargetLocation != null) {
+                oldTargetDistance = effectiveTargetLocation.subtract(position.getX(), position.getZ());
+                oldTargetDistanceSquared = oldTargetDistance.lengthSquared();
+            }
+            Vector2f effectiveTargetDirection = targetDirection;
+            if ((oldTargetDistance != null) && (oldTargetDistance.lengthSquared() > 0)) {
+                effectiveTargetDirection = oldTargetDistance.normalize();
+            }
+
             if ((remainingFallingDuration == 0) && (!isGoalkeeperJumping)) {
-                float speed;
-                if (forcedSpeed != null) {
-                    speed = forcedSpeed;
-                } else {
-                    speed = PlayerSkillUtil.getValue(3, 5.5f, player.getFieldPlayerSkills().getMaximumSpeed());
-                    if (isSprinting) {
-                        speed *= 1.667f;
+                // Turning
+                if (targetSpeedFactor > 0) {
+                    Vector3f currentDirection3f = getDirection();
+                    Vector2f currentDirection2f = new Vector2f(currentDirection3f.getX(), currentDirection3f.getZ());
+                    float angle = MathUtil.getSmallestAngleBetween(currentDirection2f, effectiveTargetDirection);
+                    isTurning = (FastMath.abs(angle) > MathUtil.EPSILON);
+                    if (isTurning) {
+                        currentDirection.set(currentDirection2f);
+                        float turnSpeed = targetSpeedFactor * PlayerSkillUtil.getValue(19, 21, player.getFieldPlayerSkills().getAcceleration());
+                        float turnAngle = Math.signum(angle) * turnSpeed * tpf;
+                        currentDirection.rotateAroundOrigin(turnAngle, false);
+
+                        float newAngle = MathUtil.getSmallestAngleBetween(currentDirection, effectiveTargetDirection);
+                        isTurning = (Math.signum(newAngle) == Math.signum(angle));
+                    }
+                    if (!isTurning) {
+                        currentDirection.set(effectiveTargetDirection);
                     }
                 }
-                boolean wantsToMove = true;
-                if (isPressuring) {
-                    Vector3f ballPosition = game.getBall().getPosition();
-                    Vector3f positionNearBall = ballPosition.add(position.subtract(ballPosition).normalizeLocal().multLocal(1.5f));
-                    effectiveTargetLocation = MathUtil.convertTo2D_XZ(positionNearBall);
-                }
-                if (effectiveTargetLocation != null) {
-                    Vector2f targetDistance = effectiveTargetLocation.subtract(position.getX(), position.getZ());
-                    oldTargetDistanceSquared = targetDistance.lengthSquared();
-                    targetWalkDirection.set(targetDistance).normalizeLocal();
-                    wantsToMove = (oldTargetDistanceSquared > MathUtil.EPSILON_SQUARED);
-                }
-                if (wantsToMove) {
-                    velocity.setX(targetWalkDirection.getX());
-                    velocity.setZ(targetWalkDirection.getY());
-                    velocity.normalizeLocal().multLocal(targetWalkDirection.length() * speed);
+                updateRotationToCurrentDirection();
+
+                // Moving (Not moving while turning also gets rid of the "endlessly circling around the target" problem)
+                if ((!isTurning) && ((oldTargetDistanceSquared == null) || (oldTargetDistanceSquared > MathUtil.EPSILON_SQUARED))) {
+                    float moveSpeed;
+                    if (forcedSpeed != null) {
+                        moveSpeed = forcedSpeed;
+                    } else {
+                        moveSpeed = targetSpeedFactor * PlayerSkillUtil.getValue(3, 5.5f, player.getFieldPlayerSkills().getMaximumSpeed());
+                        if (isSprinting) {
+                            moveSpeed *= 1.667f;
+                        }
+                    }
+                    velocity.setX(currentDirection.getX());
+                    velocity.setZ(currentDirection.getY());
+                    velocity.normalizeLocal().multLocal(moveSpeed);
                 } else {
                     velocity.set(0, 0, 0);
                 }
@@ -93,16 +122,13 @@ public class PlayerObject extends PhysicsObject {
                     setAnimation(null);
                 }
             } else {
-                if (effectiveTargetLocation != null) {
+                // Turning the player can temporarily move him further away from his target position than before,
+                // causing him to teleport with the current if-further-away-than-before-target-is-reached logic
+                if ((oldTargetDistanceSquared != null) && (!isTurning)) {
                     float newTargetDistanceSquared = effectiveTargetLocation.subtract(position.getX(), position.getZ()).lengthSquared();
-                    if ((newTargetDistanceSquared - oldTargetDistanceSquared) > -1 * MathUtil.EPSILON) {
+                    if (newTargetDistanceSquared > oldTargetDistanceSquared) {
                         position.set(effectiveTargetLocation.getX(), 0, effectiveTargetLocation.getY());
                     }
-                }
-                float distanceToLastTurnedPosition = this.position.distanceSquared(lastWalkTurnedPosition);
-                if (distanceToLastTurnedPosition >= MINIMUM_ROTATED_WALK_DIRECTION) {
-                    turnIntoWalkDirection();
-                    lastWalkTurnedPosition.set(position);
                 }
             }
         }
@@ -200,18 +226,17 @@ public class PlayerObject extends PhysicsObject {
     }
 
     public void turnIntoControllerTargetDirection() {
-        targetWalkDirection.set(controller.getTargetDirection());
-        turnIntoWalkDirection();
+        setTargetDirection(controller.getTargetDirection().normalize());
+        currentDirection.set(targetDirection);
+        updateRotationToCurrentDirection();
     }
 
-    private void turnIntoWalkDirection() {
-        if (targetWalkDirection.lengthSquared() > MathUtil.EPSILON_SQUARED) {
-            Vector3f newDirection = getDirection().clone();
-            newDirection.setX(targetWalkDirection.getX());
-            newDirection.setZ(targetWalkDirection.getY());
-            newDirection.normalizeLocal();
-            setDirection(newDirection);
-        }
+    private void updateRotationToCurrentDirection() {
+        Vector3f newDirection = getDirection().clone();
+        newDirection.setX(currentDirection.getX());
+        newDirection.setZ(currentDirection.getY());
+        newDirection.normalizeLocal();
+        setDirection(newDirection);
     }
 
     private void accelerateBall(Vector3f ballVelocity, boolean canTriggerOffside) {
@@ -283,7 +308,7 @@ public class PlayerObject extends PhysicsObject {
     public void setController(Controller controller) {
         this.controller = controller;
         targetLocation = null;
-        targetWalkDirection.set(0, 0);
+        targetSpeedFactor = 1;
         if (controller != null) {
             isSprinting = controller.isSprinting();
         } else {
@@ -309,14 +334,21 @@ public class PlayerObject extends PhysicsObject {
             }
             this.targetLocation.set(targetLocation);
         }
+        Vector3f directionToBall = game.getBall().getPosition().subtract(position).normalizeLocal();
+        setTargetDirection(MathUtil.convertTo2D_XZ(directionToBall));
+        targetSpeedFactor = 1;
     }
 
     public void setTargetWalkDirection(Vector2f targetWalkDirection) {
-        this.targetWalkDirection.set(targetWalkDirection);
+        targetLocation = null;
+        setTargetDirection(targetWalkDirection.normalize());
+        targetSpeedFactor = targetWalkDirection.length();
     }
 
-    public Vector2f getTargetWalkDirection() {
-        return targetWalkDirection;
+    private void setTargetDirection(Vector2f targetDirection) {
+        if (targetDirection.lengthSquared() > 0) {
+            this.targetDirection.set(targetDirection);
+        }
     }
 
     public void setForcedSpeed(Float forcedSpeed) {

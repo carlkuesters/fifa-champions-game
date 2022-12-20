@@ -23,11 +23,21 @@ public class MathUtil {
                 / FastMath.sqrt(FastMath.sqr(line2.y - line1.y) + FastMath.sqr(line2.x - line1.x));
     }
 
-    public static Vector2f convertTo2D_XZ(Vector3f point) {
-        return new Vector2f(point.x, point.z);
+    public static float getSmallestAngleBetween(Vector2f vector1, Vector2f vector2) {
+        float angle = vector1.angleBetween(vector2);
+        if (angle < -1 * FastMath.PI) {
+            angle += FastMath.TWO_PI;
+        } else if (angle > FastMath.PI) {
+            angle -= FastMath.TWO_PI;
+        }
+        return angle;
     }
 
-    public static Vector3f convertTo3D_XZ(Vector2f point) {
-        return new Vector3f(point.x, 0, point.y);
+    public static Vector2f convertTo2D_XZ(Vector3f vector) {
+        return new Vector2f(vector.x, vector.z);
+    }
+
+    public static Vector3f convertTo3D_XZ(Vector2f vector) {
+        return new Vector3f(vector.x, 0, vector.y);
     }
 }

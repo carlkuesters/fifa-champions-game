@@ -146,11 +146,10 @@ public class GameAppState extends BaseDisplayAppState {
     private void updatePlayerVisual(PlayerObject playerObject) {
         PlayerVisual playerVisual = getPlayerVisual(playerObject);
         updateTransform(playerObject, playerVisual.getModelNode());
-        // Run Animation
-        float velocity = playerObject.getVelocity().length();
+        // Animation
         PlayerAnimation playerAnimation = playerObject.getAnimation();
         if (isNullOrDefaultRunAnimation(playerAnimation)) {
-            playerAnimation = getPlayerDefaultRunAnimation(velocity);
+            playerAnimation = getPlayerDefaultRunAnimation(playerObject.getVelocity().length(), playerObject.isTurning());
         }
         playerVisual.playAnimation(playerAnimation);
     }
@@ -172,10 +171,10 @@ public class GameAppState extends BaseDisplayAppState {
              || (playerAnimation == PlayerVisual.IDLE_ANIMATION));
     }
 
-    private PlayerAnimation getPlayerDefaultRunAnimation(float velocity) {
+    private PlayerAnimation getPlayerDefaultRunAnimation(float velocity, boolean isTurning) {
         if (velocity > 8) {
             return PlayerVisual.RUN_ANIMATION_FAST;
-        } else if (velocity > 3) {
+        } else if ((velocity > 3) || isTurning) {
             return PlayerVisual.RUN_ANIMATION_MEDIUM;
         } else if (velocity > MathUtil.EPSILON) {
             return PlayerVisual.RUN_ANIMATION_SLOW;
