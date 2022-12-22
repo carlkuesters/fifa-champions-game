@@ -13,7 +13,7 @@ public class Teams {
         "FC",
         new String[] { "amaranth", "red", "striped", "thinstripes", "yellow" },
         new Player[] {
-            TIMO,
+            SCHMUCK,
             SAMY, MARCO, MARKUS, CARL,
             STEFFEN, FELIX, JANNIK, DENNIS,
             TIMO, MIRCO

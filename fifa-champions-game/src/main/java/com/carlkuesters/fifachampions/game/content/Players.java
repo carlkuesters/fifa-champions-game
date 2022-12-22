@@ -33,6 +33,11 @@ public class Players {
         new FieldPlayerSkills(92, 94, 95, 92, 90, 91, 95, 90, 86),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
+    public static final Player SCHMUCK = new Player(
+        "Schmuck", TW,
+        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        new GoalkeeperSkills(99, 99, 99, 99)
+    );
     public static final Player ANDI_HUG = new Player(
         "Andi Hug", ST,
         new FieldPlayerSkills(78, 81, 71, 80, 89, 81, 82, 76, 74),
