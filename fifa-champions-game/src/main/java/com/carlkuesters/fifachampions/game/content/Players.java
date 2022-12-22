@@ -168,4 +168,9 @@ public class Players {
         new FieldPlayerSkills(50, 50, 50, 50, 50, 50, 50, 50, 50),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
+    public static final Player KARL = new Player(
+        "Karl", IV,
+        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        new GoalkeeperSkills(99, 99, 99, 99)
+    );
 }
