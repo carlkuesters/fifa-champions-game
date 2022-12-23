@@ -23,7 +23,7 @@ public class Teams {
             STEFAN, ANSELM, LUDIN, ALEX, OTT,
             O2, ANDI_FRITZ, MARTIN, SCHLATTI, FRIEDRICH,
             TOBI, CHRIS, FABIAN_BUNGUS, MIMI, PHILIPP,
-            // TODO: Karl
+            // TODO: Karl, Raphi
         },
         new Formation442()
     );
