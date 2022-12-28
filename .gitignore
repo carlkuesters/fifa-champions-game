@@ -63,6 +63,7 @@ nbactions.xml
 
 # FIFA-Champions specific #
 workspace
+generated
 *.obj
 *.mtl
 *.fbx

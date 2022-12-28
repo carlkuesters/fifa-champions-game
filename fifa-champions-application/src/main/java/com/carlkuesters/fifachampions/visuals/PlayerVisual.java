@@ -17,6 +17,7 @@ public class PlayerVisual {
 
     public PlayerVisual(AssetManager assetManager, PlayerSkin playerSkin) {
         this.assetManager = assetManager;
+        this.playerSkin = playerSkin;
         Node playerModel = (Node) assetManager.loadModel("models/player/player.j3o");
         float playerScale = 0.0106f;
         playerModel.scale(playerScale);
@@ -31,17 +32,17 @@ public class PlayerVisual {
         playerModel.addControl(playerVisualAnimationControl);
         // Head
         Material materialHead = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        materialHead.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/" + playerSkin.getFaceName() + ".png"));
-        materialHead.setTexture("NormalMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/WSP_head_N.png"));
-        materialHead.setTexture("SpecularMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/WSP_head_SP.png"));
+        materialHead.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/face_" + playerSkin.getFaceName() + ".png"));
+        materialHead.setTexture("NormalMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/face_normal.png"));
+        materialHead.setTexture("SpecularMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/face_specular.png"));
         Geometry head = (Geometry) playerModel.getChild("head");
         head.setMaterial(materialHead);
         // Body
         Geometry body = (Geometry) playerModel.getChild("body");
         materialBody = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        materialBody.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/" + playerSkin.getFaceName() + ".png"));
-        materialBody.setTexture("NormalMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/WSP_body_N.png"));
-        materialBody.setTexture("SpecularMap", MaterialFactory.loadTexture(assetManager,  "models/player/resources/WSP_body_SP.png"));
+        materialBody.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/body_original.png"));
+        materialBody.setTexture("NormalMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/body_normal.png"));
+        materialBody.setTexture("SpecularMap", MaterialFactory.loadTexture(assetManager,  "models/player/resources/body_specular.png"));
         body.setMaterial(materialBody);
         playerModel.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         // Add model to visual
@@ -79,6 +80,7 @@ public class PlayerVisual {
     public static final PlayerAnimation RUN_ANIMATION_SLOW = new PlayerAnimation("run_slow", 1.59f);
     public static final PlayerAnimation IDLE_ANIMATION = new PlayerAnimation("idle", 4);
     private AssetManager assetManager;
+    private PlayerSkin playerSkin;
     private Material materialBody;
     @Getter
     private Node modelNode;
@@ -87,7 +89,7 @@ public class PlayerVisual {
     private PlayerVisualAnimationControl playerVisualAnimationControl;
 
     public void setTrikot(String trikotName) {
-        materialBody.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/WSP_body_" + trikotName + "_D.png"));
+        materialBody.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/generated/body_" + playerSkin.getFaceName() + "_" + trikotName + ".png"));
     }
 
     public void playAnimation(PlayerAnimation playerAnimation) {

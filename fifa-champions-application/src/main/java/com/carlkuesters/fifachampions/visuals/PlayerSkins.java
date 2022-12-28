@@ -4,6 +4,7 @@ import com.carlkuesters.fifachampions.game.Player;
 import com.carlkuesters.fifachampions.game.content.Players;
 import com.jme3.math.ColorRGBA;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class PlayerSkins {
@@ -53,5 +54,9 @@ public class PlayerSkins {
 
     public static PlayerSkin get(Player player) {
         return skins.get(player);
+    }
+
+    public static Collection<PlayerSkin> getAllSkins() {
+        return skins.values();
     }
 }
