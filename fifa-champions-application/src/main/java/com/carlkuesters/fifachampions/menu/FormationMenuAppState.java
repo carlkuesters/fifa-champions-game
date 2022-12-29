@@ -14,25 +14,30 @@ import java.util.HashMap;
 
 public abstract class FormationMenuAppState<P> extends MenuAppState {
 
-    private int containerMarginOutside = 150;
-    private int containerMarginBetween = 400;
+    private int containerMarginOutsideX = 50;
+    private int containerMarginOutsideY = 50;
+    private int containerMarginBetween = 200;
+    private int playerDetailsImageSize = 60;
+    private int playerImageSize = 40;
+    private int fieldPlayerLeftAndRightColumnWidth = 25;
+    private int reservePlayersX = 7;
+    private int reservePlayersY = 4;
     private int containerY;
     private int containerWidth;
-    private int playerDetailsImageSize = 60;
-    private int formationLeftAndRightColumnWidth = 25;
-    private int formationTrikotImageSize = 40;
+    private int backgroundSize;
     private FormationMenuGroup[] menuGroups = new FormationMenuGroup[2];
     private PlayerDetailsContainer[][] playerDetails = new PlayerDetailsContainer[2][2];
     private FieldPlayerContainer[][] fieldPlayers = new FieldPlayerContainer[2][11];
     private HashMap<MenuElement, Integer> fieldPlayerElementIndices = new HashMap<>();
-    private ReservePlayerContainer[][] reservePlayers = new ReservePlayerContainer[2][20];
+    private ReservePlayerContainer[][] reservePlayers = new ReservePlayerContainer[2][28];
     private HashMap<MenuElement, Integer> reservePlayerElementIndices = new HashMap<>();
 
     @Override
     protected void initMenu() {
         addTitle("Aufstellung");
-        containerY = (totalHeight - 80);
-        containerWidth = ((totalWidth - (2 * containerMarginOutside) - containerMarginBetween) / 2);
+        containerY = (totalHeight - containerMarginOutsideY);
+        containerWidth = ((totalWidth - (2 * containerMarginOutsideX) - containerMarginBetween) / 2);
+        backgroundSize = (totalHeight - (2 * containerMarginOutsideY) - playerDetailsImageSize - (reservePlayersY * (playerImageSize + 20)));
         addSide(-1);
         addSide(1);
     }
@@ -73,24 +78,28 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
         Panel formationBackground = new Panel();
         IconComponent formationBackgroundIcon = new IconComponent("textures/formation_background.png");
-        formationBackgroundIcon.setIconSize(new Vector2f(containerWidth, containerWidth));
+        formationBackgroundIcon.setIconSize(new Vector2f(backgroundSize, backgroundSize));
+        formationBackgroundIcon.setHAlignment(HAlignment.Center);
         formationBackground.setBackground(formationBackgroundIcon);
         container.addChild(formationBackground);
 
         Container reservePlayersContainer = new Container();
         reservePlayersContainer.setBackground(null);
         int reservePlayerIndex = 0;
-        for (int y = 0; y < 4; y++) {
+        for (int y = 0; y < reservePlayersY; y++) {
             Container reservePlayersRow = new Container();
             reservePlayersRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
             reservePlayersRow.setBackground(null);
-            for (int x = 0; x < 5; x++) {
+            for (int x = 0; x < reservePlayersX; x++) {
                 ReservePlayerContainer reservePlayerContainer = createReservePlayer();
                 reservePlayersRow.addChild(reservePlayerContainer.getContainer());
                 reservePlayers[teamIndex][reservePlayerIndex] = reservePlayerContainer;
                 reservePlayerElementIndices.put(reservePlayerContainer.getMenuElement(), reservePlayerIndex);
                 menuGroup.addElement(reservePlayerContainer.getMenuElement());
                 reservePlayerIndex++;
+                if (reservePlayerIndex == 28) {
+                    break;
+                }
             }
             reservePlayersContainer.addChild(reservePlayersRow);
         }
@@ -157,8 +166,8 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
         Container topRow = new Container();
         topRow.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
-        // For some reason, the reserve players row is otherwise 10px wider than the formation background image
-        topRow.setPreferredSize(new Vector3f(((containerWidth - 10) / 5f), 40, 0));
+        // We need to subtract 10, because otherwise for some reason the reserve players row is 10px wider than the container width
+        topRow.setPreferredSize(new Vector3f(((containerWidth - 10) / ((float) reservePlayersX)), playerImageSize, 0));
         topRow.setBackground(null);
 
         Label lblPosition = new Label("");
@@ -203,7 +212,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         topRow.setBackground(null);
 
         Label lblSkill = new Label("");
-        lblSkill.setPreferredSize(new Vector3f(formationLeftAndRightColumnWidth, 0, 0));
+        lblSkill.setPreferredSize(new Vector3f(fieldPlayerLeftAndRightColumnWidth, 0, 0));
         lblSkill.setTextHAlignment(HAlignment.Center);
         lblSkill.setTextVAlignment(VAlignment.Bottom);
         lblSkill.setFontSize(14);
@@ -212,13 +221,13 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
         Panel trikotImage = new Panel();
         IconComponent trikotIcon = new IconComponent("textures/player_face.png");
-        trikotIcon.setIconSize(new Vector2f(formationTrikotImageSize, formationTrikotImageSize));
+        trikotIcon.setIconSize(new Vector2f(playerImageSize, playerImageSize));
         trikotIcon.setHAlignment(HAlignment.Center);
         trikotImage.setBackground(trikotIcon);
         topRow.addChild(trikotImage);
 
         Panel placeholderRight = new Panel();
-        placeholderRight.setPreferredSize(new Vector3f(formationLeftAndRightColumnWidth, formationLeftAndRightColumnWidth, 0));
+        placeholderRight.setPreferredSize(new Vector3f(fieldPlayerLeftAndRightColumnWidth, fieldPlayerLeftAndRightColumnWidth, 0));
         placeholderRight.setBackground(null);
         topRow.addChild(placeholderRight);
 
@@ -326,21 +335,21 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         menuGroups[teamIndex].setMarkedForSwitch(fieldPlayerContainer.getMenuElement(), markedForSwitch);
     }
 
-    private float getFormationPlayerX(int teamIndex, float formationY) {
+    private float getFormationPlayerX(int teamIndex, float formationX) {
         int side = ((teamIndex == 0) ? -1 : 1);
-        int startX = getContainerX(side);
-        int maximumDistanceX = (containerWidth - ((2 * formationLeftAndRightColumnWidth) + formationTrikotImageSize));
-        float progressX = ((formationY + 1) / 2);
+        int startX = getContainerX(side) + ((containerWidth - backgroundSize) / 2);
+        int maximumDistanceX = (backgroundSize - ((2 * fieldPlayerLeftAndRightColumnWidth) + playerImageSize));
+        float progressX = ((formationX + 1) / 2);
         return (startX + (progressX * maximumDistanceX));
     }
 
-    private float getFormationPlayerY(float formationX) {
-        // - 10 because of visual aesthetics
-        int startY = (containerY - (playerDetailsImageSize - 10));
+    private float getFormationPlayerY(float formationY) {
+        // - 11 because of visual aesthetics
+        int startY = (containerY - (playerDetailsImageSize - 11));
         // + 20 because of the player name below the image
         // - 6 because of visual aesthetics
-        int maximumDistanceY = (containerWidth - (formationTrikotImageSize + 20 - 6));
-        float progressY = (1 - ((formationX + 1) / 2));
+        int maximumDistanceY = (backgroundSize - (playerImageSize + 20 - 6));
+        float progressY = (1 - ((formationY + 1) / 2));
         return (startY - (progressY * maximumDistanceY));
     }
 

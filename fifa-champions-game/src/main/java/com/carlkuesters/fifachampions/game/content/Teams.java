@@ -19,11 +19,10 @@ public class Teams {
             TIMO, MIRCO
         },
         new Player[] {
-            ANDI_HUG, FABI_HUCK, FABIAN_KERN, MARIA, MATZE,
-            STEFAN, ANSELM, LUDIN, ALEX, OTT,
-            O2, ANDI_FRITZ, MARTIN, SCHLATTI, FRIEDRICH,
-            TOBI, CHRIS, FABIAN_BUNGUS, MIMI, PHILIPP,
-            // TODO: Karl, Raphi, Alex Stehle, Erwin, Orhan (?), Sandro, Jens
+            ANDI_HUG, FABI_HUCK, FABIAN_KERN, MARIA, MATZE, STEFAN, ANSELM,
+            LUDIN, ALEX, OTT, O2, ANDI_FRITZ, MARTIN, SCHLATTI,
+            FRIEDRICH, TOBI, CHRIS, FABIAN_BUNGUS, MIMI, PHILIPP, KARL,
+            ORHAN, SANDRO, ERWIN, RAPHI, ALEX_STEHLE, JENS, JANINA
         },
         new Formation442()
     );
