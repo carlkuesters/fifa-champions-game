@@ -54,6 +54,11 @@ public class StadiumAppState extends BaseDisplayAppState {
         stadium.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         mainApplication.getRootNode().attachChild(stadium);
 
+        // The field marking is a bit above the ground in the model
+        Geometry fieldMarking = (Geometry) stadium.getChild("stadium_fixed-geom-10");
+        fieldMarking.setLocalTranslation(0, -0.19f, 0);
+        fieldMarking.setShadowMode(RenderQueue.ShadowMode.Receive);
+
         String[] audienceGeometryNames = new String[] { "stadium_fixed-geom-3", "stadium_fixed-geom-4", "stadium_fixed-geom-9" };
         audienceMaterials = new Material[audienceGeometryNames.length];
         for (int i = 0; i < audienceGeometryNames.length; i++) {
