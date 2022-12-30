@@ -15,7 +15,6 @@ import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -190,17 +189,22 @@ public class IngameAppState extends BaseDisplayAppState {
             controlledPlayerContainers[teamIndex].update(controller, optimalShootStrength, tpf);
         }
 
-        if (!mainApplication.isFreeCam()) {
-            Camera camera = mainApplication.getCamera();
+        CameraAppState cameraAppState = getAppState(CameraAppState.class);
+        if (!cameraAppState.isFreeCam()) {
             CameraPerspective cameraPerspective = game.getCameraPerspective();
             if (cameraPerspective != null) {
-                camera.setLocation(cameraPerspective.getPosition());
-                camera.lookAtDirection(cameraPerspective.getDirection(), Vector3f.UNIT_Y);
+                cameraAppState.setDefaultFieldOfView();
+                cameraAppState.setLocationAndDirection(cameraPerspective.getPosition(), cameraPerspective.getDirection());
             } else {
-                targetCameraLocation.set(0.8f * game.getBall().getPosition().getX(), 0, 0.5f * (game.getBall().getPosition().getZ() + 25));
-                targetCameraLocation.addLocal(0, 20, 20);
-                camera.setLocation(targetCameraLocation);
-                camera.lookAtDirection(new Vector3f(0, -1, -1.25f), Vector3f.UNIT_Y);
+                Vector3f ballPosition = game.getBall().getPosition();
+                float x = 1.1f * ballPosition.getX();
+                x = Math.max(-45, Math.min(x, 45));
+                float y = 30;
+                float z = (1.75f * (ballPosition.getZ() - 7)) + 60;
+                z = Math.max(39, Math.min(z, 63));
+                targetCameraLocation.set(x, y, z);
+                cameraAppState.setFieldOfView(25);
+                cameraAppState.setLocationAndDirection(targetCameraLocation, new Vector3f(0, -0.6f, -0.9f));
             }
         }
 
@@ -247,5 +251,6 @@ public class IngameAppState extends BaseDisplayAppState {
         super.cleanup();
         mainApplication.getRootNode().detachChild(rootNode);
         mainApplication.getGuiNode().detachChild(guiNode);
+        getAppState(CameraAppState.class).setDefaultFieldOfView();
     }
 }

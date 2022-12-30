@@ -34,8 +34,6 @@ public class Main extends SimpleApplication {
     private GameCreationInfo gameCreationInfo;
     @Getter
     private JoystickListener joystickListener;
-    @Getter
-    private boolean freeCam = false;
 
     @Override
     public void simpleInitApp() {
@@ -64,11 +62,7 @@ public class Main extends SimpleApplication {
         BaseStyles.loadGlassStyle();
         GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
 
-        cam.setFrustumPerspective(45, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000);
-        flyCam.setMoveSpeed(100);
-        flyCam.setDragToRotate(true);
-        flyCam.setEnabled(freeCam);
-
+        stateManager.attach(new CameraAppState());
         stateManager.attach(new PostFilterAppState());
         stateManager.attach(new CinematicAppState());
         stateManager.attach(new StadiumAppState());

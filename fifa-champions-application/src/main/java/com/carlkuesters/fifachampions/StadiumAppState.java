@@ -71,10 +71,14 @@ public class StadiumAppState extends BaseDisplayAppState {
         }
         setAudienceHyped(false);
 
-        // Some faces (e.g. roof and flags) should be rendered from both sides, for now we simply disable culling for all
+        // Some faces (e.g. roof) should be rendered from both sides, for now we simply disable culling for all
         for (Geometry geometry : JMonkeyUtil.getAllGeometryChilds(stadium)) {
             geometry.getMaterial().getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
         }
+
+        // But we specifically enable culling for the flags, because they are in the way of the ingame camera (front culling because their normals are inverted)
+        Geometry flags = (Geometry) stadium.getChild("stadium_fixed-geom-1");
+        flags.getMaterial().getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Front);
 
         if (false) {
             Geometry fieldTestBounds = new Geometry("", new Box(Game.FIELD_HALF_WIDTH, Game.GOAL_HEIGHT / 2, Game.FIELD_HALF_HEIGHT));
