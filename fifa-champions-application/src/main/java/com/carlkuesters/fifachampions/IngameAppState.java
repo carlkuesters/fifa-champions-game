@@ -42,8 +42,7 @@ public class IngameAppState extends BaseDisplayAppState {
         rootNode = new Node();
         guiNode = new Node();
 
-        // TODO: Why do I have to cast here?
-        GameAppState gameAppState = (GameAppState) getAppState(GameAppState.class);
+        GameAppState gameAppState = getAppState(GameAppState.class);
         Game game = gameAppState.getGame();
 
         KickOffSituation kickOffSituation = (KickOffSituation) game.getSituation();
@@ -126,8 +125,7 @@ public class IngameAppState extends BaseDisplayAppState {
         mainApplication.getRootNode().attachChild(rootNode);
         mainApplication.getGuiNode().attachChild(guiNode);
 
-        // TODO: Why do I have to cast here?
-        PauseIngameMenuAppState pauseIngameMenuAppState = (PauseIngameMenuAppState) getAppState(PauseIngameMenuAppState.class);
+        PauseIngameMenuAppState pauseIngameMenuAppState = getAppState(PauseIngameMenuAppState.class);
         for (int teamIndex = 0; teamIndex < game.getTeams().length; teamIndex++) {
             TeamInfo teamInfo = game.getTeams()[teamIndex].getTeamInfo();
             pauseIngameMenuAppState.setTeam(teamIndex, teamInfo);
@@ -215,8 +213,7 @@ public class IngameAppState extends BaseDisplayAppState {
         String formattedTime = getFormattedTime(passedTime);
         String formattedOverTime = ((game.getHalfTimePassedOverTime() > 0) ? getFormattedTime(game.getHalfTimePassedOverTime()) : null);
         scoreContainer.setTimeAndGoals(formattedTime, formattedOverTime, game.getGoals());
-        // TODO: Why do I have to cast here?
-        PauseIngameMenuAppState pauseIngameMenuAppState = (PauseIngameMenuAppState) getAppState(PauseIngameMenuAppState.class);
+        PauseIngameMenuAppState pauseIngameMenuAppState = getAppState(PauseIngameMenuAppState.class);
         pauseIngameMenuAppState.setTime(formattedTime + ((formattedOverTime != null) ? " (+" + formattedOverTime + ")" : ""));
         pauseIngameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
 
@@ -241,9 +238,7 @@ public class IngameAppState extends BaseDisplayAppState {
     }
 
     private Game getGame() {
-        // TODO: Why do I have to cast here?
-        GameAppState gameAppState = (GameAppState) getAppState(GameAppState.class);
-        return gameAppState.getGame();
+        return getAppState(GameAppState.class).getGame();
     }
 
     @Override

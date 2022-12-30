@@ -60,8 +60,7 @@ public class MainMenuAppState extends MenuAppState {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        // TODO: Why do I have to cast here?
-        CinematicAppState cinematicAppState = (CinematicAppState) getAppState(CinematicAppState.class);
+        CinematicAppState cinematicAppState = getAppState(CinematicAppState.class);
         if (enabled) {
             cinematicAppState.playCinematic(mainMenuCinematic);
         } else {

@@ -38,8 +38,7 @@ public class StadiumAppState extends BaseDisplayAppState {
         sun.setColor(ColorRGBA.White);
         mainApplication.getRootNode().addLight(sun);
 
-        // TODO: Why do I have to cast here?
-        PostFilterAppState postFilterAppState = (PostFilterAppState) getAppState(PostFilterAppState.class);
+        PostFilterAppState postFilterAppState = getAppState(PostFilterAppState.class);
         postFilterAppState.addFilter(new SSAOFilter(10, 25, 6, 0.1f));
         DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(mainApplication.getAssetManager(), 2048, 3);
         shadowFilter.setLight(sun);

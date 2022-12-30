@@ -56,9 +56,7 @@ public class PauseFormationMenuAppState extends FormationMenuAppState<PlayerObje
     }
 
     private Team getTeam(int teamIndex) {
-        // TODO: Why do I have to cast here?
-        GameAppState gameAppState = (GameAppState) getAppState(GameAppState.class);
-        return gameAppState.getGame().getTeams()[teamIndex];
+        return getAppState(GameAppState.class).getGame().getTeams()[teamIndex];
     }
 
     @Override

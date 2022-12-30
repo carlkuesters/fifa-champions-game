@@ -115,8 +115,7 @@ public class GameAppState extends BaseDisplayAppState {
         game.update(tpf);
 
         Cinematic activeCinematic = (Cinematic) game.getActiveCinematic();
-        // TODO: Why do I have to cast here?
-        CinematicAppState cinematicAppState = (CinematicAppState) getAppState(CinematicAppState.class);
+        CinematicAppState cinematicAppState = getAppState(CinematicAppState.class);
         if (activeCinematic != cinematicAppState.getCurrentCinematic()) {
             if (activeCinematic != null) {
                 cinematicAppState.playCinematic(activeCinematic);
@@ -199,8 +198,6 @@ public class GameAppState extends BaseDisplayAppState {
     }
 
     private void setAudienceHyped(boolean hyped) {
-        // TODO: Why do I have to cast here?
-        StadiumAppState stadiumAppState = (StadiumAppState) getAppState(StadiumAppState.class);
-        stadiumAppState.setAudienceHyped(hyped);
+        getAppState(StadiumAppState.class).setAudienceHyped(hyped);
     }
 }

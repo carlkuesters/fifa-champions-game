@@ -25,9 +25,7 @@ public class PauseSideSelectionMenuAppState extends SideSelectionMenuAppState {
     }
 
     private Controller getController(int joyId) {
-        // TODO: Why do I have to cast here?
-        GameAppState gameAppState = (GameAppState) getAppState(GameAppState.class);
-        return gameAppState.getControllers().get(joyId);
+        return getAppState(GameAppState.class).getControllers().get(joyId);
     }
 
     @Override
