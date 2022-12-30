@@ -40,7 +40,7 @@ public class StadiumAppState extends BaseDisplayAppState {
 
         PostFilterAppState postFilterAppState = getAppState(PostFilterAppState.class);
         postFilterAppState.addFilter(new SSAOFilter(10, 25, 6, 0.1f));
-        DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(mainApplication.getAssetManager(), 2048, 3);
+        DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(mainApplication.getAssetManager(), 8192, 4);
         shadowFilter.setLight(sun);
         shadowFilter.setShadowIntensity(0.4f);
         postFilterAppState.addFilter(shadowFilter);
