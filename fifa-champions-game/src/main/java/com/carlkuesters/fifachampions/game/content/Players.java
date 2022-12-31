@@ -184,7 +184,7 @@ public class Players {
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player ERWIN = new Player(
-        "Alex Stehle", ZM, // TODO: Position
+        "Erwin", ZM, // TODO: Position
         new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
         new GoalkeeperSkills(99, 99, 99, 99)
     );
