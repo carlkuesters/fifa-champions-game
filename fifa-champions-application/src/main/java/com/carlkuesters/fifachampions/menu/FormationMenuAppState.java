@@ -3,9 +3,12 @@ package com.carlkuesters.fifachampions.menu;
 import com.carlkuesters.fifachampions.game.Formation;
 import com.carlkuesters.fifachampions.game.Player;
 import com.carlkuesters.fifachampions.game.PlayerPosition;
+import com.carlkuesters.fifachampions.visuals.PlayerSkin;
+import com.carlkuesters.fifachampions.visuals.PlayerSkins;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.texture.Texture;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.IconComponent;
 import com.simsilica.lemur.component.SpringGridLayout;
@@ -131,7 +134,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         container.setLayout(new SpringGridLayout(Axis.X, Axis.Y));
 
         Panel playerImage = new Panel();
-        IconComponent playerIcon = new IconComponent("textures/player_face.png");
+        IconComponent playerIcon = new IconComponent("textures/players/unknown_80.png");
         playerIcon.setIconSize(new Vector2f(playerDetailsImageSize, playerDetailsImageSize));
         playerIcon.setHAlignment(HAlignment.Center);
         playerIcon.setVAlignment(VAlignment.Center);
@@ -158,7 +161,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         }
         container.addChild(skillsColumn);
 
-        return new PlayerDetailsContainer(container, lblSkills);
+        return new PlayerDetailsContainer(container, playerIcon, lblSkills);
     }
 
     private ReservePlayerContainer createReservePlayer() {
@@ -176,10 +179,9 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         lblPosition.setFontSize(12);
         topRow.addChild(lblPosition);
 
-        int playerImageHeight = 40;
         Panel playerImage = new Panel();
-        IconComponent playerIcon = new IconComponent("textures/player_face.png");
-        playerIcon.setIconSize(new Vector2f(playerImageHeight, playerImageHeight));
+        IconComponent playerIcon = new IconComponent("textures/players/unknown_80.png");
+        playerIcon.setIconSize(new Vector2f(playerImageSize, playerImageSize));
         playerIcon.setHAlignment(HAlignment.Center);
         playerImage.setBackground(playerIcon);
         topRow.addChild(playerImage);
@@ -200,7 +202,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
         MenuElement menuElement = new MenuElement(container, this::confirm);
 
-        return new ReservePlayerContainer(container, lblPosition, lblSkill, lblName, menuElement);
+        return new ReservePlayerContainer(container, lblPosition, lblSkill, lblName, playerIcon, menuElement);
     }
 
     private FieldPlayerContainer createFieldPlayer() {
@@ -219,12 +221,12 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         lblSkill.setColor(ColorRGBA.White);
         topRow.addChild(lblSkill);
 
-        Panel trikotImage = new Panel();
-        IconComponent trikotIcon = new IconComponent("textures/player_face.png");
-        trikotIcon.setIconSize(new Vector2f(playerImageSize, playerImageSize));
-        trikotIcon.setHAlignment(HAlignment.Center);
-        trikotImage.setBackground(trikotIcon);
-        topRow.addChild(trikotImage);
+        Panel playerImage = new Panel();
+        IconComponent playerIcon = new IconComponent("textures/players/unknown_80.png");
+        playerIcon.setIconSize(new Vector2f(playerImageSize, playerImageSize));
+        playerIcon.setHAlignment(HAlignment.Center);
+        playerImage.setBackground(playerIcon);
+        topRow.addChild(playerImage);
 
         Panel placeholderRight = new Panel();
         placeholderRight.setPreferredSize(new Vector3f(fieldPlayerLeftAndRightColumnWidth, fieldPlayerLeftAndRightColumnWidth, 0));
@@ -242,7 +244,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
 
         MenuElement menuElement = new MenuElement(container, this::confirm);
 
-        return new FieldPlayerContainer(container, lblSkill, lblName, menuElement);
+        return new FieldPlayerContainer(container, lblSkill, lblName, playerIcon, menuElement);
     }
 
     protected abstract Formation getFormation(int teamIndex);
@@ -283,6 +285,7 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
         PlayerDetailsContainer playerDetailsContainer = playerDetails[teamIndex][detailsIndex];
         Label[][] lblSkills = playerDetailsContainer.getLblSkills();
         if (player != null) {
+            playerDetailsContainer.getPlayerIcon().setImageTexture(getPlayerIconTexture(player));
             if (useGoalkeeperStats) {
                 lblSkills[0][0].setText("BEW: " + player.getGoalkeeperSkills().getAgility());
                 lblSkills[0][1].setText("SPR: " + player.getGoalkeeperSkills().getJumpStrength());
@@ -322,12 +325,12 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     protected abstract P[] getFieldPlayers(int teamIndex);
 
     private void updateFieldPlayer(int teamIndex, int playerIndex, Player player, boolean markedForSwitch, Vector2f formationLocation) {
-        String name = player.getName();
         int skill = ((playerIndex == 0) ? player.getGoalkeeperSkills().getAverageSkill() : player.getFieldPlayerSkills().getAverageSkill());
 
         FieldPlayerContainer fieldPlayerContainer = fieldPlayers[teamIndex][playerIndex];
-        fieldPlayerContainer.getLblName().setText(name);
+        fieldPlayerContainer.getLblName().setText(player.getName());
         fieldPlayerContainer.getLblSkill().setText("" + skill);
+        fieldPlayerContainer.getPlayerIcon().setImageTexture(getPlayerIconTexture(player));
         float x = getFormationPlayerX(teamIndex, formationLocation.getY());
         float y = getFormationPlayerY(formationLocation.getX());
         fieldPlayerContainer.getContainer().setLocalTranslation(x, y, 1);
@@ -368,16 +371,22 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     protected abstract boolean isMarkedForSwitch(P playerObject);
 
     private void updateReservePlayer(int teamIndex, int playerIndex, Player player, boolean markedForSwitch) {
-        String name = player.getName();
         PlayerPosition position = player.getPosition();
         int skill = ((position == PlayerPosition.TW) ? player.getGoalkeeperSkills().getAverageSkill() : player.getFieldPlayerSkills().getAverageSkill());
 
         ReservePlayerContainer reservePlayerContainer = reservePlayers[teamIndex][playerIndex];
         reservePlayerContainer.getLblPosition().setText(position.name());
         reservePlayerContainer.getLblSkill().setText("" + skill);
-        reservePlayerContainer.getLblName().setText(name);
+        reservePlayerContainer.getLblName().setText(player.getName());
+        reservePlayerContainer.getPlayerIcon().setImageTexture(getPlayerIconTexture(player));
 
         menuGroups[teamIndex].setMarkedForSwitch(reservePlayerContainer.getMenuElement(), markedForSwitch);
+    }
+
+    private Texture getPlayerIconTexture(Player player) {
+        PlayerSkin playerSKin = PlayerSkins.get(player);
+        String playerIconPath = "textures/players/" + (playerSKin.isCustomPortrait() ? playerSKin.getFaceName() : "unknown") + "_80.png";
+        return GuiGlobals.getInstance().loadTexture(playerIconPath, false, false);
     }
 
     private void swapPlayers(int teamIndex, MenuElement element1, MenuElement element2) {

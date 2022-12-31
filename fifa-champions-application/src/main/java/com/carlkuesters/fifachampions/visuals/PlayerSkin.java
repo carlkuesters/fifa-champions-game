@@ -10,4 +10,5 @@ public class PlayerSkin {
     private String faceName;
     private String hairName;
     private ColorRGBA hairColor;
+    private boolean customPortrait;
 }

@@ -2,6 +2,7 @@ package com.carlkuesters.fifachampions.menu;
 
 import com.simsilica.lemur.Container;
 import com.simsilica.lemur.Label;
+import com.simsilica.lemur.component.IconComponent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,5 +13,6 @@ public class ReservePlayerContainer {
     private Label lblPosition;
     private Label lblSkill;
     private Label lblName;
+    private IconComponent playerIcon;
     private MenuElement menuElement;
 }
