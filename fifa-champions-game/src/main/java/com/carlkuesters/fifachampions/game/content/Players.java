@@ -10,7 +10,7 @@ public class Players {
 
     public static final Player TIMO = new Player(
         "Timo", ST,
-        new FieldPlayerSkills(85, 89, 88, 88, 94, 92, 90, 86, 83),
+        new FieldPlayerSkills(86, 89, 88, 89, 94, 92, 90, 86, 83),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player CARL = new Player(
@@ -20,7 +20,7 @@ public class Players {
     );
     public static final Player STEFFEN = new Player(
         "Steffen", LM,
-        new FieldPlayerSkills(84, 85, 89, 90, 88, 89, 86, 82, 83),
+        new FieldPlayerSkills(84, 86, 89, 90, 88, 89, 88, 82, 83),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player FELIX = new Player(
@@ -35,7 +35,7 @@ public class Players {
     );
     public static final Player SCHMUCK = new Player(
         "Schmuck", TW,
-        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        new FieldPlayerSkills(76, 76, 80, 81, 92, 80, 83, 78, 80),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player ANDI_HUG = new Player(
@@ -50,7 +50,7 @@ public class Players {
     );
     public static final Player FABI_HUCK = new Player(
         "Fabi Huck", LV,
-        new FieldPlayerSkills(79, 82, 72, 85, 86, 82, 81, 77, 86),
+        new FieldPlayerSkills(78, 82, 72, 85, 86, 82, 81, 77, 86),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player FABIAN_KERN = new Player(
@@ -70,7 +70,7 @@ public class Players {
     );
     public static final Player MATZE = new Player(
         "Matze", IV,
-        new FieldPlayerSkills(73, 74, 70, 86, 93, 91, 88, 74, 80),
+        new FieldPlayerSkills(73, 74, 71, 88, 93, 91, 88, 74, 82),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player STEFAN = new Player(
@@ -85,7 +85,7 @@ public class Players {
     );
     public static final Player LUDIN = new Player(
         "Ludin", LM,
-        new FieldPlayerSkills(82, 88, 79, 84, 93, 86, 89, 88, 83),
+        new FieldPlayerSkills(82, 87, 79, 84, 93, 86, 88, 88, 82),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player SAMY = new Player(
@@ -100,12 +100,12 @@ public class Players {
     );
     public static final Player ALEX = new Player(
         "Alex", IV,
-        new FieldPlayerSkills(83, 84, 87, 80, 82, 76, 78, 79, 75),
+        new FieldPlayerSkills(83, 84, 86, 80, 82, 76, 78, 79, 75),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player OTT = new Player(
         "Ott", ST,
-        new FieldPlayerSkills(75, 77, 87, 70, 79, 81, 74, 79, 72),
+        new FieldPlayerSkills(75, 77, 83, 70, 79, 81, 74, 79, 72),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player O2 = new Player(
@@ -140,12 +140,12 @@ public class Players {
     );
     public static final Player TOBI = new Player(
         "Tobi", ZDM,
-        new FieldPlayerSkills(75, 79, 72, 80, 84, 75, 79, 77, 72),
+        new FieldPlayerSkills(75, 80, 72, 80, 84, 75, 79, 77, 72),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player CHRIS = new Player(
         "Chris", ZDM,
-        new FieldPlayerSkills(81, 83, 83, 80, 82, 81, 85, 84, 76),
+        new FieldPlayerSkills(81, 83, 84, 80, 82, 81, 85, 84, 76),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player FABIAN_BUNGUS = new Player(
@@ -155,52 +155,52 @@ public class Players {
     );
     public static final Player MIMI = new Player(
         "Mimi", ST,
-        new FieldPlayerSkills(50, 50, 50, 50, 50, 50, 50, 50, 50),
+        new FieldPlayerSkills(70, 70, 70, 70, 70, 70, 70, 70, 70),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player JANINA = new Player(
         "Janina", ST,
-        new FieldPlayerSkills(50, 50, 50, 50, 50, 50, 50, 50, 50),
+        new FieldPlayerSkills(70, 70, 70, 70, 70, 70, 70, 70, 70),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player PHILIPP = new Player(
         "Philipp", ST,
-        new FieldPlayerSkills(50, 50, 50, 50, 50, 50, 50, 50, 50),
+        new FieldPlayerSkills(79, 81, 81, 78, 88, 80, 79, 81, 75),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player KARL = new Player(
         "Karl", IV,
-        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        new FieldPlayerSkills(89, 90, 89, 91, 89, 85, 88, 91, 83),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player RAPHI = new Player(
         "Raphi", LV, // TODO: Position
-        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        new FieldPlayerSkills(80, 80, 80, 80, 80, 80, 80, 80, 80),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player ALEX_STEHLE = new Player(
         "Alex Stehle", ST, // TODO: Position
-        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        new FieldPlayerSkills(80, 80, 80, 80, 80, 80, 80, 80, 80),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player ERWIN = new Player(
         "Erwin", ZM, // TODO: Position
-        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        new FieldPlayerSkills(80, 80, 80, 80, 80, 80, 80, 80, 80),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player ORHAN = new Player(
-        "Orhan", TW, // TODO: All
-        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        "Orhan", TW, // TODO: Position
+        new FieldPlayerSkills(75, 79, 78, 80, 86, 79, 76, 74, 78),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player SANDRO = new Player(
         "Sandro", ZM, // TODO: Position
-        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        new FieldPlayerSkills(80, 80, 80, 80, 80, 80, 80, 80, 80),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
     public static final Player JENS = new Player(
         "Jens", ZM, // TODO: Position
-        new FieldPlayerSkills(99, 99, 99, 99, 99, 99, 99, 99, 99), // TODO: Skills
+        new FieldPlayerSkills(80, 80, 80, 80, 80, 80, 80, 80, 80),
         new GoalkeeperSkills(99, 99, 99, 99)
     );
 }
