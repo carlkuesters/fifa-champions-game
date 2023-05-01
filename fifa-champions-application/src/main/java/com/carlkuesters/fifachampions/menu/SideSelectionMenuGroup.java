@@ -17,13 +17,13 @@ public class SideSelectionMenuGroup extends MenuGroup {
     @Override
     public void primaryNavigateLeft() {
         super.primaryNavigateLeft();
-        switchSide(-1);
+        switchSide(1);
     }
 
     @Override
     public void primaryNavigateRight() {
         super.primaryNavigateRight();
-        switchSide(1);
+        switchSide(-1);
     }
 
     private void switchSide(int direction) {

@@ -6,16 +6,17 @@ import com.jme3.input.event.*;
 import com.jme3.math.FastMath;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class GameJoystickSubListener {
 
-    public GameJoystickSubListener(HashMap<Integer, Controller> controllers, Runnable openPauseMenu) {
+    public GameJoystickSubListener(Map<Integer, Controller> controllers, Runnable openPauseMenu) {
         this.controllers = controllers;
         this.openPauseMenu = openPauseMenu;
         axes = new HashMap<>();
     }
+    private Map<Integer, Controller> controllers;
     private Runnable openPauseMenu;
-    private HashMap<Integer, Controller> controllers;
     private HashMap<Integer, float[]> axes;
 
     public void onJoyAxisEvent(JoyAxisEvent evt) {

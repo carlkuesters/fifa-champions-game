@@ -14,6 +14,7 @@ import com.simsilica.lemur.style.BaseStyles;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Main extends SimpleApplication {
 
@@ -31,12 +32,13 @@ public class Main extends SimpleApplication {
         settings.setSamples(8);
         settings.setUseJoysticks(true);
     }
+    private ControllerSettings[] controllerSettings;
     @Getter
-    private GameCreationInfo gameCreationInfo;
+    private Map<Integer, Controller> controllers;
     @Getter
     private JoystickListener joystickListener;
-    private ControllerSettings[] controllerSettings;
-    private HashMap<Integer, Controller> controllers;
+    @Getter
+    private GameCreationInfo gameCreationInfo;
 
     @Override
     public void simpleInitApp() {
@@ -50,24 +52,22 @@ public class Main extends SimpleApplication {
             controllerSettings[i] = new ControllerSettings();
         }
 
+        controllers = new HashMap<>();
+        int teamSide = 1;
+        for (Joystick joystick : inputManager.getJoysticks()) {
+            Controller controller = new Controller(joystick);
+            controller.setTeamSide(teamSide);
+            controllers.put(joystick.getJoyId(), controller);
+        }
+
+        joystickListener = new JoystickListener();
+        inputManager.addRawInputListener(joystickListener);
+
         gameCreationInfo = new GameCreationInfo();
         gameCreationInfo.setTeams(new InitialTeamInfo[] {
             generateInitialTeamInfo(),
             generateInitialTeamInfo()
         });
-        HashMap<Integer, Integer> controllerTeamSides = new HashMap<>();
-        controllers = new HashMap<>();
-        int teamSide = -1;
-        for (Joystick joystick : inputManager.getJoysticks()) {
-            int joyId = joystick.getJoyId();
-            controllers.put(joyId, new Controller());
-            controllerTeamSides.put(joyId, teamSide);
-            teamSide *= -1;
-        }
-        gameCreationInfo.setControllerTeamSides(controllerTeamSides);
-
-        joystickListener = new JoystickListener();
-        inputManager.addRawInputListener(joystickListener);
 
         GuiGlobals.initialize(this);
         BaseStyles.loadGlassStyle();

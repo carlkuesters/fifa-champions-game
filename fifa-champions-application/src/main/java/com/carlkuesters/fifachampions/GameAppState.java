@@ -13,7 +13,6 @@ import com.carlkuesters.fifachampions.visuals.PlayerSkins;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.input.Joystick;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import lombok.Getter;
@@ -26,8 +25,6 @@ public class GameAppState extends BaseDisplayAppState {
     private Game game;
     @Getter
     private Node rootNode;
-    @Getter
-    private HashMap<Integer, Controller> controllers;
     private HashMap<PlayerObject, PlayerVisual> playerVisuals = new HashMap<>();
     @Getter
     private BallVisual ballVisual;
@@ -40,31 +37,9 @@ public class GameAppState extends BaseDisplayAppState {
         rootNode = new Node();
         rootNode.setCullHint(Spatial.CullHint.Always);
 
-        GameCreationInfo gameCreationInfo = mainApplication.getGameCreationInfo();
-        Team[] teams = new Team[gameCreationInfo.getTeams().length];
-        for (int i = 0; i < teams.length; i++) {
-            InitialTeamInfo initialTeamInfo = gameCreationInfo.getTeams()[i];
-            String trikotName = initialTeamInfo.getTeamInfo().getTrikotNames()[initialTeamInfo.getTrikotIndex()];
-            teams[i] = new Team(initialTeamInfo.getTeamInfo(), trikotName, initialTeamInfo.getFieldPlayers(), initialTeamInfo.getReservePlayers(), initialTeamInfo.getFormation());
-        }
-        game = new Game(teams, gameCreationInfo.getHalftimeDuration(), this::createCinematic);
+        game = new Game(mainApplication.getControllers().values(), mainApplication.getGameCreationInfo(), this::createCinematic);
 
-        controllers = new HashMap<>();
-        for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
-            Controller controller = new Controller();
-            controller.setGame(game);
-            Team controllerTeam = null;
-            int teamSide = mainApplication.getGameCreationInfo().getControllerTeamSides().get(joystick.getJoyId());
-            if (teamSide == -1) {
-                controllerTeam = game.getTeams()[0];
-            } else if (teamSide == 1) {
-                controllerTeam = game.getTeams()[1];
-            }
-            controller.setTeam(controllerTeam);
-            game.addController(controller);
-            controllers.put(joystick.getJoyId(), controller);
-        }
-        mainApplication.getJoystickListener().setGameSubListener(new GameJoystickSubListener(controllers, () -> {
+        mainApplication.getJoystickListener().setGameSubListener(new GameJoystickSubListener(mainApplication.getControllers(), () -> {
             if (game.getActiveCinematic() == null) {
                 stateManager.getState(PauseIngameMenuAppState.class).setEnabled(true);
             }

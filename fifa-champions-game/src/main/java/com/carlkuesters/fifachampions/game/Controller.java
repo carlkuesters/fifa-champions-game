@@ -3,16 +3,17 @@ package com.carlkuesters.fifachampions.game;
 import com.carlkuesters.fifachampions.game.buttons.*;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedBallButtonBehaviour;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
+import com.jme3.input.Joystick;
 import com.jme3.math.Vector2f;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.function.Predicate;
 
 public class Controller implements GameLoopListener {
 
-    public Controller() {
+    public Controller(Joystick joystick) {
+        this.joystick = joystick;
         registerButton(0, new FlankOrStraddleButton());
         registerButton(1, new PassDirectOrPressureButton());
         registerButton(2, new ShootButton());
@@ -21,17 +22,54 @@ public class Controller implements GameLoopListener {
         registerButton(7, new SprintButton());
     }
     @Getter
-    @Setter
+    private Joystick joystick;
+    @Getter
     private Game game;
-    private Team team;
+    @Getter
+    private int teamSide;
     private PlayerObject playerObject;
     private Vector2f targetDirection = new Vector2f();
     private boolean isSprinting;
     private HashMap<Integer, ControllerButton> buttons = new HashMap<>();
 
+    public void resetForNewGame(Game game) {
+        this.game = game;
+        switchOrClearPlayer();
+        targetDirection.set(0, 0);
+        isSprinting = false;
+    }
+
+    public void setTeamSide(int teamSide) {
+        this.teamSide = teamSide;
+        if (game != null) {
+            switchOrClearPlayer();
+        }
+    }
+
+    private void switchOrClearPlayer() {
+        if (teamSide != 0) {
+            switchPlayer();
+        } else {
+            setPlayer(null);
+        }
+    }
+
+    public Team getTeam() {
+        Integer teamIndex = getTeamIndex();
+        return ((teamIndex != null) ? game.getTeams()[teamIndex] : null);
+    }
+
+    public Integer getTeamIndex() {
+        switch (teamSide) {
+            case 1: return 0;
+            case -1: return 1;
+            default: return null;
+        }
+    }
+
     @Override
     public void update(float tpf) {
-        if (team != null) {
+        if (teamSide != 0) {
             for (ControllerButton button : buttons.values()) {
                 ControllerButtonBehaviour buttonBehaviour = button.getBehaviour();
                 if (buttonBehaviour != null) {
@@ -52,22 +90,9 @@ public class Controller implements GameLoopListener {
         button.setController(this);
         buttons.put(buttonIndex, button);
     }
-
-    public void setTeam(Team team) {
-        this.team = team;
-        if (team != null) {
-            switchPlayer();
-        } else {
-            setPlayer(null);
-        }
-    }
-
-    public Team getTeam() {
-        return team;
-    }
     
     public void onButtonPressed(int buttonIndex, boolean isPressed) {
-        if (team != null) {
+        if (teamSide != 0) {
             ControllerButton button = buttons.get(buttonIndex);
             if (button != null) {
                 ControllerButtonBehaviour behaviour = button.getBehaviour();

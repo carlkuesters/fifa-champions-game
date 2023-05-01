@@ -1,7 +1,7 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.GameAppState;
-import com.carlkuesters.fifachampions.GameCreationInfo;
+import com.carlkuesters.fifachampions.game.GameCreationInfo;
 
 public class GameSettingsMenuAppState extends SettingsMenuAppState {
 

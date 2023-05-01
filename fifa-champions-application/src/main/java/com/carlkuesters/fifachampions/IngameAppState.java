@@ -55,7 +55,7 @@ public class IngameAppState extends BaseDisplayAppState {
         gameAppState.startSynchronizingVisuals();
 
         ColorRGBA controllerColor = ColorRGBA.Blue;
-        for (Controller controller : game.getControllers()) {
+        for (Controller controller : mainApplication.getControllers().values()) {
             Spatial controllerVisual = new Geometry("player", new Box(0.1f, 0.2f, 0.1f));
             Material materialController = new Material(mainApplication.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
             materialController.setBoolean("UseMaterialColors", true);
@@ -170,7 +170,7 @@ public class IngameAppState extends BaseDisplayAppState {
         for (int teamIndex = 0; teamIndex < game.getTeams().length; teamIndex++) {
             Team team = game.getTeams()[teamIndex];
             Controller controller = null;
-            for (Controller currentController : game.getControllers()) {
+            for (Controller currentController : mainApplication.getControllers().values()) {
                 if (currentController.getTeam() == team) {
                     if ((controller == null) || currentController.getPlayerObject().isOwningBall()) {
                         controller = currentController;

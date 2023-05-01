@@ -19,7 +19,17 @@ import java.util.function.Function;
 
 public class Game implements GameLoopListener {
 
-    public Game(Team[] teams, float halfTimeDuration, Function<CinematicInfo<?>, Cinematic> createCinematic) {
+    public Game(Collection<Controller> controllers, GameCreationInfo gameCreationInfo, Function<CinematicInfo<?>, Cinematic> createCinematic) {
+        halfTimeDuration = gameCreationInfo.getHalftimeDuration();
+        ball.setGame(this);
+        this.createCinematic = createCinematic;
+        // Teams
+        teams = new Team[gameCreationInfo.getTeams().length];
+        for (int i = 0; i < teams.length; i++) {
+            InitialTeamInfo initialTeamInfo = gameCreationInfo.getTeams()[i];
+            String trikotName = initialTeamInfo.getTeamInfo().getTrikotNames()[initialTeamInfo.getTrikotIndex()];
+            teams[i] = new Team(initialTeamInfo.getTeamInfo(), trikotName, initialTeamInfo.getFieldPlayers(), initialTeamInfo.getReservePlayers(), initialTeamInfo.getFormation());
+        }
         for (Team team : teams) {
             team.setGame(this);
             for (PlayerObject playerObject : team.getPlayers()) {
@@ -29,12 +39,13 @@ public class Game implements GameLoopListener {
                 playerObject.setGame(this);
             }
         }
-        ball.setGame(this);
         teams[0].setSide(1);
         teams[1].setSide(-1);
-        this.teams = teams;
-        this.halfTimeDuration = halfTimeDuration;
-        this.createCinematic = createCinematic;
+        // Controllers (after everything else has been initialized so initial players can be properly selected)
+        this.controllers = controllers;
+        for (Controller controller : controllers) {
+            controller.resetForNewGame(this);
+        }
     }
     public static final float FIELD_HALF_WIDTH = 52.5f;
     public static final float FIELD_HALF_HEIGHT = 33.2f;
@@ -58,11 +69,11 @@ public class Game implements GameLoopListener {
     private float halfTimePassedTime = 0;
     private float halfTimePassedOverTime;
     private float nextOverTimeDuration = 0;
+    private Collection<Controller> controllers;
     private Team[] teams;
     private Ball ball = new Ball();
     private Vector3f lastBallPosition = new Vector3f();
     private boolean didBallEnterFieldAfterSituation;
-    private LinkedList<Controller> controllers = new LinkedList<>();
     private CooldownManager cooldownManager = new CooldownManager();
     private NextSituation nextSituation;
     private Situation situation;
@@ -412,10 +423,12 @@ public class Game implements GameLoopListener {
     }
 
     public void selectPlayer(PlayerObject playerObject) {
-        controllers.stream()
-                .filter(controller -> controller.getTeam() == playerObject.getTeam())
-                .findAny()
-                .ifPresent(newController -> newController.setPlayer(playerObject));
+        for (Controller controller : controllers) {
+            if (controller.getTeam() == playerObject.getTeam()) {
+                controller.setPlayer(playerObject);
+                break;
+            }
+        }
     }
 
     private LinkedList<PlayerObject> getNearPlayers(Vector3f position, float maximumDistanceXZ, float maximumDistanceY) {
@@ -624,14 +637,6 @@ public class Game implements GameLoopListener {
 
     public Ball getBall() {
         return ball;
-    }
-
-    public void addController(Controller controller) {
-        controllers.add(controller);
-    }
-
-    public LinkedList<Controller> getControllers() {
-        return controllers;
     }
 
     public CooldownManager getCooldownManager() {
