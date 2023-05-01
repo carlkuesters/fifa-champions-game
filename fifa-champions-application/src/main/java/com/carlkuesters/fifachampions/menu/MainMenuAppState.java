@@ -40,8 +40,8 @@ public class MainMenuAppState extends MenuAppState {
 
         menuGroup = new ElementsMenuGroup();
         addButton(new Vector3f(marginX, (totalHeight / 2f), 0), "Anstoß", () -> openMenu(InitialSideSelectionMenuAppState.class));
-        addButton(new Vector3f(marginX + buttonWidth + buttonsMarginBetween, (totalHeight / 2f), 0), "Einstellungen", () -> openMenu(MainSettingsMenuAppState.class));
-        addButton(new Vector3f(marginX, (totalHeight / 2f) - buttonHeight - buttonsMarginBetween, 0), "Test", () -> System.out.println("Test"));
+        addButton(new Vector3f(marginX + buttonWidth + buttonsMarginBetween, (totalHeight / 2f), 0), "Steuerung", () -> openMenu(ControllerSettingsMenuAppState.class));
+        addButton(new Vector3f(marginX, (totalHeight / 2f) - buttonHeight - buttonsMarginBetween, 0), "Einstellungen", () -> openMenu(MainSettingsMenuAppState.class));
         addButton(new Vector3f(marginX + buttonWidth + buttonsMarginBetween, (totalHeight / 2f) - buttonHeight - buttonsMarginBetween, 0), "Beenden", this::closeApplication);
         addMenuGroup(menuGroup);
     }

@@ -28,6 +28,7 @@ public class Team {
     private TeamInfo teamInfo;
     @Getter
     private String trikotName;
+    @Getter
     private Game game;
     private int side;
     @Getter

@@ -2,6 +2,7 @@ package com.carlkuesters.fifachampions;
 
 import com.carlkuesters.fifachampions.cinematics.CinematicAppState;
 import com.carlkuesters.fifachampions.game.*;
+import com.carlkuesters.fifachampions.game.controllers.ControllerSettings;
 import com.carlkuesters.fifachampions.joystick.JoystickListener;
 import com.carlkuesters.fifachampions.menu.*;
 import com.jme3.app.SimpleApplication;
@@ -34,6 +35,8 @@ public class Main extends SimpleApplication {
     private GameCreationInfo gameCreationInfo;
     @Getter
     private JoystickListener joystickListener;
+    private ControllerSettings[] controllerSettings;
+    private HashMap<Integer, Controller> controllers;
 
     @Override
     public void simpleInitApp() {
@@ -42,15 +45,23 @@ public class Main extends SimpleApplication {
         setPauseOnLostFocus(false);
         setDisplayStatView(false);
 
+        controllerSettings = new ControllerSettings[10];
+        for (int i = 0; i < controllerSettings.length; i++) {
+            controllerSettings[i] = new ControllerSettings();
+        }
+
         gameCreationInfo = new GameCreationInfo();
         gameCreationInfo.setTeams(new InitialTeamInfo[] {
             generateInitialTeamInfo(),
             generateInitialTeamInfo()
         });
         HashMap<Integer, Integer> controllerTeamSides = new HashMap<>();
+        controllers = new HashMap<>();
         int teamSide = -1;
         for (Joystick joystick : inputManager.getJoysticks()) {
-            controllerTeamSides.put(joystick.getJoyId(), teamSide);
+            int joyId = joystick.getJoyId();
+            controllers.put(joyId, new Controller());
+            controllerTeamSides.put(joyId, teamSide);
             teamSide *= -1;
         }
         gameCreationInfo.setControllerTeamSides(controllerTeamSides);
@@ -67,6 +78,7 @@ public class Main extends SimpleApplication {
         stateManager.attach(new CinematicAppState());
         stateManager.attach(new StadiumAppState());
         stateManager.attach(new MainSettingsMenuAppState());
+        stateManager.attach(new ControllerSettingsMenuAppState(controllerSettings));
         stateManager.attach(new InitialSideSelectionMenuAppState());
         stateManager.attach(new TeamsMenuAppState());
         stateManager.attach(new TrikotMenuAppState());

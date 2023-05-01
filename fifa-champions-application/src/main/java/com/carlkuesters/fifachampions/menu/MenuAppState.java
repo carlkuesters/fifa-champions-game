@@ -25,7 +25,7 @@ public abstract class MenuAppState extends BaseDisplayAppState {
     }
     protected Node guiNode;
     private LinkedList<MenuGroup> menuGroups;
-    private MenuJoystickSubListener menuJoystickSubListener;
+    protected MenuJoystickSubListener menuJoystickSubListener;
     protected int totalWidth;
     protected int totalHeight;
     protected boolean autoEnabled;
@@ -43,7 +43,7 @@ public abstract class MenuAppState extends BaseDisplayAppState {
 
     protected void addTitle(String title) {
         int titleMarginTop = 70;
-        int titleWidth = 300;
+        int titleWidth = 400;
         Label lblTitle = new Label(title);
         lblTitle.setFontSize(32);
         lblTitle.setLocalTranslation(new Vector3f((totalWidth / 2f) - (titleWidth / 2f), totalHeight - titleMarginTop, 0));

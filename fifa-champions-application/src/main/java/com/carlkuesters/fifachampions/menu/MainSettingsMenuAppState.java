@@ -5,6 +5,9 @@ import com.jme3.system.JmeContext;
 
 public class MainSettingsMenuAppState extends SettingsMenuAppState {
 
+    public MainSettingsMenuAppState() {
+        super("Einstellungen");
+    }
     private LabelCarousel<Boolean> carouselFullscreen;
     private LabelCarousel<int[]> carouselResolution;
     private LabelCarousel<Boolean> carouselVSync;

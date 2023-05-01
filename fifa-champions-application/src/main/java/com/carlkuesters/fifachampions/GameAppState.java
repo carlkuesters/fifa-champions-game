@@ -51,7 +51,8 @@ public class GameAppState extends BaseDisplayAppState {
 
         controllers = new HashMap<>();
         for (Joystick joystick : mainApplication.getInputManager().getJoysticks()) {
-            Controller controller = new Controller(game);
+            Controller controller = new Controller();
+            controller.setGame(game);
             Team controllerTeam = null;
             int teamSide = mainApplication.getGameCreationInfo().getControllerTeamSides().get(joystick.getJoyId());
             if (teamSide == -1) {

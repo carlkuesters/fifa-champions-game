@@ -10,13 +10,17 @@ import java.util.function.Function;
 
 public abstract class SettingsMenuAppState extends MenuAppState {
 
+    public SettingsMenuAppState(String title) {
+        this.title = title;
+    }
+    private String title;
     private int containerWidth = 600;
     private Container container;
-    private ElementsMenuGroup menuGroup;
+    protected ElementsMenuGroup menuGroup;
 
     @Override
     protected void initMenu() {
-        addTitle("Einstellungen");
+        addTitle(title);
 
         int containerX = ((totalWidth / 2) - (containerWidth / 2));
         int containerY = (totalHeight - 200);
@@ -28,9 +32,10 @@ public abstract class SettingsMenuAppState extends MenuAppState {
         addMenuGroup(menuGroup);
     }
 
-    protected void addButton(String text, Runnable action) {
+    protected Button addButton(String text, Runnable action) {
         Button button = addButton(text);
         menuGroup.addElement(new MenuElement(button, action));
+        return button;
     }
 
     protected LabelCarousel<Boolean> addCarouselButton(String title, Consumer<Boolean> setCurrentValue) {

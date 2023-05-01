@@ -196,10 +196,10 @@ public class IngameAppState extends BaseDisplayAppState {
             } else {
                 Vector3f ballPosition = game.getBall().getPosition();
                 float x = 1.1f * ballPosition.getX();
-                x = Math.max(-45, Math.min(x, 45));
+                x = Math.max(-44, Math.min(x, 44));
                 float y = 30;
-                float z = (1.75f * (ballPosition.getZ() - 7)) + 60;
-                z = Math.max(39, Math.min(z, 63));
+                float z = (1 * (ballPosition.getZ() - 10)) + 60;
+                z = Math.max(30, Math.min(z, 63));
                 targetCameraLocation.set(x, y, z);
                 cameraAppState.setFieldOfView(25);
                 cameraAppState.setLocationAndDirection(targetCameraLocation, new Vector3f(0, -0.6f, -0.9f));

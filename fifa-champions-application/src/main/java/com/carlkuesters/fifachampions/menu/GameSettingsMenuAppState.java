@@ -5,6 +5,9 @@ import com.carlkuesters.fifachampions.GameCreationInfo;
 
 public class GameSettingsMenuAppState extends SettingsMenuAppState {
 
+    public GameSettingsMenuAppState() {
+        super("Einstellungen");
+    }
     private LabelCarousel<Float> carouselHalftimeDuration;
 
     @Override

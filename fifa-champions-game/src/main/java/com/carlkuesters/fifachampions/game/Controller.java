@@ -5,13 +5,14 @@ import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedBallButtonB
 import com.carlkuesters.fifachampions.game.buttons.behaviours.ChargedButtonBehaviour;
 import com.jme3.math.Vector2f;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
+import java.util.function.Predicate;
 
 public class Controller implements GameLoopListener {
 
-    public Controller(Game game) {
-        this.game = game;
+    public Controller() {
         registerButton(0, new FlankOrStraddleButton());
         registerButton(1, new PassDirectOrPressureButton());
         registerButton(2, new ShootButton());
@@ -20,6 +21,7 @@ public class Controller implements GameLoopListener {
         registerButton(7, new SprintButton());
     }
     @Getter
+    @Setter
     private Game game;
     private Team team;
     private PlayerObject playerObject;
@@ -112,38 +114,24 @@ public class Controller implements GameLoopListener {
     }
 
     public boolean isChargingBallButton() {
-        for (ControllerButton button : buttons.values()) {
-            ControllerButtonBehaviour buttonBehaviour = button.getBehaviour();
-            if (buttonBehaviour instanceof ChargedBallButtonBehaviour) {
-                ChargedBallButtonBehaviour preChargeableBallButtonBehaviour = (ChargedBallButtonBehaviour) buttonBehaviour;
-                if (preChargeableBallButtonBehaviour.isCharging()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return getButtonBehaviour(ChargedBallButtonBehaviour.class, ChargedBallButtonBehaviour::isCharging) != null;
     }
 
     public boolean triggerCurrentOrRecentBallCharge() {
-        for (ControllerButton button : buttons.values()) {
-            ControllerButtonBehaviour buttonBehaviour = button.getBehaviour();
-            if (buttonBehaviour instanceof ChargedBallButtonBehaviour) {
-                ChargedBallButtonBehaviour preChargeableBallButtonBehaviour = (ChargedBallButtonBehaviour) buttonBehaviour;
-                if (preChargeableBallButtonBehaviour.triggerCurrentOrRecentCharge()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return getButtonBehaviour(ChargedBallButtonBehaviour.class, ChargedButtonBehaviour::triggerCurrentOrRecentCharge) != null;
     }
 
     public ChargedButtonBehaviour getChargingButtonBehaviour() {
+        return getButtonBehaviour(ChargedButtonBehaviour.class, ChargedButtonBehaviour::isCharging);
+    }
+
+    private <T extends ControllerButtonBehaviour> T getButtonBehaviour(Class<T> buttonBehaviourCLass, Predicate<T> filter) {
         for (ControllerButton button : buttons.values()) {
             ControllerButtonBehaviour buttonBehaviour = button.getBehaviour();
-            if (buttonBehaviour instanceof ChargedButtonBehaviour) {
-                ChargedButtonBehaviour chargedButtonBehaviour = (ChargedButtonBehaviour) buttonBehaviour;
-                if (chargedButtonBehaviour.isCharging()) {
-                    return chargedButtonBehaviour;
+            if ((buttonBehaviour != null) && buttonBehaviourCLass.isAssignableFrom(buttonBehaviour.getClass())) {
+                T castedButtonBehaviour = (T) buttonBehaviour;
+                if (filter.test(castedButtonBehaviour)) {
+                    return castedButtonBehaviour;
                 }
             }
         }
