@@ -51,7 +51,7 @@ public class ControlledPlayerContainer {
 
     public void update(Controller controller, Float optimalShootStrength, float tpf) {
         if (controller != null) {
-            ChargedButtonBehaviour chargingButtonBehaviour = controller.getChargingButtonBehaviour();
+            ChargedButtonBehaviour chargingButtonBehaviour = controller.getButtons().getChargingButtonBehaviour();
             if (chargingButtonBehaviour != null) {
                 displayedStrength = chargingButtonBehaviour.getCurrentChargeStrength();
                 remainingDisplayedStrengthDuration = 2;

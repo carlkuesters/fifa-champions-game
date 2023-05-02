@@ -1,9 +1,14 @@
 package com.carlkuesters.fifachampions.game.buttons.behaviours;
 
+import com.carlkuesters.fifachampions.game.Controller;
 import com.carlkuesters.fifachampions.game.PlayerAnimation;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 
 public class ShootButtonBehaviour extends ChargedBallButtonBehaviour {
+
+    public ShootButtonBehaviour(Controller controller) {
+        super(controller);
+    }
 
     @Override
     public void onPressed(boolean isPressed) {

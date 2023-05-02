@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions.game.buttons;
 
+import com.carlkuesters.fifachampions.game.Controller;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.FlankButtonBehaviour;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.GoalKickFlankButtonBehaviour;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.StraddleButtonBehaviour;
@@ -9,9 +10,10 @@ import com.carlkuesters.fifachampions.game.situations.GoalKickSituation;
 
 public class FlankOrStraddleButton extends DefaultBallActionButton {
 
-    public FlankOrStraddleButton() {
-        FlankButtonBehaviour flankButtonBehaviour = new FlankButtonBehaviour();
-        StraddleButtonBehaviour straddleButtonBehaviour = new StraddleButtonBehaviour();
+    public FlankOrStraddleButton(Controller controller) {
+        super(controller);
+        FlankButtonBehaviour flankButtonBehaviour = new FlankButtonBehaviour(controller);
+        StraddleButtonBehaviour straddleButtonBehaviour = new StraddleButtonBehaviour(controller);
         setNoSituationBehaviours(
             straddleButtonBehaviour,
             flankButtonBehaviour,
@@ -19,7 +21,7 @@ public class FlankOrStraddleButton extends DefaultBallActionButton {
             straddleButtonBehaviour
         );
         setBehaviourWithOwnedBall(CornerKickSituation.class, flankButtonBehaviour);
-        setBehaviourWithOwnedBall(GoalKickSituation.class, new GoalKickFlankButtonBehaviour());
+        setBehaviourWithOwnedBall(GoalKickSituation.class, new GoalKickFlankButtonBehaviour(controller));
         setBehaviourWithOwnedBall(FarFreeKickSituation.class, flankButtonBehaviour);
     }
 }

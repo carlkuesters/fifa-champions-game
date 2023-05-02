@@ -1,12 +1,11 @@
 package com.carlkuesters.fifachampions.game;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public abstract class ControllerButton {
     
     protected Controller controller;
-
-    public void setController(Controller controller) {
-        this.controller = controller;
-    }
 
     public abstract ControllerButtonBehaviour getBehaviour();
 }

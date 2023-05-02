@@ -1,6 +1,7 @@
 package com.carlkuesters.fifachampions.joystick;
 
 import com.carlkuesters.fifachampions.game.Controller;
+import com.carlkuesters.fifachampions.game.controllers.PS5Controller;
 import com.jme3.input.JoystickAxis;
 import com.jme3.input.event.*;
 import com.jme3.math.FastMath;
@@ -44,11 +45,11 @@ public class GameJoystickSubListener {
     }
 
     public void onJoyButtonEvent(JoyButtonEvent evt) {
-        if ((evt.getButtonIndex() == 9) && evt.isPressed()) {
+        if ((evt.getButtonIndex() == PS5Controller.OPTIONS) && evt.isPressed()) {
             openPauseMenu.run();
         } else {
             Controller controller = controllers.get(evt.getJoyIndex());
-            controller.onButtonPressed(evt.getButtonIndex(), evt.isPressed());
+            controller.getButtons().onButtonPressed(evt.getButtonIndex(), evt.isPressed());
         }
     }
 }

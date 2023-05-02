@@ -1,9 +1,6 @@
 package com.carlkuesters.fifachampions.game.buttons.behaviours;
 
-import com.carlkuesters.fifachampions.game.EnqueuedAction;
-import com.carlkuesters.fifachampions.game.MathUtil;
-import com.carlkuesters.fifachampions.game.PlayerAnimation;
-import com.carlkuesters.fifachampions.game.PlayerObject;
+import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.situations.BallSituation;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -11,6 +8,9 @@ import com.jme3.math.Vector3f;
 
 public abstract class ApproachShootButtonBehaviour<T extends BallSituation> extends ChargedBallButtonBehaviour {
 
+    public ApproachShootButtonBehaviour(Controller controller) {
+        super(controller);
+    }
     public static float APPROACH_SPEED = 2.767f;
     public static float APPROACH_DURATION = 1.2f;
 

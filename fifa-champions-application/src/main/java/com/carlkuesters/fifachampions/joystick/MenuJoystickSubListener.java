@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions.joystick;
 
+import com.carlkuesters.fifachampions.game.controllers.PS5Controller;
 import com.carlkuesters.fifachampions.menu.MenuGroup;
 import com.jme3.input.JoystickAxis;
 import com.jme3.input.event.*;
@@ -63,21 +64,21 @@ public class MenuJoystickSubListener {
                 MenuGroup menuGroup = getControllerMenuGroup.apply(evt.getJoyIndex());
                 if (menuGroup != null) {
                     switch (evt.getButtonIndex()) {
-                        case 0:
-                        case 1:
+                        case PS5Controller.CROSS:
+                        case PS5Controller.SQUARE:
                             menuGroup.confirm();
                             break;
-                        case 4:
+                        case PS5Controller.L1:
                             menuGroup.secondaryNavigateLeft();
                             break;
-                        case 5:
+                        case PS5Controller.R1:
                             menuGroup.secondaryNavigateRight();
                             break;
                     }
                 }
                 switch (evt.getButtonIndex()) {
-                    case 2:
-                    case 9:
+                    case PS5Controller.CIRCLE:
+                    case PS5Controller.OPTIONS:
                         back.run();
                         break;
                 }

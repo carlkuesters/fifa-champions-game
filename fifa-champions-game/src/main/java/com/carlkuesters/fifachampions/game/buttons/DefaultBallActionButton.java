@@ -1,22 +1,22 @@
 package com.carlkuesters.fifachampions.game.buttons;
 
-import com.carlkuesters.fifachampions.game.ControllerButton;
-import com.carlkuesters.fifachampions.game.ControllerButtonBehaviour;
-import com.carlkuesters.fifachampions.game.Game;
-import com.carlkuesters.fifachampions.game.PlayerObject;
-import com.carlkuesters.fifachampions.game.Situation;
+import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.buttons.behaviours.SkipCinematicButtonBehaviour;
 
 import java.util.HashMap;
 
 public class DefaultBallActionButton extends ControllerButton {
 
-    private ControllerButtonBehaviour behaviourSkipCinematic = new SkipCinematicButtonBehaviour();
-    private HashMap<Class<? extends Situation>, ControllerButtonBehaviour> behavioursWithOwnedBallSituation = new HashMap<>();
+    public DefaultBallActionButton(Controller controller) {
+        super(controller);
+        behaviourSkipCinematic = new SkipCinematicButtonBehaviour(controller);
+    }
+    private ControllerButtonBehaviour behaviourSkipCinematic;
     private ControllerButtonBehaviour behaviourWithUnownedBallNoSituation;
     private ControllerButtonBehaviour behaviourWithSelfOwnedBallNoSituation;
     private ControllerButtonBehaviour behaviourWithAllyOwnedBallNoSituation;
     private ControllerButtonBehaviour behaviourWithEnemyOwnedBallNoSituation;
+    private HashMap<Class<? extends Situation>, ControllerButtonBehaviour> behavioursWithOwnedBallSituation = new HashMap<>();
 
     protected void setNoSituationBehaviours(
         ControllerButtonBehaviour behaviourWithUnownedBallNoSituation,

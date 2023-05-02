@@ -320,7 +320,7 @@ public class Game implements GameLoopListener {
                 } else if (playerObject == penaltySituation.getGoalkeeper()) {
                     penaltySituation.setTargetGoalkeeperDirection(targetDirection);
                 }
-            } else if (!controller.isChargingBallButton()) {
+            } else if (!controller.getButtons().isChargingBallButton()) {
                 playerObject.setTargetWalkDirection(controller.getTargetDirection());
             }
         } else if (!playerObject.isGoalkeeperJumping()) {

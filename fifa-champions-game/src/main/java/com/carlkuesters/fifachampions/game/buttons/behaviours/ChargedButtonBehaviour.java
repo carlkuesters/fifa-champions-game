@@ -4,6 +4,9 @@ import com.carlkuesters.fifachampions.game.*;
 
 public abstract class ChargedButtonBehaviour extends ControllerButtonBehaviour implements GameLoopListener {
 
+    public ChargedButtonBehaviour(Controller controller) {
+        super(controller);
+    }
     protected float maxChargedDuration = 1;
     private float chargedDuration;
     private boolean isCharging;

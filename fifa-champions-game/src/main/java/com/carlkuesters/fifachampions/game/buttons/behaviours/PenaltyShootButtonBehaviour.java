@@ -6,7 +6,8 @@ import com.jme3.math.Vector3f;
 
 public class PenaltyShootButtonBehaviour extends ApproachShootButtonBehaviour<PenaltySituation> {
 
-    public PenaltyShootButtonBehaviour() {
+    public PenaltyShootButtonBehaviour(Controller controller) {
+        super(controller);
         maxChargedDuration = 0;
     }
 

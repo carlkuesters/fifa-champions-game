@@ -288,7 +288,7 @@ public class PlayerObject extends PhysicsObject {
 
     public boolean onBallPickUp() {
         if (controller != null) {
-            return controller.triggerCurrentOrRecentBallCharge();
+            return controller.getButtons().triggerCurrentOrRecentBallCharge();
         }
         return false;
     }

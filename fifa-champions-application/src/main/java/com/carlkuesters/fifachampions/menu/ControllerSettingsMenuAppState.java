@@ -9,21 +9,19 @@ import java.util.function.Function;
 
 public class ControllerSettingsMenuAppState extends SettingsMenuAppState {
 
-    public ControllerSettingsMenuAppState(ControllerSettings[] controllerSettings) {
+    public ControllerSettingsMenuAppState() {
         super("Steuerung");
-        this.controllerSettings = controllerSettings;
         updateTasks = new ArrayList<>();
     }
-    private ControllerSettings[] controllerSettings;
-    private ArrayList<Runnable> updateTasks;
     private LabelCarousel<Integer> carouselSettingIndex;
+    private ArrayList<Runnable> updateTasks;
 
     @Override
     protected void initMenu() {
         super.initMenu();
         carouselSettingIndex = addCarouselButton(
-            new Integer[]{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 },
-            settingIndex -> "Alternativ " + (settingIndex + 1),
+            new Integer[]{ 1, 2, 3, 4, 5, 6, 7, 8 },
+            settingIndex -> "Alternativ " + settingIndex,
             settingIndex -> update()
         );
         addRecordButton("Direktpass / Pressen", ControllerSettings::getButtonIndex_PassDirectOrPressure, ControllerSettings::setButtonIndex_PassDirectOrPressure);
@@ -55,7 +53,7 @@ public class ControllerSettingsMenuAppState extends SettingsMenuAppState {
     }
 
     private ControllerSettings getSelectedControllerSettings() {
-        return controllerSettings[carouselSettingIndex.getCarouselValue()];
+        return mainApplication.getControllerSettings()[carouselSettingIndex.getCarouselValue()];
     }
 
     private void update() {
@@ -73,7 +71,7 @@ public class ControllerSettingsMenuAppState extends SettingsMenuAppState {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         if (enabled) {
-            carouselSettingIndex.setValue(0);
+            carouselSettingIndex.setValue(1);
             update();
         }
     }

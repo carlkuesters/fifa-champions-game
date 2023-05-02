@@ -32,11 +32,12 @@ public class Main extends SimpleApplication {
         settings.setSamples(8);
         settings.setUseJoysticks(true);
     }
+    @Getter
+    private JoystickListener joystickListener;
+    @Getter
     private ControllerSettings[] controllerSettings;
     @Getter
     private Map<Integer, Controller> controllers;
-    @Getter
-    private JoystickListener joystickListener;
     @Getter
     private GameCreationInfo gameCreationInfo;
 
@@ -47,7 +48,14 @@ public class Main extends SimpleApplication {
         setPauseOnLostFocus(false);
         setDisplayStatView(false);
 
-        controllerSettings = new ControllerSettings[10];
+        GuiGlobals.initialize(this);
+        BaseStyles.loadGlassStyle();
+        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
+
+        joystickListener = new JoystickListener();
+        inputManager.addRawInputListener(joystickListener);
+
+        controllerSettings = new ControllerSettings[9];
         for (int i = 0; i < controllerSettings.length; i++) {
             controllerSettings[i] = new ControllerSettings();
         }
@@ -55,13 +63,10 @@ public class Main extends SimpleApplication {
         controllers = new HashMap<>();
         int teamSide = 1;
         for (Joystick joystick : inputManager.getJoysticks()) {
-            Controller controller = new Controller(joystick);
+            Controller controller = new Controller(joystick, controllerSettings[0]);
             controller.setTeamSide(teamSide);
             controllers.put(joystick.getJoyId(), controller);
         }
-
-        joystickListener = new JoystickListener();
-        inputManager.addRawInputListener(joystickListener);
 
         gameCreationInfo = new GameCreationInfo();
         gameCreationInfo.setTeams(new InitialTeamInfo[] {
@@ -69,16 +74,12 @@ public class Main extends SimpleApplication {
             generateInitialTeamInfo()
         });
 
-        GuiGlobals.initialize(this);
-        BaseStyles.loadGlassStyle();
-        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
-
         stateManager.attach(new CameraAppState());
         stateManager.attach(new PostFilterAppState());
         stateManager.attach(new CinematicAppState());
         stateManager.attach(new StadiumAppState());
         stateManager.attach(new MainSettingsMenuAppState());
-        stateManager.attach(new ControllerSettingsMenuAppState(controllerSettings));
+        stateManager.attach(new ControllerSettingsMenuAppState());
         stateManager.attach(new InitialSideSelectionMenuAppState());
         stateManager.attach(new TeamsMenuAppState());
         stateManager.attach(new TrikotMenuAppState());

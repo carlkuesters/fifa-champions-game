@@ -1,8 +1,13 @@
 package com.carlkuesters.fifachampions.game.buttons.behaviours;
 
+import com.carlkuesters.fifachampions.game.Controller;
 import com.carlkuesters.fifachampions.game.PlayerAnimation;
 
 public class ThrowInInRunButtonBehaviour extends ChargedBallButtonBehaviour {
+
+    public ThrowInInRunButtonBehaviour(Controller controller) {
+        super(controller);
+    }
 
     @Override
     public void onPressed(boolean isPressed) {
