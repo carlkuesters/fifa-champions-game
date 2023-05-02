@@ -1,6 +1,7 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.ControllerAppState;
+import com.carlkuesters.fifachampions.game.controllers.ControllerButtonPS5;
 import com.carlkuesters.fifachampions.game.controllers.ControllerSettings;
 import com.simsilica.lemur.Button;
 
@@ -53,7 +54,9 @@ public class ControllerSettingsMenuAppState extends SettingsMenuAppState {
             if ((menuJoystickSubListener.getButtonRecorder() != null) && (menuGroup.getActiveElement().getPanel() == button)) {
                 buttonText += "<Taste drücken>";
             } else {
-                buttonText += getButtonIndex.apply(getSelectedControllerSettings());
+                int buttonIndex = getButtonIndex.apply(getSelectedControllerSettings());
+                ControllerButtonPS5 buttonPS5 = ControllerButtonPS5.byButtonIndex(buttonIndex);
+                buttonText += ((buttonPS5 != null) ? buttonPS5.getName() : "<" + buttonIndex + ">");
             }
             button.setText(buttonText);
         });

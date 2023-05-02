@@ -6,10 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ControllerSettings {
-    private int buttonIndex_FlankOrStraddle = PS5Controller.SQUARE;
-    private int buttonIndex_PassDirectOrPressure = PS5Controller.CROSS;
-    private int buttonIndex_Shoot = PS5Controller.CIRCLE;
-    private int buttonIndex_PassInRunOrGoalkeeperPressure = PS5Controller.TRIANGLE;
-    private int buttonIndex_SwitchPlayer = PS5Controller.L1;
-    private int buttonIndex_Sprint = PS5Controller.R2;
+    private int buttonIndex_FlankOrStraddle = ControllerButtonPS5.SQUARE.getButtonIndex();
+    private int buttonIndex_PassDirectOrPressure = ControllerButtonPS5.X.getButtonIndex();
+    private int buttonIndex_Shoot = ControllerButtonPS5.CIRCLE.getButtonIndex();
+    private int buttonIndex_PassInRunOrGoalkeeperPressure = ControllerButtonPS5.TRIANGLE.getButtonIndex();
+    private int buttonIndex_SwitchPlayer = ControllerButtonPS5.L1.getButtonIndex();
+    private int buttonIndex_Sprint = ControllerButtonPS5.R2.getButtonIndex();
 }

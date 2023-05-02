@@ -1,6 +1,6 @@
 package com.carlkuesters.fifachampions.joystick;
 
-import com.carlkuesters.fifachampions.game.controllers.PS5Controller;
+import com.carlkuesters.fifachampions.game.controllers.ControllerButtonPS5;
 import com.carlkuesters.fifachampions.menu.MenuGroup;
 import com.jme3.input.JoystickAxis;
 import com.jme3.input.event.*;
@@ -58,36 +58,40 @@ public class MenuJoystickSubListener {
 
     public void onJoyButtonEvent(JoyButtonEvent evt) {
         if (evt.isPressed()) {
+            int buttonIndex = evt.getButtonIndex();
             if (buttonRecorder != null) {
                 Consumer<Integer> tmpButtonRecorder = buttonRecorder;
                 buttonRecorder = null;
-                tmpButtonRecorder.accept(evt.getButtonIndex());
+                tmpButtonRecorder.accept(buttonIndex);
             } else {
-                MenuGroup menuGroup = getControllerMenuGroup.apply(evt.getJoyIndex());
-                if (menuGroup != null) {
-                    switch (evt.getButtonIndex()) {
-                        case PS5Controller.CROSS:
-                        case PS5Controller.SQUARE:
-                            menuGroup.confirm();
+                ControllerButtonPS5 buttonPS5 = ControllerButtonPS5.byButtonIndex(buttonIndex);
+                if (buttonPS5 != null) {
+                    MenuGroup menuGroup = getControllerMenuGroup.apply(evt.getJoyIndex());
+                    if (menuGroup != null) {
+                        switch (buttonPS5) {
+                            case X:
+                            case SQUARE:
+                                menuGroup.confirm();
+                                break;
+                            case L1:
+                            case L2:
+                                menuGroup.secondaryNavigateLeft();
+                                break;
+                            case R1:
+                            case R2:
+                                menuGroup.secondaryNavigateRight();
+                                break;
+                        }
+                    }
+                    switch (buttonPS5) {
+                        case CIRCLE:
+                        case OPTIONS:
+                            back.run();
                             break;
-                        case PS5Controller.L1:
-                        case PS5Controller.L2:
-                            menuGroup.secondaryNavigateLeft();
-                            break;
-                        case PS5Controller.R1:
-                        case PS5Controller.R2:
-                            menuGroup.secondaryNavigateRight();
+                        case TRIANGLE:
+                            showDetails.run();
                             break;
                     }
-                }
-                switch (evt.getButtonIndex()) {
-                    case PS5Controller.CIRCLE:
-                    case PS5Controller.OPTIONS:
-                        back.run();
-                        break;
-                    case PS5Controller.TRIANGLE:
-                        showDetails.run();
-                        break;
                 }
             }
         }
