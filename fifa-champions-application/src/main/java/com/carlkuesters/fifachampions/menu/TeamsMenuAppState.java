@@ -88,9 +88,4 @@ public class TeamsMenuAppState extends MenuAppState {
         lblsMiddlefield[teamIndex].setText("Midlefield: " + teamInfo.getAverageSkill_Middlefield());
         lblsDefense[teamIndex].setText("Defense: " + teamInfo.getAverageSkill_Defense());
     }
-
-    @Override
-    protected void back() {
-        openMenu(InitialSideSelectionMenuAppState.class);
-    }
 }

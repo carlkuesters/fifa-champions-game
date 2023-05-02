@@ -416,6 +416,4 @@ public abstract class FormationMenuAppState<P> extends MenuAppState {
     protected abstract void swapFieldAndReservePlayer(int teamIndex, int fieldPlayerIndex, int reservePlayerIndex);
 
     protected abstract void confirm();
-
-    protected abstract void back();
 }

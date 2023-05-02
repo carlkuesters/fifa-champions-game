@@ -44,11 +44,6 @@ public class MainSettingsMenuAppState extends SettingsMenuAppState {
     }
 
     @Override
-    protected void back() {
-        openMenu(MainMenuAppState.class);
-    }
-
-    @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         if (enabled) {

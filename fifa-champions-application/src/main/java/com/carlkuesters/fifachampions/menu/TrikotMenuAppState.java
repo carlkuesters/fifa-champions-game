@@ -96,9 +96,4 @@ public class TrikotMenuAppState extends MenuAppState {
         lblTrikotNames[teamIndex].setText(trikotName);
         playerVisuals[teamIndex].setTrikot(trikotName);
     }
-
-    @Override
-    protected void back() {
-        openMenu(TeamsMenuAppState.class);
-    }
 }

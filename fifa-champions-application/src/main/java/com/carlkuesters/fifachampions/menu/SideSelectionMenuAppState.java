@@ -97,4 +97,10 @@ public abstract class SideSelectionMenuAppState extends MenuAppState {
     }
 
     protected abstract void confirm();
+
+    @Override
+    protected void showDetails() {
+        super.showDetails();
+        openMenu(ControllerSettingsMenuAppState.class);
+    }
 }

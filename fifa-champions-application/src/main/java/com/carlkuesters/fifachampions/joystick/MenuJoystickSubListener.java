@@ -13,11 +13,13 @@ import java.util.function.Function;
 
 public class MenuJoystickSubListener {
 
-    public MenuJoystickSubListener(Runnable back, Function<Integer, MenuGroup> getControllerMenuGroup) {
+    public MenuJoystickSubListener(Runnable back, Runnable showDetails, Function<Integer, MenuGroup> getControllerMenuGroup) {
         this.back = back;
+        this.showDetails = showDetails;
         this.getControllerMenuGroup = getControllerMenuGroup;
     }
     private Runnable back;
+    private Runnable showDetails;
     private Function<Integer, MenuGroup> getControllerMenuGroup;
     private HashMap<Integer, float[]> axes = new HashMap<>();
     @Getter
@@ -80,6 +82,9 @@ public class MenuJoystickSubListener {
                     case PS5Controller.CIRCLE:
                     case PS5Controller.OPTIONS:
                         back.run();
+                        break;
+                    case PS5Controller.TRIANGLE:
+                        showDetails.run();
                         break;
                 }
             }

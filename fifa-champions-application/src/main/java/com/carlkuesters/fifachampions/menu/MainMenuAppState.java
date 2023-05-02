@@ -12,6 +12,7 @@ import com.simsilica.lemur.component.IconComponent;
 public class MainMenuAppState extends MenuAppState {
 
     public MainMenuAppState() {
+        mode = MenuMode.ROOT;
         autoEnabled = true;
         mainMenuCinematic = new MainMenuCinematic();
     }
@@ -42,7 +43,7 @@ public class MainMenuAppState extends MenuAppState {
         addButton(new Vector3f(marginX, (totalHeight / 2f), 0), "Anstoß", () -> openMenu(InitialSideSelectionMenuAppState.class));
         addButton(new Vector3f(marginX + buttonWidth + buttonsMarginBetween, (totalHeight / 2f), 0), "Steuerung", () -> openMenu(ControllerSettingsMenuAppState.class));
         addButton(new Vector3f(marginX, (totalHeight / 2f) - buttonHeight - buttonsMarginBetween, 0), "Einstellungen", () -> openMenu(MainSettingsMenuAppState.class));
-        addButton(new Vector3f(marginX + buttonWidth + buttonsMarginBetween, (totalHeight / 2f) - buttonHeight - buttonsMarginBetween, 0), "Beenden", this::closeApplication);
+        addButton(new Vector3f(marginX + buttonWidth + buttonsMarginBetween, (totalHeight / 2f) - buttonHeight - buttonsMarginBetween, 0), "Beenden", () -> mainApplication.stop());
         addMenuGroup(menuGroup);
     }
 
@@ -68,12 +69,8 @@ public class MainMenuAppState extends MenuAppState {
         }
     }
 
-    private void closeApplication() {
-        System.exit(0);
-    }
-
     @Override
     protected void back() {
-        // THere is no back in main menu :)
+        // There is no back in main menu :)
     }
 }

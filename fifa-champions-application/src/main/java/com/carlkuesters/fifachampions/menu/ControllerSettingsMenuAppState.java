@@ -11,6 +11,7 @@ public class ControllerSettingsMenuAppState extends SettingsMenuAppState {
 
     public ControllerSettingsMenuAppState() {
         super("Steuerung");
+        mode = MenuMode.FREE_CHILD;
         updateTasks = new ArrayList<>();
     }
     private LabelCarousel<Integer> carouselSettingIndex;
@@ -60,11 +61,6 @@ public class ControllerSettingsMenuAppState extends SettingsMenuAppState {
         for (Runnable updateTask : updateTasks) {
             updateTask.run();
         }
-    }
-
-    @Override
-    protected void back() {
-        openMenu(MainMenuAppState.class);
     }
 
     @Override

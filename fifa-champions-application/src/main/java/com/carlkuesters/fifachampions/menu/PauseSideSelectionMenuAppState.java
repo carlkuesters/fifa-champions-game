@@ -6,9 +6,4 @@ public class PauseSideSelectionMenuAppState extends SideSelectionMenuAppState {
     protected void confirm() {
         back();
     }
-
-    @Override
-    protected void back() {
-        openMenu(PauseIngameMenuAppState.class);
-    }
 }

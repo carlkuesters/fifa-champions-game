@@ -6,9 +6,4 @@ public class InitialSideSelectionMenuAppState extends SideSelectionMenuAppState 
     protected void confirm() {
         openMenu(TeamsMenuAppState.class);
     }
-
-    @Override
-    protected void back() {
-        openMenu(MainMenuAppState.class);
-    }
 }

@@ -64,9 +64,4 @@ public class InitialFormationMenuAppState extends FormationMenuAppState<Player> 
     protected void confirm() {
         openMenu(GameSettingsMenuAppState.class);
     }
-
-    @Override
-    protected void back() {
-        openMenu(GameSettingsMenuAppState.class);
-    }
 }

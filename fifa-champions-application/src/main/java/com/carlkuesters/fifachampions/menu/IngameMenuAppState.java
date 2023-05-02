@@ -11,6 +11,9 @@ import com.simsilica.lemur.component.SpringGridLayout;
 
 public class IngameMenuAppState extends MenuAppState {
 
+    public IngameMenuAppState() {
+        mode = MenuMode.ROOT;
+    }
     protected int marginX = 100;
     protected int containerHeight = 600;
     protected int marginBetween = 20;
@@ -125,10 +128,5 @@ public class IngameMenuAppState extends MenuAppState {
         mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(IngameAppState.class));
         mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(GameAppState.class));
         openMenu(MainMenuAppState.class);
-    }
-
-    @Override
-    protected void back() {
-        close();
     }
 }

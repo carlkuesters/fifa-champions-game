@@ -18,13 +18,15 @@ public abstract class MenuAppState extends BaseDisplayAppState {
     public MenuAppState() {
         guiNode = new Node();
         menuGroups = new LinkedList<>();
-        menuJoystickSubListener = new MenuJoystickSubListener(this::back, this::getMenuGroup);
+        menuJoystickSubListener = new MenuJoystickSubListener(this::back, this::showDetails, this::getMenuGroup);
     }
     protected Node guiNode;
     private LinkedList<MenuGroup> menuGroups;
     protected MenuJoystickSubListener menuJoystickSubListener;
     protected int totalWidth;
     protected int totalHeight;
+    protected MenuMode mode = MenuMode.DEFAULT;
+    private MenuAppState parentMenuAppState;
     protected boolean autoEnabled;
 
     @Override
@@ -67,11 +69,30 @@ public abstract class MenuAppState extends BaseDisplayAppState {
         return menuGroups.get(menuGroupIndex);
     }
 
-    protected abstract void back();
+    protected void back() {
+        if (parentMenuAppState != null) {
+            openMenu(parentMenuAppState);
+        } else {
+            close();
+        }
+    }
+
+    protected void showDetails() {
+
+    }
 
     protected void openMenu(Class<? extends MenuAppState> menuAppStateClass) {
+        openMenu(getAppState(menuAppStateClass));
+    }
+
+    private void openMenu(MenuAppState newMenu) {
         close();
-        getAppState(menuAppStateClass).setEnabled(true);
+        if (newMenu.mode != MenuMode.ROOT) {
+            if ((newMenu.parentMenuAppState == null) || (newMenu.mode == MenuMode.FREE_CHILD)) {
+                newMenu.parentMenuAppState = this;
+            }
+        }
+        newMenu.setEnabled(true);
     }
 
     protected void close() {

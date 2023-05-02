@@ -61,11 +61,6 @@ public class PauseFormationMenuAppState extends FormationMenuAppState<PlayerObje
 
     @Override
     protected void confirm() {
-        openMenu(PauseIngameMenuAppState.class);
-    }
-
-    @Override
-    protected void back() {
-        openMenu(PauseIngameMenuAppState.class);
+        back();
     }
 }
