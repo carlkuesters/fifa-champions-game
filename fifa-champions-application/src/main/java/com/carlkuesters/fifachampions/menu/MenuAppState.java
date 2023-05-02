@@ -1,7 +1,9 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.BaseDisplayAppState;
+import com.carlkuesters.fifachampions.ControllerAppState;
 import com.carlkuesters.fifachampions.game.Controller;
+import com.carlkuesters.fifachampions.joystick.JoystickListener;
 import com.carlkuesters.fifachampions.joystick.MenuJoystickSubListener;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
@@ -59,7 +61,7 @@ public abstract class MenuAppState extends BaseDisplayAppState {
     protected MenuGroup getMenuGroup(int joyId) {
         int menuGroupIndex = 0;
         if (menuGroups.size() > 1) {
-            Controller controller = mainApplication.getControllers().get(joyId);
+            Controller controller = getAppState(ControllerAppState.class).getControllers().get(joyId);
             Integer controllerTeamIndex = controller.getTeamIndex();
             if (controllerTeamIndex == null) {
                 return null;
@@ -102,12 +104,13 @@ public abstract class MenuAppState extends BaseDisplayAppState {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+        JoystickListener joystickListener = getAppState(ControllerAppState.class).getJoystickListener();
         if (enabled) {
             mainApplication.getGuiNode().attachChild(guiNode);
-            mainApplication.getJoystickListener().setMenuSubListener(menuJoystickSubListener);
+            joystickListener.setMenuSubListener(menuJoystickSubListener);
         } else {
             mainApplication.getGuiNode().detachChild(guiNode);
-            mainApplication.getJoystickListener().setMenuSubListener(null);
+            joystickListener.setMenuSubListener(null);
         }
     }
 }

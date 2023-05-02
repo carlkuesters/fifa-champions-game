@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions.menu;
 
+import com.carlkuesters.fifachampions.ControllerAppState;
 import com.carlkuesters.fifachampions.game.Controller;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 public abstract class SideSelectionMenuAppState extends MenuAppState {
 
     private HashMap<Controller, MenuGroup> controllerMenuGroups = new HashMap<>();
-    private HashMap<Controller, IconComponent> controllerIcons = new HashMap<>();
+    private HashMap<Controller, SideSelectionControllerContainer> controllerContainers = new HashMap<>();
 
     @Override
     protected void initMenu() {
@@ -34,12 +35,18 @@ public abstract class SideSelectionMenuAppState extends MenuAppState {
         containerInner.setBackground(null);
         containerOuter.addChild(containerInner);
 
-        for (Controller controller : mainApplication.getControllers().values()) {
+        ControllerAppState controllerAppState = getAppState(ControllerAppState.class);
+        for (Controller controller : controllerAppState.getControllers().values()) {
             SideSelectionMenuGroup menuGroup = new SideSelectionMenuGroup(
                 controller::getTeamSide,
                 teamSide -> {
                     controller.setTeamSide(teamSide);
-                    updateControllerSide(controller, teamSide);
+                    updateControllerContainer(controller);
+                },
+                () -> controllerAppState.getSettingsIndex(controller),
+                controllerSettingsIndex -> {
+                    controller.setSettings(controllerAppState.getSettings()[controllerSettingsIndex]);
+                    updateControllerContainer(controller);
                 },
                 this::confirm
             );
@@ -49,18 +56,27 @@ public abstract class SideSelectionMenuAppState extends MenuAppState {
             row.setInsets(new Insets3f(0, rowPadding, 0, rowPadding));
             row.setBackground(null);
 
+            Container controllerContainer = new Container();
+            controllerContainer.setBackground(null);
+            // Logo icon
             Panel controllerLogo = new Panel();
             IconComponent controllerIcon = new IconComponent("textures/controller.png");
-            controllerIcon.setVAlignment(VAlignment.Center);
+            controllerIcon.setHAlignment(HAlignment.Center);
+            controllerIcon.setVAlignment(VAlignment.Bottom);
             controllerIcon.setIconSize(new Vector2f(controllerLogoSize, controllerLogoSize));
-            controllerIcons.put(controller, controllerIcon);
             controllerLogo.setBackground(controllerIcon);
-            row.addChild(controllerLogo);
+            controllerContainer.addChild(controllerLogo);
+            // Settings text
+            Label lblSettings = new Label("XXX");
+            lblSettings.setFontSize(20);
+            lblSettings.setTextHAlignment(HAlignment.Center);
+            controllerContainer.addChild(lblSettings);
 
+            row.addChild(controllerContainer);
+            controllerContainers.put(controller, new SideSelectionControllerContainer(controllerIcon, lblSettings));
             containerInner.addChild(row);
 
             addMenuGroup(menuGroup);
-
             controllerMenuGroups.put(controller, menuGroup);
         }
 
@@ -69,31 +85,35 @@ public abstract class SideSelectionMenuAppState extends MenuAppState {
 
     @Override
     protected MenuGroup getMenuGroup(int joyId) {
-        return controllerMenuGroups.get(mainApplication.getControllers().get(joyId));
+        ControllerAppState controllerAppState = getAppState(ControllerAppState.class);
+        return controllerMenuGroups.get(controllerAppState.getControllers().get(joyId));
     }
 
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         if (enabled) {
-            for (Controller controller : mainApplication.getControllers().values()) {
-                updateControllerSide(controller, controller.getTeamSide());
+            for (Controller controller : getAppState(ControllerAppState.class).getControllers().values()) {
+                updateControllerContainer(controller);
             }
             mainApplication.getCamera().setLocation(new Vector3f(0, 1, 5));
             mainApplication.getCamera().lookAtDirection(new Vector3f(0, 0.05f, -1), Vector3f.UNIT_Y);
         }
     }
 
-    private void updateControllerSide(Controller controller, int teamSide) {
+    private void updateControllerContainer(Controller controller) {
         HAlignment hAlignment;
-        if (teamSide == -1) {
+        if (controller.getTeamSide() == -1) {
             hAlignment = HAlignment.Right;
-        } else if (teamSide == 1) {
+        } else if (controller.getTeamSide() == 1) {
             hAlignment = HAlignment.Left;
         } else {
             hAlignment = HAlignment.Center;
         }
-        controllerIcons.get(controller).setHAlignment(hAlignment);
+        SideSelectionControllerContainer container = controllerContainers.get(controller);
+        container.getControllerIcon().setHAlignment(hAlignment);
+        container.getLblSettings().setTextHAlignment(hAlignment);
+        container.getLblSettings().setText(getAppState(ControllerAppState.class).getSettingsName(controller));
     }
 
     protected abstract void confirm();

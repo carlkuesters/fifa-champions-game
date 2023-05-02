@@ -1,5 +1,6 @@
 package com.carlkuesters.fifachampions.menu;
 
+import com.carlkuesters.fifachampions.ControllerAppState;
 import com.carlkuesters.fifachampions.game.controllers.ControllerSettings;
 import com.simsilica.lemur.Button;
 
@@ -20,9 +21,14 @@ public class ControllerSettingsMenuAppState extends SettingsMenuAppState {
     @Override
     protected void initMenu() {
         super.initMenu();
+        ControllerAppState controllerAppState = getAppState(ControllerAppState.class);
+        Integer[] alternativeSettingIndices = new Integer[ControllerAppState.SETTINGS_COUNT - 1];
+        for (int i = 0; i < alternativeSettingIndices.length; i++) {
+            alternativeSettingIndices[i] = i + 1;
+        }
         carouselSettingIndex = addCarouselButton(
-            new Integer[]{ 1, 2, 3, 4, 5, 6, 7, 8 },
-            settingIndex -> "Alternativ " + settingIndex,
+            alternativeSettingIndices,
+            controllerAppState::getSettingsName,
             settingIndex -> update()
         );
         addRecordButton("Direktpass / Pressen", ControllerSettings::getButtonIndex_PassDirectOrPressure, ControllerSettings::setButtonIndex_PassDirectOrPressure);
@@ -54,7 +60,7 @@ public class ControllerSettingsMenuAppState extends SettingsMenuAppState {
     }
 
     private ControllerSettings getSelectedControllerSettings() {
-        return mainApplication.getControllerSettings()[carouselSettingIndex.getCarouselValue()];
+        return getAppState(ControllerAppState.class).getSettings()[carouselSettingIndex.getValue()];
     }
 
     private void update() {

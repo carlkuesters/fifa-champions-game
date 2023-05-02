@@ -37,9 +37,10 @@ public class GameAppState extends BaseDisplayAppState {
         rootNode = new Node();
         rootNode.setCullHint(Spatial.CullHint.Always);
 
-        game = new Game(mainApplication.getControllers().values(), mainApplication.getGameCreationInfo(), this::createCinematic);
+        ControllerAppState controllerAppState = getAppState(ControllerAppState.class);
+        game = new Game(controllerAppState.getControllers().values(), mainApplication.getGameCreationInfo(), this::createCinematic);
 
-        mainApplication.getJoystickListener().setGameSubListener(new GameJoystickSubListener(mainApplication.getControllers(), () -> {
+        controllerAppState.getJoystickListener().setGameSubListener(new GameJoystickSubListener(controllerAppState.getControllers(), () -> {
             if (game.getActiveCinematic() == null) {
                 stateManager.getState(PauseIngameMenuAppState.class).setEnabled(true);
             }
@@ -169,7 +170,7 @@ public class GameAppState extends BaseDisplayAppState {
     public void cleanup() {
         super.cleanup();
         mainApplication.getRootNode().detachChild(rootNode);
-        mainApplication.getJoystickListener().setGameSubListener(null);
+        getAppState(ControllerAppState.class).getJoystickListener().setGameSubListener(null);
         setAudienceHyped(false);
     }
 

@@ -1,17 +1,18 @@
 package com.carlkuesters.fifachampions.menu;
 
+import com.carlkuesters.fifachampions.ControllerAppState;
+import lombok.AllArgsConstructor;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@AllArgsConstructor
 public class SideSelectionMenuGroup extends MenuGroup {
 
-    public SideSelectionMenuGroup(Supplier<Integer> getTeamSide, Consumer<Integer> setTeamSide, Runnable confirm) {
-        this.getTeamSide = getTeamSide;
-        this.setTeamSide = setTeamSide;
-        this.confirm = confirm;
-    }
     private Supplier<Integer> getTeamSide;
     private Consumer<Integer> setTeamSide;
+    private Supplier<Integer> getControllerSettingsIndex;
+    private Consumer<Integer> setControllerSettingsIndex;
     private Runnable confirm;
 
     @Override
@@ -32,6 +33,24 @@ public class SideSelectionMenuGroup extends MenuGroup {
         if (newTeamSide != oldTeamSide) {
             setTeamSide.accept(newTeamSide);
         }
+    }
+
+    @Override
+    public void secondaryNavigateLeft() {
+        super.secondaryNavigateLeft();
+        switchControllerSettings(-1);
+    }
+
+    @Override
+    public void secondaryNavigateRight() {
+        super.secondaryNavigateRight();
+        switchControllerSettings(1);
+    }
+
+    private void switchControllerSettings(int direction) {
+        int oldControllerSettingsIndex = getControllerSettingsIndex.get();
+        int newControllerSettingsIndex = ((oldControllerSettingsIndex + direction + ControllerAppState.SETTINGS_COUNT) % ControllerAppState.SETTINGS_COUNT);
+        setControllerSettingsIndex.accept(newControllerSettingsIndex);
     }
 
     @Override

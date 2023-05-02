@@ -71,9 +71,11 @@ public class MenuJoystickSubListener {
                             menuGroup.confirm();
                             break;
                         case PS5Controller.L1:
+                        case PS5Controller.L2:
                             menuGroup.secondaryNavigateLeft();
                             break;
                         case PS5Controller.R1:
+                        case PS5Controller.R2:
                             menuGroup.secondaryNavigateRight();
                             break;
                     }
