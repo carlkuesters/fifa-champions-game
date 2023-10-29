@@ -11,11 +11,9 @@ public class ShootButtonBehaviour extends ChargedBallButtonBehaviour {
     }
 
     @Override
-    public void onPressed(boolean isPressed) {
-        super.onPressed(isPressed);
-        if (isPressed && controller.getPlayerObject().isOwningBall()) {
-            controller.getPlayerObject().setAnimation(new PlayerAnimation("run_kick_start", maxChargedDuration));
-        }
+    protected void onBallOwnerPressed() {
+        super.onBallOwnerPressed();
+        controller.getPlayerObject().setAnimation(new PlayerAnimation("run_kick_start", maxChargedDuration));
     }
 
     @Override

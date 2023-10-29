@@ -9,6 +9,7 @@ import com.carlkuesters.fifachampions.game.cinematics.cinematics.*;
 import com.carlkuesters.fifachampions.joystick.GameJoystickSubListener;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
 import com.carlkuesters.fifachampions.visuals.BallVisual;
+import com.carlkuesters.fifachampions.visuals.TimeFormatter;
 import com.carlkuesters.fifachampions.visuals.PlayerSkins;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
 import com.jme3.app.Application;
@@ -16,7 +17,9 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class GameAppState extends BaseDisplayAppState {
@@ -24,24 +27,31 @@ public class GameAppState extends BaseDisplayAppState {
     @Getter
     private Game game;
     @Getter
+    private TimeFormatter timeFormatter;
     private Node rootNode;
     private HashMap<PlayerObject, PlayerVisual> playerVisuals = new HashMap<>();
     @Getter
     private BallVisual ballVisual;
+    @Setter
     private boolean synchronizeVisuals;
     private boolean isFirstFrame = true;
+    @Setter
+    @Getter
+    private boolean paused;
 
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
         rootNode = new Node();
-        rootNode.setCullHint(Spatial.CullHint.Always);
+        setDisplayVisuals(false);
 
         ControllerAppState controllerAppState = getAppState(ControllerAppState.class);
         game = new Game(controllerAppState.getControllers().values(), mainApplication.getGameCreationInfo(), this::createCinematic);
+        timeFormatter = new TimeFormatter(game);
 
         controllerAppState.getJoystickListener().setGameSubListener(new GameJoystickSubListener(controllerAppState.getControllers(), () -> {
             if (game.getActiveCinematic() == null) {
+                paused = true;
                 stateManager.getState(PauseIngameMenuAppState.class).setEnabled(true);
             }
         }));
@@ -61,12 +71,14 @@ public class GameAppState extends BaseDisplayAppState {
         mainApplication.getRootNode().attachChild(rootNode);
     }
 
-    private PlayerVisual createPlayerVisual(PlayerObject playerObject) {
+    private void createPlayerVisual(PlayerObject playerObject) {
         PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager(), PlayerSkins.get(playerObject.getPlayer()));
         String trikotName = (playerObject.isGoalkeeper() ? "thinstripes" : playerObject.getTeam().getTrikotName());
         playerVisual.setTrikot(trikotName);
         playerVisuals.put(playerObject, playerVisual);
-        return playerVisual;
+
+        rootNode.attachChild(playerVisual.getWrapperNode());
+        setDisplayPlayerVisual(playerVisual, false);
     }
 
     private Cinematic createCinematic(CinematicInfo<?> cinematicInfo) {
@@ -84,36 +96,34 @@ public class GameAppState extends BaseDisplayAppState {
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        // Skip logic on initial very long frame that loads the models
-        if (isFirstFrame) {
-            isFirstFrame = false;
-            return;
-        }
-        game.update(tpf);
-
-        Cinematic activeCinematic = (Cinematic) game.getActiveCinematic();
-        CinematicAppState cinematicAppState = getAppState(CinematicAppState.class);
-        if (activeCinematic != cinematicAppState.getCurrentCinematic()) {
-            if (activeCinematic != null) {
-                cinematicAppState.playCinematic(activeCinematic);
-            } else {
-                cinematicAppState.stopCinematic();
+        if (!paused) {
+            // Skip logic on initial very long frame that loads the models
+            if (isFirstFrame) {
+                isFirstFrame = false;
+                return;
             }
-        }
+            game.update(tpf);
 
-        for (Team team : game.getTeams()) {
-            for (PlayerObject playerObject : team.getPlayers()) {
-                if (synchronizeVisuals) {
-                    updatePlayerVisual(playerObject);
+            Cinematic activeCinematic = (Cinematic) game.getActiveCinematic();
+            CinematicAppState cinematicAppState = getAppState(CinematicAppState.class);
+            if (activeCinematic != cinematicAppState.getCurrentCinematic()) {
+                if (activeCinematic != null) {
+                    cinematicAppState.playCinematic(activeCinematic);
+                } else {
+                    cinematicAppState.stopCinematic();
                 }
-                rootNode.attachChild(getPlayerVisual(playerObject).getWrapperNode());
-            }
-            for (PlayerObject playerObject : team.getReservePlayers()) {
-                rootNode.detachChild(getPlayerVisual(playerObject).getWrapperNode());
             }
         }
-
         if (synchronizeVisuals) {
+            for (Team team : game.getTeams()) {
+                for (PlayerObject playerObject : team.getPlayers()) {
+                    updatePlayerVisual(playerObject);
+                    setDisplayPlayerVisual(getPlayerVisual(playerObject), true);
+                }
+                for (PlayerObject playerObject : team.getReservePlayers()) {
+                    setDisplayPlayerVisual(getPlayerVisual(playerObject), false);
+                }
+            }
             updateTransform(game.getBall(), ballVisual.getBallModel());
             setAudienceHyped(game.isAudienceHyped());
         }
@@ -128,6 +138,10 @@ public class GameAppState extends BaseDisplayAppState {
             playerAnimation = getPlayerDefaultRunAnimation(playerObject.getVelocity().length(), playerObject.isTurning());
         }
         playerVisual.playAnimation(playerAnimation);
+    }
+
+    public Collection<PlayerVisual> getPlayerVisuals() {
+        return playerVisuals.values();
     }
 
     public PlayerVisual getPlayerVisual(PlayerObject playerObject) {
@@ -158,12 +172,16 @@ public class GameAppState extends BaseDisplayAppState {
         return PlayerVisual.IDLE_ANIMATION;
     }
 
-    public void startDisplayingVisuals() {
-        rootNode.setCullHint(Spatial.CullHint.Inherit);
+    public void setDisplayVisuals(boolean displayed) {
+        rootNode.setCullHint(displayed ? Spatial.CullHint.Inherit : Spatial.CullHint.Always);
     }
 
-    public void startSynchronizingVisuals() {
-        synchronizeVisuals = true;
+    public void setDisplayPlayerVisual(PlayerVisual playerVisual, boolean displayed) {
+        playerVisual.getWrapperNode().setCullHint(displayed ? Spatial.CullHint.Inherit : Spatial.CullHint.Always);
+    }
+
+    public boolean shouldRecordReplayFrames() {
+        return !paused && game.isReplayRecording();
     }
 
     @Override
@@ -174,7 +192,7 @@ public class GameAppState extends BaseDisplayAppState {
         setAudienceHyped(false);
     }
 
-    private void setAudienceHyped(boolean hyped) {
+    public void setAudienceHyped(boolean hyped) {
         getAppState(StadiumAppState.class).setAudienceHyped(hyped);
     }
 }

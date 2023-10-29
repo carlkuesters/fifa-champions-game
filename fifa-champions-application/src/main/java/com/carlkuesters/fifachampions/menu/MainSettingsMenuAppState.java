@@ -7,6 +7,7 @@ public class MainSettingsMenuAppState extends SettingsMenuAppState {
 
     public MainSettingsMenuAppState() {
         super("Einstellungen");
+        mode = MenuMode.FREE_CHILD;
     }
     private LabelCarousel<Boolean> carouselFullscreen;
     private LabelCarousel<int[]> carouselResolution;

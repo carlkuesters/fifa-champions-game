@@ -10,11 +10,9 @@ public class PassDirectButtonBehaviour extends ChargedBallButtonBehaviour {
     }
 
     @Override
-    public void onPressed(boolean isPressed) {
-        super.onPressed(isPressed);
-        if (isPressed && controller.getPlayerObject().isOwningBall()) {
-            controller.getPlayerObject().setAnimation(new PlayerAnimation("short_pass_start", maxChargedDuration));
-        }
+    protected void onBallOwnerPressed() {
+        super.onBallOwnerPressed();
+        controller.getPlayerObject().setAnimation(new PlayerAnimation("short_pass_start", maxChargedDuration));
     }
 
     @Override

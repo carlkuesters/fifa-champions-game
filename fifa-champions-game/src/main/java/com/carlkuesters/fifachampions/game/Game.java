@@ -62,6 +62,8 @@ public class Game implements GameLoopListener {
     private static final Vector3f CORNER_KICK_TOP_RIGHT = new Vector3f(FIELD_HALF_WIDTH, 0, FIELD_HALF_HEIGHT);
     private boolean isGameOver;
     private boolean isTimeRunning;
+    @Getter
+    private boolean isReplayRecording;
     private float logicTime = 0;
     private int halfTime = 0;
     @Getter
@@ -615,12 +617,12 @@ public class Game implements GameLoopListener {
         return logicTime;
     }
 
-    public int getHalfTime() {
-        return halfTime;
-    }
-
-    public float getHalfTimePassedTime() {
-        return halfTimePassedTime;
+    public float getPassedTime() {
+        float passedTime = halfTimePassedTime;
+        if (halfTime == 1) {
+            passedTime += halfTimeDuration;
+        }
+        return passedTime;
     }
 
     public float getHalfTimePassedOverTime() {
@@ -667,6 +669,7 @@ public class Game implements GameLoopListener {
     public void playCinematic(CinematicInfo<?> cinematicInfo) {
         Cinematic cinematic = createCinematic.apply(cinematicInfo);
         cinematics.add(0, cinematic);
+        isReplayRecording = false;
     }
 
     public void finishActiveCinematic() {
@@ -678,5 +681,9 @@ public class Game implements GameLoopListener {
 
     public Cinematic getActiveCinematic() {
         return (((situation != null) && (cinematics.size() > 0)) ? cinematics.getFirst() : null);
+    }
+
+    public void enableReplayRecording() {
+        isReplayRecording = true;
     }
 }

@@ -10,11 +10,9 @@ public class ThrowInDirectButtonBehaviour extends ChargedBallButtonBehaviour {
     }
 
     @Override
-    public void onPressed(boolean isPressed) {
-        super.onPressed(isPressed);
-        if (isPressed) {
-            controller.getPlayerObject().setAnimation(new PlayerAnimation("throw_in_start", maxChargedDuration));
-        }
+    protected void onBallOwnerPressed() {
+        super.onBallOwnerPressed();
+        controller.getPlayerObject().setAnimation(new PlayerAnimation("throw_in_start", maxChargedDuration));
     }
 
     @Override

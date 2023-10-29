@@ -1,14 +1,10 @@
 package com.carlkuesters.fifachampions;
 
 import com.carlkuesters.fifachampions.game.*;
-import com.carlkuesters.fifachampions.game.situations.KickOffSituation;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
 import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
-import com.carlkuesters.fifachampions.visuals.BallVisual;
-import com.carlkuesters.fifachampions.visuals.ControlledPlayerContainer;
-import com.carlkuesters.fifachampions.visuals.MaterialFactory;
-import com.carlkuesters.fifachampions.visuals.ScoreContainer;
+import com.carlkuesters.fifachampions.visuals.*;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.material.Material;
@@ -45,14 +41,8 @@ public class IngameAppState extends BaseDisplayAppState {
         GameAppState gameAppState = getAppState(GameAppState.class);
         Game game = gameAppState.getGame();
 
-        KickOffSituation kickOffSituation = (KickOffSituation) game.getSituation();
-        for (Team team : game.getTeams()) {
-            for (PlayerObject playerObject : team.getPlayers()) {
-                playerObject.setPosition(kickOffSituation.getPlayerPosition(playerObject));
-            }
-        }
-        gameAppState.startDisplayingVisuals();
-        gameAppState.startSynchronizingVisuals();
+        gameAppState.setDisplayVisuals(true);
+        gameAppState.setSynchronizeVisuals(true);
 
         ColorRGBA controllerColor = ColorRGBA.Blue;
         for (Controller controller : getAppState(ControllerAppState.class).getControllers().values()) {
@@ -130,12 +120,15 @@ public class IngameAppState extends BaseDisplayAppState {
             TeamInfo teamInfo = game.getTeams()[teamIndex].getTeamInfo();
             pauseIngameMenuAppState.setTeam(teamIndex, teamInfo);
         }
+
+        mainApplication.getStateManager().attach(new ReplayAppState());
     }
 
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        Game game = getGame();
+        GameAppState gameAppState = getAppState(GameAppState.class);
+        Game game = gameAppState.getGame();
 
         for (Map.Entry<Controller, Node> entry : controllerVisuals.entrySet()) {
             Controller controller = entry.getKey();
@@ -195,7 +188,8 @@ public class IngameAppState extends BaseDisplayAppState {
                 cameraAppState.setDefaultFieldOfView();
                 cameraAppState.setLocationAndDirection(cameraPerspective.getPosition(), cameraPerspective.getDirection());
             } else {
-                Vector3f ballPosition = game.getBall().getPosition();
+                // Use the ball visual instead of the ball game object to support camera during replays
+                Vector3f ballPosition = gameAppState.getBallVisual().getBallModel().getLocalTranslation();
                 float x = 1.1f * ballPosition.getX();
                 x = Math.max(-44, Math.min(x, 44));
                 float y = 30;
@@ -207,39 +201,23 @@ public class IngameAppState extends BaseDisplayAppState {
             }
         }
 
-        float passedTime = game.getHalfTimePassedTime();
-        if (game.getHalfTime() == 1) {
-            passedTime += game.getHalfTimeDuration();
-        }
-        String formattedTime = getFormattedTime(passedTime);
-        String formattedOverTime = ((game.getHalfTimePassedOverTime() > 0) ? getFormattedTime(game.getHalfTimePassedOverTime()) : null);
-        scoreContainer.setTimeAndGoals(formattedTime, formattedOverTime, game.getGoals());
+        TimeFormatter timeFormatter = gameAppState.getTimeFormatter();
+        scoreContainer.setTimeAndGoals(timeFormatter.getTime(), timeFormatter.getOverTime(), game.getGoals());
         PauseIngameMenuAppState pauseIngameMenuAppState = getAppState(PauseIngameMenuAppState.class);
-        pauseIngameMenuAppState.setTime(formattedTime + ((formattedOverTime != null) ? " (+" + formattedOverTime + ")" : ""));
+        pauseIngameMenuAppState.setTime(timeFormatter.getCombinedTime());
         pauseIngameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
 
+        Spatial.CullHint generalCullHint = (gameAppState.isPaused() ? Spatial.CullHint.Always : Spatial.CullHint.Inherit);
+        rootNode.setCullHint(generalCullHint);
+        guiNode.setCullHint(generalCullHint);
+
         if (game.isGameOver()) {
+            mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(ReplayAppState.class));
             mainApplication.getStateManager().detach(this);
             mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(GameAppState.class));
             mainApplication.getStateManager().getState(PauseIngameMenuAppState.class).setEnabled(false);
             mainApplication.getStateManager().getState(GameOverIngameMenuAppState.class).setEnabled(true);
         }
-    }
-
-    private String getFormattedTime(float time) {
-        int secondsPerHalfTime = (45 * 60);
-        int seconds = (int) ((time / getGame().getHalfTimeDuration()) * secondsPerHalfTime);
-        int minutes = (seconds / 60);
-        seconds -= (minutes * 60);
-        return getFormattedMinutesOrSeconds(minutes) + ":" + getFormattedMinutesOrSeconds(seconds);
-    }
-
-    private String getFormattedMinutesOrSeconds(int value) {
-        return ((value < 10) ? "0" : "") + value;
-    }
-
-    private Game getGame() {
-        return getAppState(GameAppState.class).getGame();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.GameAppState;
 import com.carlkuesters.fifachampions.IngameAppState;
+import com.carlkuesters.fifachampions.ReplayAppState;
 import com.carlkuesters.fifachampions.game.TeamInfo;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -125,6 +126,7 @@ public class IngameMenuAppState extends MenuAppState {
     }
 
     protected void endGame() {
+        mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(ReplayAppState.class));
         mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(IngameAppState.class));
         mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(GameAppState.class));
         openMenu(MainMenuAppState.class);

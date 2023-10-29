@@ -18,7 +18,7 @@ public class PlayerVisual {
     public PlayerVisual(AssetManager assetManager, PlayerSkin playerSkin) {
         this.assetManager = assetManager;
         this.playerSkin = playerSkin;
-        Node playerModel = (Node) assetManager.loadModel("models/player/player.j3o");
+        playerModel = (Node) assetManager.loadModel("models/player/player.j3o");
         float playerScale = 0.0106f;
         playerModel.scale(playerScale);
         float halfPlayerModelHeight = (JMonkeyUtil.getSpatialDimension(playerModel).getY() / 2);
@@ -81,6 +81,8 @@ public class PlayerVisual {
     public static final PlayerAnimation IDLE_ANIMATION = new PlayerAnimation("idle", 4);
     private AssetManager assetManager;
     private PlayerSkin playerSkin;
+    @Getter
+    private Node playerModel;
     private Material materialBody;
     @Getter
     private Node modelNode;

@@ -59,6 +59,7 @@ public class Main extends SimpleApplication {
         stateManager.attach(new GameSettingsMenuAppState());
         stateManager.attach(new InitialFormationMenuAppState());
         stateManager.attach(new PauseIngameMenuAppState());
+        stateManager.attach(new ReplayMenuAppState());
         stateManager.attach(new PauseSideSelectionMenuAppState());
         stateManager.attach(new PauseFormationMenuAppState());
         stateManager.attach(new GameOverIngameMenuAppState());

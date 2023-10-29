@@ -10,6 +10,7 @@ import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.visuals.BallVisual;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.audio.AudioData;
 import com.jme3.audio.AudioNode;
 import com.jme3.cinematic.MotionPath;
@@ -21,6 +22,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.post.filters.FadeFilter;
 
 public class GameIntroCinematic extends Cinematic {
+
+    private BallVisual[] ballVisuals = new BallVisual[3];
 
     @Override
     protected void initialize(SimpleApplication simpleApplication) {
@@ -77,13 +80,14 @@ public class GameIntroCinematic extends Cinematic {
             setRotation(new Quaternion(0.027416293f, -0.008860216f, 2.664796E-4f, 0.99958473f));
             setInitialDuration(11.5f);
         }})));
-        addPart(new CinematicPart(cameraPart2, new SimpleAction(gameAppState::startDisplayingVisuals)));
+        addPart(new CinematicPart(cameraPart2, new SimpleAction(() -> gameAppState.setDisplayVisuals(true))));
         for (int i = 0; i < game.getTeams().length; i++) {
             float side = ((i - 0.5f) * 2);
             for (int r = 0; r < game.getTeams()[i].getPlayers().length; r++) {
                 int _r = r;
                 PlayerObject playerObject = game.getTeams()[i].getPlayers()[r];
                 PlayerVisual playerVisual = gameAppState.getPlayerVisual(playerObject);
+                addPart(new CinematicPart(cameraPart2, new SimpleAction(() -> gameAppState.setDisplayPlayerVisual(playerVisual, true))));
                 float startX = ((side * 1) + (float) ((Math.random() - 0.5f) * 0.25f));
                 addPart(new CinematicPart(cameraPart2, new PlayerAnimationAction(playerVisual, PlayerVisual.RUN_ANIMATION_SLOW, true)));
                 CinematicPart walkPart = addPart(new CinematicPart(cameraPart2, new MoveAction(playerVisual.getModelNode(), new MotionEvent() {{
@@ -180,7 +184,7 @@ public class GameIntroCinematic extends Cinematic {
         }})));
         float[] zOffset = new float[] { -1, -0.7f, -1 };
         float[] timeOffsets = new float[] { 0.2f, 0.4f, 0 };
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < ballVisuals.length; i++) {
             Vector3f playerPosition = new Vector3f(-2 - (i * 2), 0, -20 + zOffset[i]);
             Vector3f ballPositionNear = playerPosition.add(-0.3f, 0, 0);
             Vector3f ballPositionFar = ballPositionNear.add(0, 0, 10);
@@ -199,6 +203,7 @@ public class GameIntroCinematic extends Cinematic {
                 setInitialDuration(2);
             }})));
             addPart(new CinematicPart(ballMovePart, new DetachSpatialAction(ballVisual.getBallNode())));
+            ballVisuals[i] = ballVisual;
 
             PlayerObject playerObject = gameAppState.getGame().getTeams()[0].getPlayers()[5 + i];
             PlayerVisual playerVisual = gameAppState.getPlayerVisual(playerObject);
@@ -249,7 +254,7 @@ public class GameIntroCinematic extends Cinematic {
                 })));
             }
         }
-        addPart(new CinematicPart(runToPositionsTime, new SimpleAction(gameAppState::startSynchronizingVisuals)));
+        addPart(new CinematicPart(runToPositionsTime, new SimpleAction(() -> gameAppState.setSynchronizeVisuals(true))));
         // Stadion End
         addPart(new CinematicPart(cameraPart9, new CameraPathAction(new MotionEvent() {{
             setPath(new MotionPath() {{
@@ -268,6 +273,12 @@ public class GameIntroCinematic extends Cinematic {
     @Override
     public void stop() {
         super.stop();
-        getSimpleApplication().getStateManager().attach(new IngameAppState());
+        AppStateManager stateManager = getSimpleApplication().getStateManager();
+
+        for (BallVisual ballVisual : ballVisuals) {
+            getSimpleApplication().getRootNode().detachChild(ballVisual.getBallNode());
+        }
+
+        stateManager.attach(new IngameAppState());
     }
 }
