@@ -1,7 +1,6 @@
 package com.carlkuesters.fifachampions.game;
 
 import com.carlkuesters.fifachampions.game.math.Parabole;
-import com.jme3.animation.LoopMode;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -250,14 +249,14 @@ public class PlayerObject extends PhysicsObject {
             float straddleVelocity = Math.max(3, velocity.length());
             velocity.set(getDirection().mult(straddleVelocity));
             this.remainingFallingDuration = (1 + (straddleVelocity / 9));
-            setAnimation(new PlayerAnimation("tackle", (1.1f * remainingFallingDuration), LoopMode.DontLoop));
+            setAnimation(new PlayerAnimation("tackle", (1.1f * remainingFallingDuration)));
         }
     }
 
     public void collapse() {
         velocity.multLocal(0.5f);
         this.remainingFallingDuration = 1;
-        setAnimation(new PlayerAnimation("collapse", (1.1f * remainingFallingDuration), LoopMode.DontLoop));
+        setAnimation(new PlayerAnimation("collapse", (1.1f * remainingFallingDuration)));
     }
 
     public GoalkeeperJump getGoalkeeperJump(Vector3f targetPosition, float jumpDuration) {
@@ -283,7 +282,7 @@ public class PlayerObject extends PhysicsObject {
         velocity.set(goalkeeperJump.getInitialVelocity());
         rotation.set(goalkeeperJump.getRotation());
         frictionXZ_Air = goalkeeperJump.getFrictionXZ_Air();
-        setAnimation(new PlayerAnimation("goalkeeper_jump", goalkeeperJump.getJumpDuration(), LoopMode.DontLoop));
+        setAnimation(new PlayerAnimation("goalkeeper_jump", goalkeeperJump.getJumpDuration()));
     }
 
     public boolean onBallPickUp() {

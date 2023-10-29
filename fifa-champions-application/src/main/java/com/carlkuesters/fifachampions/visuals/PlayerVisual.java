@@ -75,10 +75,10 @@ public class PlayerVisual {
             skeletonControl.getAttachmentsNode("Bip001 Head").attachChild(hairWrapper);
         }
     }
-    public static final PlayerAnimation RUN_ANIMATION_FAST = new PlayerAnimation("run_fast", 0.7f);
-    public static final PlayerAnimation RUN_ANIMATION_MEDIUM = new PlayerAnimation("run_medium", 1.17f);
-    public static final PlayerAnimation RUN_ANIMATION_SLOW = new PlayerAnimation("run_slow", 1.59f);
-    public static final PlayerAnimation IDLE_ANIMATION = new PlayerAnimation("idle", 4);
+    public static final PlayerAnimation RUN_ANIMATION_FAST = new PlayerAnimation("run_fast", 0.7f, true);
+    public static final PlayerAnimation RUN_ANIMATION_MEDIUM = new PlayerAnimation("run_medium", 1.17f, true);
+    public static final PlayerAnimation RUN_ANIMATION_SLOW = new PlayerAnimation("run_slow", 1.59f, true);
+    public static final PlayerAnimation IDLE_ANIMATION = new PlayerAnimation("idle", 4, true);
     private AssetManager assetManager;
     private PlayerSkin playerSkin;
     @Getter

@@ -149,7 +149,7 @@ public class GameIntroCinematic extends Cinematic {
             final int _i = i;
             PlayerObject playerObject = gameAppState.getGame().getTeams()[0].getPlayers()[1 + i];
             PlayerVisual playerVisual = gameAppState.getPlayerVisual(playerObject);
-            addPart(new CinematicPart(cameraPart6, new PlayerAnimationAction(playerVisual, new PlayerAnimation("run_backwards", 0.6f), true)));
+            addPart(new CinematicPart(cameraPart6, new PlayerAnimationAction(playerVisual, new PlayerAnimation("run_backwards", 0.6f, true), true)));
             addPart(new CinematicPart(cameraPart6, new MoveAction(playerVisual.getModelNode(), new MotionEvent() {{
                 setPath(new MotionPath() {{
                     addWayPoint(new Vector3f(-49 - (_i + 0.5f), 0, -9 + zOffsetStart[_i]));

@@ -2,6 +2,7 @@ package com.carlkuesters.fifachampions.visuals;
 
 import com.carlkuesters.fifachampions.game.PlayerAnimation;
 import com.jme3.animation.AnimChannel;
+import com.jme3.animation.LoopMode;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
@@ -29,7 +30,7 @@ public class PlayerVisualAnimationControl extends AbstractControl {
             remainingBlendTime = BLEND_TIME;
         }
         animChannel.setSpeed(animChannel.getAnimMaxTime() / playerAnimation.getLoopDuration());
-        animChannel.setLoopMode(playerAnimation.getLoopMode());
+        animChannel.setLoopMode(playerAnimation.isLoop() ? LoopMode.Loop : LoopMode.DontLoop);
     }
 
     @Override
