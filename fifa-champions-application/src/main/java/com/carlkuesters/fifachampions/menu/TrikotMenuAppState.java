@@ -1,6 +1,7 @@
 package com.carlkuesters.fifachampions.menu;
 
 import com.carlkuesters.fifachampions.game.InitialTeamInfo;
+import com.carlkuesters.fifachampions.game.PlayerAnimations;
 import com.carlkuesters.fifachampions.game.content.Players;
 import com.carlkuesters.fifachampions.visuals.PlayerSkin;
 import com.carlkuesters.fifachampions.visuals.PlayerSkins;
@@ -57,7 +58,7 @@ public class TrikotMenuAppState extends MenuAppState {
         PlayerSkin playerSkin = PlayerSkins.get((side == -1) ? Players.MARKUS : Players.STEFFEN);
         PlayerVisual playerVisual = new PlayerVisual(mainApplication.getAssetManager(), playerSkin);
         playerVisual.getModelNode().setLocalTranslation(side * 1.75f, 0, 0);
-        playerVisual.playAnimation(PlayerVisual.IDLE_ANIMATION);
+        playerVisual.playAnimation(PlayerAnimations.createIdle());
         playerVisuals[teamIndex] = playerVisual;
     }
 

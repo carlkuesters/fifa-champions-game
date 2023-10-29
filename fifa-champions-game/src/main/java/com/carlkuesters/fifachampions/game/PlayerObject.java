@@ -32,6 +32,8 @@ public class PlayerObject extends PhysicsObject {
     private boolean isStraddling;
     private float remainingFallingDuration;
     private boolean isGoalkeeperJumping;
+    @Getter
+    @Setter
     private PlayerAnimation animation;
     @Getter
     @Setter
@@ -112,13 +114,13 @@ public class PlayerObject extends PhysicsObject {
                 if (remainingFallingDuration <= 0) {
                     isStraddling = false;
                     remainingFallingDuration = 0;
-                    setAnimation(null);
+                    animation = null;
                 }
             } else if (isGoalkeeperJumping) {
                 if (velocity.lengthSquared() <= 0) {
                     isGoalkeeperJumping = false;
                     setDirection(new Vector3f(game.getHalfTimeSideFactor() * team.getSide(), 0, 0));
-                    setAnimation(null);
+                    animation = null;
                 }
             } else {
                 // Turning the player can temporarily move him further away from his target position than before,
@@ -131,11 +133,12 @@ public class PlayerObject extends PhysicsObject {
                 }
             }
         }
-        if (animation != null) {
-            animation.update(tpf);
-            if (animation.isFinished()) {
-                animation = null;
-            }
+
+        setDefaultAnimationIfNeeded();
+        animation.update(tpf);
+        if (animation.isFinished()) {
+            animation = null;
+            setDefaultAnimationIfNeeded();
         }
     }
 
@@ -159,9 +162,9 @@ public class PlayerObject extends PhysicsObject {
         Vector3f ballVelocity = passDirection.multLocal(effectiveStrength * 25);
         accelerateBall(ballVelocity, true);
         if (game.getBall().getPosition().getY() > 0.5f) {
-            setAnimation(new PlayerAnimation("header_end", 0.5f));
+            animation = new PlayerAnimation("header_end", 0.5f);
         } else {
-            setAnimation(new PlayerAnimation("short_pass_end", 1));
+            animation = new PlayerAnimation("short_pass_end", 1);
         }
     }
 
@@ -249,14 +252,14 @@ public class PlayerObject extends PhysicsObject {
             float straddleVelocity = Math.max(3, velocity.length());
             velocity.set(getDirection().mult(straddleVelocity));
             this.remainingFallingDuration = (1 + (straddleVelocity / 9));
-            setAnimation(new PlayerAnimation("tackle", (1.1f * remainingFallingDuration)));
+            animation = new PlayerAnimation("tackle", (1.1f * remainingFallingDuration));
         }
     }
 
     public void collapse() {
         velocity.multLocal(0.5f);
         this.remainingFallingDuration = 1;
-        setAnimation(new PlayerAnimation("collapse", (1.1f * remainingFallingDuration)));
+        animation = new PlayerAnimation("collapse", (1.1f * remainingFallingDuration));
     }
 
     public GoalkeeperJump getGoalkeeperJump(Vector3f targetPosition, float jumpDuration) {
@@ -282,7 +285,7 @@ public class PlayerObject extends PhysicsObject {
         velocity.set(goalkeeperJump.getInitialVelocity());
         rotation.set(goalkeeperJump.getRotation());
         frictionXZ_Air = goalkeeperJump.getFrictionXZ_Air();
-        setAnimation(new PlayerAnimation("goalkeeper_jump", goalkeeperJump.getJumpDuration()));
+        animation = new PlayerAnimation("goalkeeper_jump", goalkeeperJump.getJumpDuration());
     }
 
     public boolean onBallPickUp() {
@@ -358,10 +361,6 @@ public class PlayerObject extends PhysicsObject {
         this.isSprinting = isSprinting;
     }
 
-    public boolean isSprinting() {
-        return isSprinting;
-    }
-
     public void setIsPressuring(boolean isPressuring) {
         this.isPressuring = isPressuring;
     }
@@ -389,11 +388,25 @@ public class PlayerObject extends PhysicsObject {
         this.remainingFreezeTime = freezeTime;
     }
 
-    public void setAnimation(PlayerAnimation animation) {
-        this.animation = animation;
+    private void setDefaultAnimationIfNeeded() {
+        // The default animations are the only looped ones at the moment
+        if ((animation == null) || animation.isLoop()) {
+            PlayerAnimation defaultAnimation = getDefaultAnimation();
+            if ((animation == null) || (!defaultAnimation.getName().equals(animation.getName()))) {
+                animation = defaultAnimation;
+            }
+        }
     }
 
-    public PlayerAnimation getAnimation() {
-        return animation;
+    private PlayerAnimation getDefaultAnimation() {
+        float velocityLength = velocity.length();
+        if (velocityLength > 8) {
+            return PlayerAnimations.createRunFast();
+        } else if ((velocityLength > 3) || isTurning) {
+            return PlayerAnimations.createRunMedium();
+        } else if (velocityLength > MathUtil.EPSILON) {
+            return PlayerAnimations.createRunSlow();
+        }
+        return PlayerAnimations.createIdle();
     }
 }

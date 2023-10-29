@@ -89,7 +89,7 @@ public class GameIntroCinematic extends Cinematic {
                 PlayerVisual playerVisual = gameAppState.getPlayerVisual(playerObject);
                 addPart(new CinematicPart(cameraPart2, new SimpleAction(() -> gameAppState.setDisplayPlayerVisual(playerVisual, true))));
                 float startX = ((side * 1) + (float) ((Math.random() - 0.5f) * 0.25f));
-                addPart(new CinematicPart(cameraPart2, new PlayerAnimationAction(playerVisual, PlayerVisual.RUN_ANIMATION_SLOW, true)));
+                addPart(new CinematicPart(cameraPart2, new PlayerAnimationAction(playerVisual, PlayerAnimations.createRunSlow(), true)));
                 CinematicPart walkPart = addPart(new CinematicPart(cameraPart2, new MoveAction(playerVisual.getModelNode(), new MotionEvent() {{
                     setPath(new MotionPath() {{
                         setPathSplineType(Spline.SplineType.Linear);
@@ -101,7 +101,7 @@ public class GameIntroCinematic extends Cinematic {
                     setDirectionType(Direction.Path);
                     setInitialDuration(9.5f + (_r / 2f));
                 }})));
-                addPart(new CinematicPart(walkPart, new PlayerAnimationAction(playerVisual, PlayerVisual.IDLE_ANIMATION, true)));
+                addPart(new CinematicPart(walkPart, new PlayerAnimationAction(playerVisual, PlayerAnimations.createIdle(), true)));
             }
         }
         // Stadion QuickCut 1
@@ -162,7 +162,7 @@ public class GameIntroCinematic extends Cinematic {
         }
         PlayerObject playerObjectSprint = gameAppState.getGame().getTeams()[0].getPlayers()[4];
         PlayerVisual playerVisualSprint = gameAppState.getPlayerVisual(playerObjectSprint);
-        addPart(new CinematicPart(cameraPart6, new PlayerAnimationAction(playerVisualSprint, PlayerVisual.RUN_ANIMATION_FAST, true)));
+        addPart(new CinematicPart(cameraPart6, new PlayerAnimationAction(playerVisualSprint, PlayerAnimations.createRunFast(), true)));
         addPart(new CinematicPart(cameraPart6, new MoveAction(playerVisualSprint.getModelNode(), new MotionEvent() {{
             setPath(new MotionPath() {{
                 addWayPoint(new Vector3f(-47, 0, 12));
@@ -207,7 +207,7 @@ public class GameIntroCinematic extends Cinematic {
 
             PlayerObject playerObject = gameAppState.getGame().getTeams()[0].getPlayers()[5 + i];
             PlayerVisual playerVisual = gameAppState.getPlayerVisual(playerObject);
-            addPart(new CinematicPart(start8, new PlayerAnimationAction(playerVisual, PlayerVisual.IDLE_ANIMATION, true)));
+            addPart(new CinematicPart(start8, new PlayerAnimationAction(playerVisual, PlayerAnimations.createIdle(), true)));
             addPart(new CinematicPart(start8, new MoveAction(playerVisual.getModelNode(), new MotionEvent() {{
                 setPath(new MotionPath() {{
                     addWayPoint(playerPosition);
@@ -218,7 +218,7 @@ public class GameIntroCinematic extends Cinematic {
                 setInitialDuration(4.1f);
             }})));
             addPart(new CinematicPart(start8 + 1 + timeOffsets[i], new PlayerAnimationAction(playerVisual, new PlayerAnimation("standing_pass", 2.5f), false)));
-            addPart(new CinematicPart(start8 + 1 + timeOffsets[i] + 2.5f, new PlayerAnimationAction(playerVisual, PlayerVisual.IDLE_ANIMATION, true)));
+            addPart(new CinematicPart(start8 + 1 + timeOffsets[i] + 2.5f, new PlayerAnimationAction(playerVisual, PlayerAnimations.createIdle(), true)));
         }
         // Stadion 3
         CinematicPart cameraPart9 = addPart(new CinematicPart(cameraPart8, new CameraPathAction(new MotionEvent() {{
@@ -243,7 +243,7 @@ public class GameIntroCinematic extends Cinematic {
                 Vector3f position = new Vector3f(x, 0, z);
                 PlayerObject playerObject = team.getPlayers()[r];
                 PlayerVisual playerVisual = gameAppState.getPlayerVisual(playerObject);
-                addPart(new CinematicPart(cameraPart8, new PlayerAnimationAction(playerVisual, PlayerVisual.IDLE_ANIMATION, true)));
+                addPart(new CinematicPart(cameraPart8, new PlayerAnimationAction(playerVisual, PlayerAnimations.createIdle(), true)));
                 addPart(new CinematicPart(cameraPart8, new SimpleAction(() -> {
                     playerVisual.getModelNode().setLocalTranslation(position);
                     playerVisual.getModelNode().setLocalRotation(new Quaternion().fromAngleAxis(angle + FastMath.PI, Vector3f.UNIT_Y));

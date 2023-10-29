@@ -132,12 +132,7 @@ public class GameAppState extends BaseDisplayAppState {
     private void updatePlayerVisual(PlayerObject playerObject) {
         PlayerVisual playerVisual = getPlayerVisual(playerObject);
         updateTransform(playerObject, playerVisual.getModelNode());
-        // Animation
-        PlayerAnimation playerAnimation = playerObject.getAnimation();
-        if (isNullOrDefaultRunAnimation(playerAnimation)) {
-            playerAnimation = getPlayerDefaultRunAnimation(playerObject.getVelocity().length(), playerObject.isTurning());
-        }
-        playerVisual.playAnimation(playerAnimation);
+        playerVisual.setAnimation(playerObject.getAnimation());
     }
 
     public Collection<PlayerVisual> getPlayerVisuals() {
@@ -151,25 +146,6 @@ public class GameAppState extends BaseDisplayAppState {
     private void updateTransform(PhysicsObject physicsObject, Spatial spatial) {
         spatial.setLocalTranslation(physicsObject.getPosition());
         spatial.setLocalRotation(physicsObject.getRotation());
-    }
-
-    private boolean isNullOrDefaultRunAnimation(PlayerAnimation playerAnimation) {
-        return ((playerAnimation == null)
-             || (playerAnimation == PlayerVisual.RUN_ANIMATION_FAST)
-             || (playerAnimation == PlayerVisual.RUN_ANIMATION_MEDIUM)
-             || (playerAnimation == PlayerVisual.RUN_ANIMATION_SLOW)
-             || (playerAnimation == PlayerVisual.IDLE_ANIMATION));
-    }
-
-    private PlayerAnimation getPlayerDefaultRunAnimation(float velocity, boolean isTurning) {
-        if (velocity > 8) {
-            return PlayerVisual.RUN_ANIMATION_FAST;
-        } else if ((velocity > 3) || isTurning) {
-            return PlayerVisual.RUN_ANIMATION_MEDIUM;
-        } else if (velocity > MathUtil.EPSILON) {
-            return PlayerVisual.RUN_ANIMATION_SLOW;
-        }
-        return PlayerVisual.IDLE_ANIMATION;
     }
 
     public void setDisplayVisuals(boolean displayed) {

@@ -18,7 +18,6 @@ public class PlayerAnimationAction extends CinematicAction {
     @Override
     public void trigger() {
         super.trigger();
-        float startTime = (randomOffset ? (float) (Math.random() * animation.getLoopDuration()) : 0);
-        playerVisual.playAnimation(animation, startTime);
+        playerVisual.playAnimation(randomOffset ? animation.cloneWithRandomOffset() : animation);
     }
 }

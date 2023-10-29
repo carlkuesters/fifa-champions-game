@@ -114,7 +114,7 @@ public class ReplayAppState extends BaseDisplayAppState {
 
             AnimChannel animChannel = playerVisual.getPlayerModel().getControl(AnimControl.class).getChannel(0);
             if (playerState.getAnimationName() != null) {
-                animChannel.setAnim(playerState.getAnimationName());
+                animChannel.setAnim(playerState.getAnimationName(), 0);
                 animChannel.setTime(playerState.getAnimationTime());
                 animChannel.setSpeed(0);
             } else {

@@ -15,37 +15,28 @@ public class PlayerVisualAnimationControl extends AbstractControl {
     private static final float BLEND_TIME = 0.15f;
     private AnimChannel animChannel;
     private float remainingBlendTime;
-    private PlayerAnimation queuedPlayerAnimation;
-    private float queuedStartTime;
 
-    public void playAnimation(PlayerAnimation playerAnimation, float startTime) {
+    public void set(PlayerAnimation playerAnimation) {
         if (!playerAnimation.getName().equals(animChannel.getAnimationName())) {
             if (remainingBlendTime > 0) {
-                queuedPlayerAnimation = playerAnimation;
-                queuedStartTime = startTime;
                 return;
             }
             animChannel.setAnim(playerAnimation.getName(), BLEND_TIME);
-            animChannel.setTime(startTime);
+            animChannel.setSpeed(0);
             remainingBlendTime = BLEND_TIME;
         }
-        animChannel.setSpeed(animChannel.getAnimMaxTime() / playerAnimation.getLoopDuration());
+        animChannel.setTime((playerAnimation.getTime() / playerAnimation.getDuration()) * animChannel.getAnimMaxTime());
+    }
+
+    public void play(PlayerAnimation playerAnimation) {
+        animChannel.setAnim(playerAnimation.getName(), 0);
+        animChannel.setSpeed(animChannel.getAnimMaxTime() / playerAnimation.getDuration());
         animChannel.setLoopMode(playerAnimation.isLoop() ? LoopMode.Loop : LoopMode.DontLoop);
     }
 
     @Override
     protected void controlUpdate(float tpf) {
-        if (remainingBlendTime > 0) {
-            remainingBlendTime -= tpf;
-            if (remainingBlendTime <= 0) {
-                remainingBlendTime = 0;
-                if (queuedPlayerAnimation != null) {
-                    playAnimation(queuedPlayerAnimation, queuedStartTime);
-                    queuedPlayerAnimation = null;
-                    queuedStartTime = 0;
-                }
-            }
-        }
+        remainingBlendTime -= tpf;
     }
 
     @Override
