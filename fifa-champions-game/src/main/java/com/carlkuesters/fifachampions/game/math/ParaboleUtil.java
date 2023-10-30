@@ -166,12 +166,20 @@ public class ParaboleUtil {
                 .collect(Collectors.toList());
     }
 
-    public static Parabole getQuadraticFormulaResult(List<Parabole> quadraticFormulaParaboles, boolean positiveOrNegativeSolution) {
-        if (quadraticFormulaParaboles.size() == 2) {
-            return quadraticFormulaParaboles.get(positiveOrNegativeSolution ? 1 : 0);
-        } else if (quadraticFormulaParaboles.size() == 1) {
-            return quadraticFormulaParaboles.get(0);
-        }
-        return null;
+    public static float getA(float deltaDx) {
+        // f(x) = ax² + bx + c
+        // f'(x) = 2ax + b
+        // ----------
+        // f'(x) + deltaDx = 2a(x+1) + b
+        // f'(x) = 2a(x+1) + b - deltaDx
+        // ----------
+        // 2ax + b = 2a(x+1) + b - deltaDx
+        // 2ax + b = 2ax + 2a + b - deltaDx
+        // b = 2a + b - deltaDx
+        // 0 = 2a - deltaDx
+        // -2a = -deltaDx
+        // a = deltaDx / 2
+        // ----------
+        return deltaDx / 2;
     }
 }
