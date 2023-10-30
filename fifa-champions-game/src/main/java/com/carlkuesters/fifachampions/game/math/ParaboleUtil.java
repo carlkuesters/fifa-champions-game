@@ -166,20 +166,20 @@ public class ParaboleUtil {
                 .collect(Collectors.toList());
     }
 
-    public static float getA(float deltaDx) {
+    public static float getA(float deltaFdx) {
         // f(x) = ax² + bx + c
         // f'(x) = 2ax + b
         // ----------
-        // f'(x) + deltaDx = 2a(x+1) + b
-        // f'(x) = 2a(x+1) + b - deltaDx
+        // f'(x) + deltaFdx = 2a(x+1) + b
+        // f'(x) = 2a(x+1) + b - deltaFdx
         // ----------
-        // 2ax + b = 2a(x+1) + b - deltaDx
-        // 2ax + b = 2ax + 2a + b - deltaDx
-        // b = 2a + b - deltaDx
-        // 0 = 2a - deltaDx
-        // -2a = -deltaDx
-        // a = deltaDx / 2
+        // 2ax + b = 2a(x+1) + b - deltaFdx
+        // 2ax + b = 2ax + 2a + b - deltaFdx
+        // b = 2a + b - deltaFdx
+        // 0 = 2a - deltaFdx
+        // -2a = -deltaFdx
+        // a = deltaFdx / 2
         // ----------
-        return deltaDx / 2;
+        return deltaFdx / 2;
     }
 }
