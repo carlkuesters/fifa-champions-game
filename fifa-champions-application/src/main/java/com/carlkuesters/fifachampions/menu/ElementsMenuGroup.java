@@ -63,38 +63,17 @@ public class ElementsMenuGroup extends MenuGroup {
     }
 
     private void primaryNavigate(Vector3f direction) {
-        float minimumPrimaryAxisDistance = Float.MAX_VALUE;
-        float minimumSecondaryAxisDistance = Float.MAX_VALUE;
+        float newActiveElementCenterDistanceSquared = Float.MAX_VALUE;
         MenuElement newActiveElement = null;
+        Vector3f activeElementCenter = activeElement.getPanel().getWorldTranslation().add(activeElement.getPanel().getSize().divide(2));
         for (MenuElement element : elements) {
             if (element != activeElement) {
-                Vector3f activeElementCorner = activeElement.getPanel().getWorldTranslation().clone();
-                Vector3f elementCorner = element.getPanel().getWorldTranslation().clone();
-                if (direction.getX() > 0) {
-                    activeElementCorner.addLocal(activeElement.getPanel().getSize().getX(), 0, 0);
-                } else if (direction.getX() < 0) {
-                    elementCorner.addLocal(element.getPanel().getSize().getX(), 0, 0);
-                }
-                if (direction.getY() > 0) {
-                    activeElementCorner.addLocal(0, activeElement.getPanel().getSize().getY(), 0);
-                } else if (direction.getY() < 0) {
-                    elementCorner.addLocal(0, element.getPanel().getSize().getY(), 0);
-                }
-                Vector3f distance = elementCorner.subtract(activeElementCorner);
-                float primaryAxisDistance;
-                float secondaryAxisDistance;
-                if (direction.getX() != 0) {
-                    primaryAxisDistance = FastMath.sign(direction.getX()) * distance.getX();
-                    secondaryAxisDistance = FastMath.abs(distance.getY());
-                } else {
-                    primaryAxisDistance = FastMath.sign(direction.getY()) * distance.getY();
-                    secondaryAxisDistance = FastMath.abs(distance.getX());
-                }
-                if (primaryAxisDistance >= 0) {
-                    if ((primaryAxisDistance < minimumPrimaryAxisDistance)
-                    || ((primaryAxisDistance == minimumPrimaryAxisDistance) && (secondaryAxisDistance < minimumSecondaryAxisDistance))) {
-                        minimumPrimaryAxisDistance = primaryAxisDistance;
-                        minimumSecondaryAxisDistance = secondaryAxisDistance;
+                Vector3f elementCenter = element.getPanel().getWorldTranslation().add(element.getPanel().getSize().divide(2));
+                Vector3f elementCenterDistance = elementCenter.subtract(activeElementCenter);
+                if (direction.angleBetween(elementCenterDistance.normalize()) < FastMath.QUARTER_PI) {
+                    float centerDistanceSquared = elementCenterDistance.lengthSquared();
+                    if (centerDistanceSquared < newActiveElementCenterDistanceSquared) {
+                        newActiveElementCenterDistanceSquared = centerDistanceSquared;
                         newActiveElement = element;
                     }
                 }
