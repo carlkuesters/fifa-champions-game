@@ -13,6 +13,8 @@ import lombok.Getter;
 public class Main extends SimpleApplication {
 
     public static void main(String[] args) {
+        JMonkeyUtil.disableLogger();
+
         Main app = new Main();
         app.setShowSettings(false);
         app.start();

@@ -146,7 +146,10 @@ public class IngameAppState extends BaseDisplayAppState {
             ballOnGroundResult = game.getBall().precomputeTransformUntil(result -> result.getPosition().getY() < 0.2f);
         }
         if ((ballOnGroundResult != null) && (ballOnGroundResult.getPassedTime() > 0)) {
-            ballGroundIndicator.setLocalTranslation(ballOnGroundResult.getPosition());
+            // Prevent flickering
+            if (ballOnGroundResult.getPosition().distanceSquared(ballGroundIndicator.getLocalTranslation()) > 1) {
+                ballGroundIndicator.setLocalTranslation(ballOnGroundResult.getPosition());
+            }
             ballGroundIndicator.setCullHint(Spatial.CullHint.Inherit);
         } else {
             ballGroundIndicator.setCullHint(Spatial.CullHint.Always);

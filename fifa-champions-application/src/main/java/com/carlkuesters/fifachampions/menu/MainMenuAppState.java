@@ -62,10 +62,8 @@ public class MainMenuAppState extends MenuAppState {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         CinematicAppState cinematicAppState = getAppState(CinematicAppState.class);
-        if (enabled) {
+        if (enabled && (cinematicAppState.getCurrentCinematic() != mainMenuCinematic)) {
             cinematicAppState.playCinematic(mainMenuCinematic);
-        } else {
-            cinematicAppState.stopCinematic();
         }
     }
 
