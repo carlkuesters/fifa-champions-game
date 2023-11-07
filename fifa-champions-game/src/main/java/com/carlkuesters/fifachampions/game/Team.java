@@ -23,6 +23,7 @@ public class Team {
         }
         this.formation = formation;
         playerSwitches = new LinkedList<>();
+        statistics = new TeamStatistics();
     }
     @Getter
     private TeamInfo teamInfo;
@@ -39,6 +40,8 @@ public class Team {
     private Formation formation;
     @Getter
     private LinkedList<PlayerSwitch> playerSwitches;
+    @Getter
+    private TeamStatistics statistics;
 
     public void setGame(Game game) {
         this.game = game;

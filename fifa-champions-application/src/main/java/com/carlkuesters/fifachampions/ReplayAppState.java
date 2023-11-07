@@ -8,8 +8,6 @@ import com.carlkuesters.fifachampions.replay.ReplayFrame;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
-import com.jme3.app.Application;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -22,21 +20,20 @@ import java.util.HashMap;
 public class ReplayAppState extends BaseDisplayAppState {
 
     private Replay replay = new Replay();
+    private boolean recordedFirstFrame;
     @Getter
     @Setter
     private boolean playing;
     private float currentReplayTime;
 
     @Override
-    public void initialize(AppStateManager stateManager, Application application) {
-        super.initialize(stateManager, application);
-        // Save the initial kickoff frame, as the player can open the replay menu before actually starting the game (and therefore recording frames)
-        saveFrame(0);
-    }
-
-    @Override
     public void update(float tpf) {
         super.update(tpf);
+        // Save the initial kickoff frame, as the player can open the replay menu before actually starting the game (and therefore recording frames)
+        if (!recordedFirstFrame && getAppState(GameAppState.class).isSynchronizeVisuals()) {
+            saveFrame(0);
+            recordedFirstFrame = true;
+        }
         if (getAppState(GameAppState.class).shouldRecordReplayFrames()) {
             saveFrame(tpf);
         } else if (playing) {

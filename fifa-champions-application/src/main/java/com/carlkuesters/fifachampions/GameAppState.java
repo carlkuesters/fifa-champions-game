@@ -14,6 +14,7 @@ import com.carlkuesters.fifachampions.visuals.PlayerSkins;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class GameAppState extends BaseDisplayAppState {
     @Getter
     private BallVisual ballVisual;
     @Setter
+    @Getter
     private boolean synchronizeVisuals;
     private boolean isFirstFrame = true;
     @Setter
@@ -96,24 +98,15 @@ public class GameAppState extends BaseDisplayAppState {
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        if (!paused) {
+        if (isGameRunning()) {
             // Skip logic on initial very long frame that loads the models
             if (isFirstFrame) {
                 isFirstFrame = false;
                 return;
             }
             game.update(tpf);
-
-            Cinematic activeCinematic = (Cinematic) game.getActiveCinematic();
-            CinematicAppState cinematicAppState = getAppState(CinematicAppState.class);
-            if (activeCinematic != cinematicAppState.getCurrentCinematic()) {
-                if (activeCinematic != null) {
-                    cinematicAppState.playCinematic(activeCinematic);
-                } else {
-                    cinematicAppState.stopCinematic();
-                }
-            }
         }
+
         if (synchronizeVisuals) {
             for (Team team : game.getTeams()) {
                 for (PlayerObject playerObject : team.getPlayers()) {
@@ -126,6 +119,36 @@ public class GameAppState extends BaseDisplayAppState {
             }
             updateTransform(game.getBall(), ballVisual.getBallModel());
             setAudienceHyped(game.isAudienceHyped());
+        }
+
+        CinematicAppState cinematicAppState = getAppState(CinematicAppState.class);
+        CameraAppState cameraAppState = getAppState(CameraAppState.class);
+        Cinematic activeCinematic = (Cinematic) game.getActiveCinematic();
+        if (activeCinematic != null) {
+            cameraAppState.setDefaultFieldOfView();
+            if (activeCinematic != cinematicAppState.getCurrentCinematic()) {
+                cinematicAppState.playCinematic(activeCinematic);
+            }
+        } else {
+            cinematicAppState.stopCinematic();
+
+            if (!cameraAppState.isFreeCam()) {
+                CameraPerspective cameraPerspective = game.getCameraPerspective();
+                if (cameraPerspective != null) {
+                    cameraAppState.setDefaultFieldOfView();
+                    cameraAppState.setLocationAndDirection(cameraPerspective.getPosition(), cameraPerspective.getDirection());
+                } else {
+                    // Use the ball visual instead of the ball game object to support camera during replays
+                    Vector3f ballPosition = ballVisual.getBallModel().getLocalTranslation();
+                    float x = 1.1f * ballPosition.getX();
+                    x = Math.max(-44, Math.min(x, 44));
+                    float y = 30;
+                    float z = (1 * (ballPosition.getZ() - 10)) + 60;
+                    z = Math.max(30, Math.min(z, 63));
+                    cameraAppState.setFieldOfView(25);
+                    cameraAppState.setLocationAndDirection(new Vector3f(x, y, z), new Vector3f(0, -0.6f, -0.9f));
+                }
+            }
         }
     }
 
@@ -157,13 +180,18 @@ public class GameAppState extends BaseDisplayAppState {
     }
 
     public boolean shouldRecordReplayFrames() {
-        return !paused && game.isReplayRecording();
+        return isGameRunning() && game.isReplayRecording();
+    }
+
+    private boolean isGameRunning() {
+        return (!game.isGameOver() && !paused);
     }
 
     @Override
     public void cleanup() {
         super.cleanup();
         mainApplication.getRootNode().detachChild(rootNode);
+        getAppState(CameraAppState.class).setDefaultFieldOfView();
         getAppState(ControllerAppState.class).getJoystickListener().setGameSubListener(null);
         setAudienceHyped(false);
     }

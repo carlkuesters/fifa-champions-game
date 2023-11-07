@@ -110,6 +110,7 @@ public class Game implements GameLoopListener {
                     setNextSituation(new NextSituation(halfTimeEndSituation, 4, false));
                 }
             }
+            ball.getLastTouchedOwner().getTeam().getStatistics().addTimeWithBall(tpf);
         }
 
         for (Controller controller : controllers) {
@@ -162,6 +163,8 @@ public class Game implements GameLoopListener {
                                                 setNextSituation(new NextSituation(new FarFreeKickSituation(playerNearStraddler, foulPosition), 2, true));
                                             }
                                         }
+
+                                        straddler.getTeam().getStatistics().addFoul();
                                         audienceHyped = true;
                                     }
                                 }
@@ -208,9 +211,19 @@ public class Game implements GameLoopListener {
                                     playerNearBall.getPlayer(),
                                     player -> player.getFieldPlayerSkills().getFootDuel()
                                 );
-                                PlayerObject ballWinner = (isBallOwnerWinning ? ball.getOwner() : playerNearBall);
+                                PlayerObject ballWinner;
+                                PlayerObject ballLoser;
+                                if (isBallOwnerWinning) {
+                                    ballWinner = ball.getOwner();
+                                    ballLoser = playerNearBall;
+                                } else {
+                                    ballWinner = playerNearBall;
+                                    ballLoser = ball.getOwner();
+                                }
                                 ball.setOwner(ballWinner, false);
                                 cooldownManager.putOnCooldown(fightCooldown);
+                                ballWinner.getTeam().getStatistics().addFight(true);
+                                ballLoser.getTeam().getStatistics().addFight(false);
                             }
                         }
                     }
@@ -266,6 +279,7 @@ public class Game implements GameLoopListener {
 
                             Vector3f cornerKickPosition = getCornerKickPosition(ball.getPosition());
                             setNextSituation(new NextSituation(new CornerKickSituation(cornerKickTeam, cornerKickPosition), 2, true));
+                            cornerKickTeam.getStatistics().addCorner();
                         } else {
                             // Testing: Our team always has goal kick
                             goalOutsideTeam = teams[0];
@@ -358,6 +372,7 @@ public class Game implements GameLoopListener {
         PlayerObject startingPlayer = freeKickTeam.getPlayers()[freeKickTeam.getPlayers().length - 1];
         setNextSituation(new NextSituation(new FarFreeKickSituation(startingPlayer, lastBallTouchPosition), 2, false));
         playCinematic(new OffsideCinematicInfo(offsidePlayer.getOffsidePosition().getX()));
+        offsidePlayer.getPlayerObject().getTeam().getStatistics().addOffside();
     }
 
     public PhysicsPrecomputationResult precomputeBallTransformUntilInsideGoal(Team goalTeam) {

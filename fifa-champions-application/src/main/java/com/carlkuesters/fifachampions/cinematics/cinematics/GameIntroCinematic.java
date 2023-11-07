@@ -3,6 +3,7 @@ package com.carlkuesters.fifachampions.cinematics.cinematics;
 import com.carlkuesters.fifachampions.GameAppState;
 import com.carlkuesters.fifachampions.IngameAppState;
 import com.carlkuesters.fifachampions.PostFilterAppState;
+import com.carlkuesters.fifachampions.ReplayAppState;
 import com.carlkuesters.fifachampions.cinematics.Cinematic;
 import com.carlkuesters.fifachampions.cinematics.CinematicPart;
 import com.carlkuesters.fifachampions.cinematics.actions.*;
@@ -279,6 +280,7 @@ public class GameIntroCinematic extends Cinematic {
             getSimpleApplication().getRootNode().detachChild(ballVisual.getBallNode());
         }
 
+        stateManager.attach(new ReplayAppState());
         stateManager.attach(new IngameAppState());
     }
 }

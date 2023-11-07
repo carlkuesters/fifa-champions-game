@@ -14,7 +14,7 @@ public class PauseIngameMenuAppState extends IngameMenuAppState {
         int buttonX1 = ((totalWidth / 2) + (marginBetween / 2));
         int buttonX2 = (buttonX1 + buttonWidth + marginBetween);
         int buttonY1 = yStart;
-        int buttonY2 = yStart - buttonHeight - marginBetween;
+        int buttonY2 = yStart - (buttonHeight + marginBetween);
         int buttonY3 = yStart - (2 * (buttonHeight + marginBetween));
         addButton(new Vector3f(buttonX1, buttonY1, 0), buttonWidth, buttonHeight, "Fortsetzen", this::back);
         addButton(new Vector3f(buttonX2, buttonY1, 0), buttonWidth, buttonHeight, "Wiederholung", () -> openMenu(ReplayMenuAppState.class));

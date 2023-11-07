@@ -3,14 +3,12 @@ package com.carlkuesters.fifachampions;
 import com.carlkuesters.fifachampions.game.*;
 import com.carlkuesters.fifachampions.game.situations.NearFreeKickSituation;
 import com.carlkuesters.fifachampions.menu.GameOverIngameMenuAppState;
-import com.carlkuesters.fifachampions.menu.PauseIngameMenuAppState;
 import com.carlkuesters.fifachampions.visuals.*;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -28,7 +26,6 @@ public class IngameAppState extends BaseDisplayAppState {
     private HashMap<Controller, Node> controllerVisuals = new HashMap<>();
     private Node ballGroundIndicator;
     private Node targetInGoalIndicator;
-    private Vector3f targetCameraLocation = new Vector3f();
     private ScoreContainer scoreContainer;
     private ControlledPlayerContainer[] controlledPlayerContainers;
 
@@ -114,14 +111,6 @@ public class IngameAppState extends BaseDisplayAppState {
 
         mainApplication.getRootNode().attachChild(rootNode);
         mainApplication.getGuiNode().attachChild(guiNode);
-
-        PauseIngameMenuAppState pauseIngameMenuAppState = getAppState(PauseIngameMenuAppState.class);
-        for (int teamIndex = 0; teamIndex < game.getTeams().length; teamIndex++) {
-            TeamInfo teamInfo = game.getTeams()[teamIndex].getTeamInfo();
-            pauseIngameMenuAppState.setTeam(teamIndex, teamInfo);
-        }
-
-        mainApplication.getStateManager().attach(new ReplayAppState());
     }
 
     @Override
@@ -184,41 +173,15 @@ public class IngameAppState extends BaseDisplayAppState {
             controlledPlayerContainers[teamIndex].update(controller, optimalShootStrength, tpf);
         }
 
-        CameraAppState cameraAppState = getAppState(CameraAppState.class);
-        if (!cameraAppState.isFreeCam()) {
-            CameraPerspective cameraPerspective = game.getCameraPerspective();
-            if (cameraPerspective != null) {
-                cameraAppState.setDefaultFieldOfView();
-                cameraAppState.setLocationAndDirection(cameraPerspective.getPosition(), cameraPerspective.getDirection());
-            } else {
-                // Use the ball visual instead of the ball game object to support camera during replays
-                Vector3f ballPosition = gameAppState.getBallVisual().getBallModel().getLocalTranslation();
-                float x = 1.1f * ballPosition.getX();
-                x = Math.max(-44, Math.min(x, 44));
-                float y = 30;
-                float z = (1 * (ballPosition.getZ() - 10)) + 60;
-                z = Math.max(30, Math.min(z, 63));
-                targetCameraLocation.set(x, y, z);
-                cameraAppState.setFieldOfView(25);
-                cameraAppState.setLocationAndDirection(targetCameraLocation, new Vector3f(0, -0.6f, -0.9f));
-            }
-        }
-
         TimeFormatter timeFormatter = gameAppState.getTimeFormatter();
         scoreContainer.setTimeAndGoals(timeFormatter.getTime(), timeFormatter.getOverTime(), game.getGoals());
-        PauseIngameMenuAppState pauseIngameMenuAppState = getAppState(PauseIngameMenuAppState.class);
-        pauseIngameMenuAppState.setTime(timeFormatter.getCombinedTime());
-        pauseIngameMenuAppState.setScore(game.getGoals()[0], game.getGoals()[1]);
 
         Spatial.CullHint generalCullHint = (gameAppState.isPaused() ? Spatial.CullHint.Always : Spatial.CullHint.Inherit);
         rootNode.setCullHint(generalCullHint);
         guiNode.setCullHint(generalCullHint);
 
         if (game.isGameOver()) {
-            mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(ReplayAppState.class));
             mainApplication.getStateManager().detach(this);
-            mainApplication.getStateManager().detach(mainApplication.getStateManager().getState(GameAppState.class));
-            mainApplication.getStateManager().getState(PauseIngameMenuAppState.class).setEnabled(false);
             mainApplication.getStateManager().getState(GameOverIngameMenuAppState.class).setEnabled(true);
         }
     }
@@ -228,6 +191,5 @@ public class IngameAppState extends BaseDisplayAppState {
         super.cleanup();
         mainApplication.getRootNode().detachChild(rootNode);
         mainApplication.getGuiNode().detachChild(guiNode);
-        getAppState(CameraAppState.class).setDefaultFieldOfView();
     }
 }
