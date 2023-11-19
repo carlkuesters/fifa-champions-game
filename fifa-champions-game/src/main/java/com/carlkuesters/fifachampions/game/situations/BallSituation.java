@@ -26,6 +26,7 @@ public abstract class BallSituation extends Situation {
         startingPlayer.setDirection(getStartingPlayerDirection());
         startingPlayer.setCanMove(false);
         game.selectPlayer(startingPlayer);
+        game.setReplayRecordingEnabled(false);
     }
 
     protected CameraPerspective getCameraPerspectiveTowardsEnemyGoal(float height, float distance, float angle) {

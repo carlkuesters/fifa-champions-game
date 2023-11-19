@@ -1,18 +1,12 @@
 package com.carlkuesters.fifachampions.replay;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 
 public class Replay {
 
     private ArrayList<ReplayFrame> frames = new ArrayList<>();
-    @Getter
-    private float duration;
 
     public void addFrame(ReplayFrame frame, float tpf) {
-        duration += tpf;
-        frame.setReplayTime(duration);
         frames.add(frame);
     }
 
@@ -31,5 +25,9 @@ public class Replay {
             }
         }
         throw new IllegalArgumentException();
+    }
+
+    public float getDuration() {
+        return frames.get(frames.size() - 1).getReplayTime();
     }
 }

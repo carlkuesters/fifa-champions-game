@@ -46,11 +46,11 @@ public class ReplayAppState extends BaseDisplayAppState {
     }
 
     public void moveTime(float deltaTime) {
-        setCurrentReplayTime(Math.max(0, Math.min(currentReplayTime + deltaTime, replay.getDuration())));
+        setCurrentReplayTime(currentReplayTime + deltaTime);
     }
 
-    private void setCurrentReplayTime(float currentReplayTime) {
-        this.currentReplayTime = currentReplayTime;
+    public void setCurrentReplayTime(float replayTime) {
+        currentReplayTime = Math.max(0, Math.min(replayTime, replay.getDuration()));
         if (currentReplayTime >= replay.getDuration()) {
             playing = false;
         }
@@ -88,10 +88,11 @@ public class ReplayAppState extends BaseDisplayAppState {
         Spatial ballModel = gameAppState.getBallVisual().getBallModel();
         PhysicsReplayState ballState = new PhysicsReplayState(ballModel.getLocalTranslation().clone(), ballModel.getLocalRotation().clone());
 
+        float replayTime = game.getReplayTime();
         String combinedTime = gameAppState.getTimeFormatter().getCombinedTime();
         boolean audienceHyped = game.isAudienceHyped();
 
-        replay.addFrame(new ReplayFrame(playerStates, ballState, combinedTime, audienceHyped), tpf);
+        replay.addFrame(new ReplayFrame(replayTime, playerStates, ballState, combinedTime, audienceHyped), tpf);
     }
 
     private void loadFrame(ReplayFrame frame) {

@@ -17,6 +17,7 @@ public class Ball extends PhysicsObject {
     }
     private PlayerObject owner;
     private PlayerObject lastTouchedOwner;
+    private float lastTouchReplayTime;
     private Vector3f lastTouchPosition = new Vector3f();
     private LinkedList<OffsidePlayer> lastTouchOffsidePlayers = new LinkedList<>();
     private Vector3f lastPosition = new Vector3f();
@@ -45,6 +46,7 @@ public class Ball extends PhysicsObject {
     public void accelerate(Vector3f velocity, boolean canTriggerOffside) {
         this.owner = null;
         this.velocity.set(velocity);
+        lastTouchReplayTime = game.getReplayTime();
         lastTouchPosition.set(position);
         lastTouchOffsidePlayers.clear();
         if (canTriggerOffside) {
@@ -64,7 +66,7 @@ public class Ball extends PhysicsObject {
                     if (allyPlayer != owner) {
                         float distanceToGoalAlly = FastMath.abs(goalX - allyPlayer.getPosition().getX());
                         if ((distanceToGoalAlly < distanceToGoalSecondLastEnemy) && (distanceToGoalAlly < distanceToGoalPassingAlly)) {
-                            lastTouchOffsidePlayers.add(new OffsidePlayer(allyPlayer, allyPlayer.getPosition()));
+                            lastTouchOffsidePlayers.add(new OffsidePlayer(allyPlayer, allyPlayer.getPosition().clone()));
                         }
                     }
                 }
@@ -85,7 +87,7 @@ public class Ball extends PhysicsObject {
             if (canTriggerOffside) {
                 OffsidePlayer offsidePlayer = lastTouchOffsidePlayers.stream().filter(op -> op.getPlayerObject() == owner).findAny().orElse(null);
                 if (offsidePlayer != null) {
-                    game.onOffside(owner, lastTouchPosition, offsidePlayer);
+                    game.onOffside(offsidePlayer, lastTouchPosition, lastTouchReplayTime);
                 }
             }
         }

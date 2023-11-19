@@ -98,7 +98,7 @@ public class GameAppState extends BaseDisplayAppState {
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        if (isGameRunning()) {
+        if (!game.isGameOver() && !paused) {
             // Skip logic on initial very long frame that loads the models
             if (isFirstFrame) {
                 isFirstFrame = false;
@@ -180,11 +180,7 @@ public class GameAppState extends BaseDisplayAppState {
     }
 
     public boolean shouldRecordReplayFrames() {
-        return isGameRunning() && game.isReplayRecording();
-    }
-
-    private boolean isGameRunning() {
-        return (!game.isGameOver() && !paused);
+        return game.shouldRecordReplayFrames() && !paused;
     }
 
     @Override

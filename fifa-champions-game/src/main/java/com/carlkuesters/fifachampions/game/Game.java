@@ -13,6 +13,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.util.TempVars;
 import com.carlkuesters.fifachampions.game.cooldowns.SwitchToPlayerCooldown;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 import java.util.function.Function;
@@ -62,8 +63,6 @@ public class Game implements GameLoopListener {
     private static final Vector3f CORNER_KICK_TOP_RIGHT = new Vector3f(FIELD_HALF_WIDTH, 0, FIELD_HALF_HEIGHT);
     private boolean isGameOver;
     private boolean isTimeRunning;
-    @Getter
-    private boolean isReplayRecording;
     private float logicTime = 0;
     private int halfTime = 0;
     @Getter
@@ -87,6 +86,10 @@ public class Game implements GameLoopListener {
     @Getter
     private boolean audienceHyped;
     private LinkedList<EnqueuedAction> enqueuedActions = new LinkedList<>();
+    @Setter
+    private boolean replayRecordingEnabled;
+    @Getter
+    private float replayTime = 0;
 
     @Override
     public void update(float tpf) {
@@ -313,6 +316,10 @@ public class Game implements GameLoopListener {
         }
 
         checkEnqueuedActions(tpf);
+
+        if (shouldRecordReplayFrames()) {
+            replayTime += tpf;
+        }
     }
 
     private void updatePlayerObject(PlayerObject playerObject, float tpf) {
@@ -366,13 +373,14 @@ public class Game implements GameLoopListener {
         return (Math.signum(ball.getPosition().get(axis)) == Math.signum(ball.getVelocity().get(axis)));
     }
 
-    public void onOffside(PlayerObject offsidePlayerObject, Vector3f lastBallTouchPosition, OffsidePlayer offsidePlayer) {
-        Team freeKickTeam = ((offsidePlayerObject.getTeam() == teams[0]) ? teams[1] : teams[0]);
+    public void onOffside(OffsidePlayer offsidePlayer, Vector3f lastBallTouchPosition, float lastBallTouchReplayTime) {
+        Team offsidePlayerTeam = offsidePlayer.getPlayerObject().getTeam();
+        Team freeKickTeam = ((offsidePlayerTeam == teams[0]) ? teams[1] : teams[0]);
         // TODO: Properly choosing a starting player (based on position?)
         PlayerObject startingPlayer = freeKickTeam.getPlayers()[freeKickTeam.getPlayers().length - 1];
         setNextSituation(new NextSituation(new FarFreeKickSituation(startingPlayer, lastBallTouchPosition), 2, false));
-        playCinematic(new OffsideCinematicInfo(offsidePlayer.getOffsidePosition().getX()));
-        offsidePlayer.getPlayerObject().getTeam().getStatistics().addOffside();
+        playCinematic(new OffsideCinematicInfo(new OffsideCinematicInfoData(offsidePlayer.getOffsidePosition().getX(), offsidePlayerTeam.getSide(), lastBallTouchReplayTime)));
+        offsidePlayerTeam.getStatistics().addOffside();
     }
 
     public PhysicsPrecomputationResult precomputeBallTransformUntilInsideGoal(Team goalTeam) {
@@ -684,7 +692,6 @@ public class Game implements GameLoopListener {
     public void playCinematic(CinematicInfo<?> cinematicInfo) {
         Cinematic cinematic = createCinematic.apply(cinematicInfo);
         cinematics.add(0, cinematic);
-        isReplayRecording = false;
     }
 
     public void finishActiveCinematic() {
@@ -698,7 +705,7 @@ public class Game implements GameLoopListener {
         return (((situation != null) && (cinematics.size() > 0)) ? cinematics.getFirst() : null);
     }
 
-    public void enableReplayRecording() {
-        isReplayRecording = true;
+    public boolean shouldRecordReplayFrames() {
+        return (!isGameOver && replayRecordingEnabled && (getActiveCinematic() == null));
     }
 }
