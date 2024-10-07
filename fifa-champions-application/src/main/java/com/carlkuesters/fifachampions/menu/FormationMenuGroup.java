@@ -84,6 +84,7 @@ public class FormationMenuGroup extends ElementsMenuGroup implements Carousel {
             setSelectedElement(activeElement);
         } else {
             if (selectedElement != activeElement) {
+                // TODO: Return boolean to check if switch was allowed and handle properly if not
                 swapPlayers.accept(selectedElement, activeElement);
             }
             setSelectedElement(null);

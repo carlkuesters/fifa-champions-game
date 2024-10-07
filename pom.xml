@@ -9,20 +9,23 @@
     <name>FIFA-Champions</name>
     <description>A 3D football game written for me and my friends, featuring ourselves as players.</description>
     <modules>
+        <module>fifa-champions-ai</module>
         <module>fifa-champions-application</module>
         <module>fifa-champions-game</module>
         <module>fifa-champions-shared</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.jdom>2.0.6</version.jdom>
-        <version.jme3>3.2.2-stable</version.jme3>
+        <version.dl4j>1.0.0-M2.1</version.dl4j>
+        <version.jme3>3.6.1-stable</version.jme3>
         <version.fifa-champions>1.0.0</version.fifa-champions>
-        <version.groovy>3.0.6</version.groovy>
+        <version.groovy>3.0.22</version.groovy>
+        <version.json>20240303</version.json>
         <version.lemur>1.16.0</version.lemur>
         <version.lemur-proto>1.13.0</version.lemur-proto>
-        <version.lombok>1.18.24</version.lombok>
-        <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
+        <version.lombok>1.18.34</version.lombok>
+        <version.maven-compiler-plugin>3.13.0</version.maven-compiler-plugin>
+        <version.opencv>4.9.0-0</version.opencv>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -43,7 +46,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jmonkeyengine</groupId>
-                <artifactId>jme3-lwjgl</artifactId>
+                <artifactId>jme3-lwjgl3</artifactId>
                 <version>${version.jme3}</version>
             </dependency>
             <dependency>
@@ -77,6 +80,31 @@
                 <version>${version.lemur-proto}</version>
             </dependency>
             <dependency>
+                <groupId>org.nd4j</groupId>
+                <artifactId>nd4j-native-platform</artifactId>
+                <version>${version.dl4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.deeplearning4j</groupId>
+                <artifactId>deeplearning4j-core</artifactId>
+                <version>${version.dl4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.deeplearning4j</groupId>
+                <artifactId>deeplearning4j-ui</artifactId>
+                <version>${version.dl4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openpnp</groupId>
+                <artifactId>opencv</artifactId>
+                <version>${version.opencv}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${version.json}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${version.lombok}</version>
@@ -91,8 +119,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${version.maven-compiler-plugin}</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>22</source>
+                    <target>22</target>
                 </configuration>
             </plugin>
             <plugin>

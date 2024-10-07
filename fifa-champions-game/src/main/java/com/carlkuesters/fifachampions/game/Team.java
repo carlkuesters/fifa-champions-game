@@ -69,9 +69,9 @@ public class Team {
                 Vector2f formationLocation = getIdealLocation_FormationOnly(i);
                 Vector2f idealLocation = new Vector2f(formationLocation);
                 if (!playerObject.isGoalkeeper()) {
-                    Vector2f normalizedFormationLocation = formationLocation.divide(Game.FIELD_HALF_WIDTH);
+                    Vector2f normalizedFormationLocation = formationLocation.divide(Game.FIELD_HALF_WIDTH, Game.FIELD_HALF_HEIGHT);
                     Vector2f ballLocation = MathUtil.convertTo2D_XZ(game.getBall().getPosition());
-                    Vector2f normalizedBallLocation = ballLocation.divide(Game.FIELD_HALF_WIDTH);
+                    Vector2f normalizedBallLocation = ballLocation.divide(Game.FIELD_HALF_WIDTH, Game.FIELD_HALF_HEIGHT);
                     boolean isBallOwned = (game.getBall().getOwner() != null);
                     boolean isBallAllied = (isBallOwned && (game.getBall().getOwner().getTeam() == this));
 
@@ -82,12 +82,20 @@ public class Team {
                     idealLocation.addLocal(randomError);
 
                     // Stand behind opponent to protect own goal
-                    float xAddition = ((game.getHalfTimeSideFactor() * side) * -0.5f);
+                    float xAddition = ((game.getHalfTimeSideFactor() * side) * -1);
                     idealLocation.setX(idealLocation.getX() + xAddition);
 
-                    // Make field more narrow towards the goal
-                    float yFactor = Math.min(1.4f - FastMath.abs(normalizedFormationLocation.getX()), 1);
-                    idealLocation.setY(idealLocation.getY() * yFactor);
+                    // Defense & Offense: Make field more narrow towards the goal
+                    if ((formation.getLocation(i).getX() < -0.5f) || (formation.getLocation(i).getX() > 0.5f)) {
+                        float widenessFactorX = Math.min(1, 1.5f - (1.2f * FastMath.abs(normalizedBallLocation.getX())));
+                        float widenessFactor = widenessFactorX;
+                        // But keep it wider towards own goal if the ball is on the outside
+                        if (FastMath.abs(normalizedBallLocation.getX()) > 0.6f) {
+                            float widenessFactorY = FastMath.abs(normalizedBallLocation.getY());
+                            widenessFactor = (widenessFactorX + widenessFactorY) / 2;
+                        }
+                        idealLocation.setY(idealLocation.getY() * widenessFactor);
+                    }
 
                     // Move horizontally with the ball
                     Vector2f normalizedSourceToBall = normalizedBallLocation.subtract(normalizedFormationLocation);
@@ -108,10 +116,10 @@ public class Team {
                     float dangerRange = 20;
                     if (dangerDistance < dangerRange) {
                         float dangerRangeProgress = (1 - (dangerDistance / dangerRange));
-                        float dangerFactor = Math.min(dangerRangeProgress, 0.7f);
+                        float dangerFactor = Math.min(dangerRangeProgress, 0.2f);
                         Vector2f dangerCorrection = dangerPosition.subtract(idealLocation).multLocal(dangerFactor);
                         if (isBallAllied) {
-                            dangerCorrection.multLocal(-0.2f);
+                            dangerCorrection.multLocal(-1);
                         }
                         idealLocation.addLocal(dangerCorrection);
                     }

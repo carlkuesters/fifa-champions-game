@@ -27,33 +27,7 @@ public class MenuJoystickSubListener {
     private Consumer<Integer> buttonRecorder;
 
     public void onJoyAxisEvent(JoyAxisEvent evt) {
-        if (buttonRecorder == null) {
-            MenuGroup menuGroup = getControllerMenuGroup.apply(evt.getJoyIndex());
-            if (menuGroup != null) {
-                float[] values = axes.computeIfAbsent(evt.getJoyIndex(), ji -> new float[2]);
-                JoystickAxis axis = evt.getAxis();
-                float value = evt.getValue();
-                if (axis == axis.getJoystick().getPovXAxis()) {
-                    if (value != values[0]) {
-                        values[0] = value;
-                        if (value > 0) {
-                            menuGroup.primaryNavigateRight();
-                        } else if (value < 0) {
-                            menuGroup.primaryNavigateLeft();
-                        }
-                    }
-                } else if (axis == axis.getJoystick().getPovYAxis()) {
-                    if (value != values[1]) {
-                        values[1] = value;
-                        if (value > 0) {
-                            menuGroup.primaryNavigateUp();
-                        } else if (value < 0) {
-                            menuGroup.primaryNavigateDown();
-                        }
-                    }
-                }
-            }
-        }
+
     }
 
     public void onJoyButtonEvent(JoyButtonEvent evt) {
@@ -69,6 +43,18 @@ public class MenuJoystickSubListener {
                     MenuGroup menuGroup = getControllerMenuGroup.apply(evt.getJoyIndex());
                     if (menuGroup != null) {
                         switch (buttonPS5) {
+                            case LEFT:
+                                menuGroup.primaryNavigateLeft();
+                                break;
+                            case RIGHT:
+                                menuGroup.primaryNavigateRight();
+                                break;
+                            case UP:
+                                menuGroup.primaryNavigateUp();
+                                break;
+                            case DOWN:
+                                menuGroup.primaryNavigateDown();
+                                break;
                             case X:
                             case SQUARE:
                                 menuGroup.confirm();

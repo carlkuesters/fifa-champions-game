@@ -24,9 +24,9 @@ public class GameJoystickSubListener {
         float[] values = axes.computeIfAbsent(evt.getJoyIndex(), ji -> new float[2]);
         JoystickAxis axis = evt.getAxis();
         float value = evt.getValue();
-        if (axis == axis.getJoystick().getXAxis()) {
+        if (axis == axis.getJoystick().getPovXAxis()) {
             values[0] = value;
-        } else if (axis == axis.getJoystick().getYAxis()) {
+        } else if (axis == axis.getJoystick().getPovYAxis()) {
             values[1] = value;
         }
         float x = 0;

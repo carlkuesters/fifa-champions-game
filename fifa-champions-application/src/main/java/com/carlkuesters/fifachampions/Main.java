@@ -22,10 +22,11 @@ public class Main extends SimpleApplication {
 
     public Main() {
         settings = new AppSettings(true);
-        settings.setWidth(1600);
-        settings.setHeight(900);
+        settings.setWidth(1920);
+        settings.setHeight(1080);
         settings.setVSync(true);
         settings.setSamples(8);
+        settings.setGammaCorrection(false);
         settings.setUseJoysticks(true);
     }
     @Getter

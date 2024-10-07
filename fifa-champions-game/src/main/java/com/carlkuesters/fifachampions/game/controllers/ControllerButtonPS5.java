@@ -20,7 +20,11 @@ public enum ControllerButtonPS5 {
     R3(11, "R3"),
     PS(12, "PS"),
     TOUCH(13, "Touch"),
-    MICROPHONE(14, "Mikrofon");
+    MICROPHONE(14, "Mikrofon"),
+    UP(15, "Oben"),
+    RIGHT(16, "Rechts"),
+    DOWN(17, "Unten"),
+    LEFT(18, "Links");
 
     private int buttonIndex;
     private String name;
