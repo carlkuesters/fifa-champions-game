@@ -306,12 +306,13 @@ public class Game implements GameLoopListener {
                 }
             }
             didBallEnterFieldAfterSituation = (outSide == null);
+        }
 
-            if (cameraPerspective != null) {
-                cameraPerspectiveRemainingNonSituationDuration -= tpf;
-                if (cameraPerspectiveRemainingNonSituationDuration <= 0) {
-                    cameraPerspective = null;
-                }
+        if ((situation == null) && (cameraPerspective != null) && (cameraPerspectiveRemainingNonSituationDuration > 0)) {
+            cameraPerspectiveRemainingNonSituationDuration -= tpf;
+            if (cameraPerspectiveRemainingNonSituationDuration <= 0) {
+                cameraPerspectiveRemainingNonSituationDuration = 0;
+                cameraPerspective = null;
             }
         }
 
@@ -406,12 +407,12 @@ public class Game implements GameLoopListener {
             ball.setOwner(null, false);
         }
         isTimeRunning = false;
-        cameraPerspective = null;
     }
 
     private void setSituation(Situation situation) {
         situation.setGame(this);
         this.situation = situation;
+        cameraPerspective = null;
         audienceHyped = false;
         if (cinematics.isEmpty()) {
             startSituation();

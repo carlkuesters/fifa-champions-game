@@ -1,9 +1,12 @@
 package com.carlkuesters.fifachampions.game.situations;
 
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 import com.carlkuesters.fifachampions.game.Team;
+import lombok.Getter;
+import lombok.Setter;
 
 public class PenaltySituation extends BallSituation {
 
@@ -13,7 +16,11 @@ public class PenaltySituation extends BallSituation {
     }
     private Team team;
     private Vector3f ballPosition;
+    @Getter
+    @Setter
     private float targetShootDirection;
+    @Getter
+    @Setter
     private float targetGoalkeeperDirection;
 
     @Override
@@ -38,27 +45,16 @@ public class PenaltySituation extends BallSituation {
         if (playerObject == startingPlayer) {
             return getBallApproachPosition(getDirectionToOpponentGoal());
         }
-        return super.getPlayerPosition(playerObject);
+        // Move out of penalty area
+        Vector3f position = super.getPlayerPosition(playerObject);
+        if ((playerObject != getGoalkeeper()) && (FastMath.abs(getOpponentGoalX() - position.getX()) < Game.PENALTY_AREA_WIDTH)) {
+            position.setX(getStartingPlayerXFactor() * (Game.FIELD_HALF_WIDTH - Game.PENALTY_AREA_WIDTH - 0.2f));
+        }
+        return position;
     }
 
     public PlayerObject getGoalkeeper() {
         Team goalTeam = game.getTeams()[(startingPlayer.getTeam() == game.getTeams()[0]) ? 1 : 0];
         return goalTeam.getGoalkeeper();
-    }
-
-    public void setTargetShootDirection(float targetShootDirection) {
-        this.targetShootDirection = targetShootDirection;
-    }
-
-    public void setTargetGoalkeeperDirection(float targetGoalkeeperDirection) {
-        this.targetGoalkeeperDirection = targetGoalkeeperDirection;
-    }
-
-    public float getTargetShootDirection() {
-        return targetShootDirection;
-    }
-
-    public float getTargetGoalkeeperDirection() {
-        return targetGoalkeeperDirection;
     }
 }

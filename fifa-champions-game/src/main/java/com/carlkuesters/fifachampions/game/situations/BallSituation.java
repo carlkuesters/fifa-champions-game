@@ -55,7 +55,15 @@ public abstract class BallSituation extends Situation {
     }
 
     private Vector3f getCenterOpponentGoal() {
-        return new Vector3f(game.getHalfTimeSideFactor() * startingPlayer.getTeam().getSide() * Game.FIELD_HALF_WIDTH, 0, 0);
+        return new Vector3f(getOpponentGoalX(), 0, 0);
+    }
+
+    protected float getOpponentGoalX() {
+        return getStartingPlayerXFactor() * Game.FIELD_HALF_WIDTH;
+    }
+
+    protected float getStartingPlayerXFactor() {
+        return game.getHalfTimeSideFactor() * startingPlayer.getTeam().getSide();
     }
 
     public Vector3f getStartingPlayerDirection() {

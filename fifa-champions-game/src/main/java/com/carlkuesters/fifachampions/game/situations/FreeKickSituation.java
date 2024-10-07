@@ -25,6 +25,7 @@ public abstract class FreeKickSituation extends BallSituation {
             return getStartingPlayerPosition(getDirectionToOpponentGoal());
         }
         Vector3f playerPosition = super.getPlayerPosition(playerObject);
+        // Move minimum distance away from ball
         Vector3f distanceToBall = ballPosition.subtract(playerPosition);
         if (distanceToBall.lengthSquared() < (MINIMUM_DISTANCE_TO_BALL * MINIMUM_DISTANCE_TO_BALL)) {
             playerPosition.set(ballPosition.subtract(distanceToBall.normalize().multLocal(MINIMUM_DISTANCE_TO_BALL)));
