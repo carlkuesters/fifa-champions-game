@@ -13,7 +13,7 @@ public class KickOffSituation extends BallSituation {
     }
 
     @Override
-    public Vector3f getBallPosition() {
+    protected Vector3f calculateBallPosition() {
         return Vector3f.ZERO;
     }
 

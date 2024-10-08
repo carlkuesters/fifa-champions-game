@@ -13,7 +13,7 @@ public class ThrowInSituation extends BallSituation {
     private Vector3f throwInPosition;
 
     @Override
-    public Vector3f getBallPosition() {
+    protected Vector3f calculateBallPosition() {
         return new Vector3f(throwInPosition.getX(), 1.8f, throwInPosition.getZ());
     }
 

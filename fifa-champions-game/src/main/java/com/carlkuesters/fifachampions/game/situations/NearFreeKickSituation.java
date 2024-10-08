@@ -5,14 +5,19 @@ import com.carlkuesters.fifachampions.game.PlayerObject;
 import com.carlkuesters.fifachampions.game.Team;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import lombok.Getter;
+import lombok.Setter;
 
 public class NearFreeKickSituation extends FreeKickSituation {
 
     public NearFreeKickSituation(PlayerObject startingPlayer, Vector3f ballPosition) {
         super(startingPlayer, ballPosition);
     }
+    @Getter
     private float optimalShootStrength;
+    @Getter
     private Vector3f targetInGoalPosition = new Vector3f();
+    @Setter
     private Vector2f targetCursorDirection = new Vector2f();
 
     @Override
@@ -26,6 +31,11 @@ public class NearFreeKickSituation extends FreeKickSituation {
     }
 
     @Override
+    protected Vector3f getStartingPlayerPosition(Vector3f directionToOpponentGoal) {
+        return getBallApproachPosition(directionToOpponentGoal);
+    }
+
+    @Override
     public void update(float tpf) {
         super.update(tpf);
         float maximumMovedCursorDistance = (tpf * (0.5f * (Game.GOAL_Z_TOP - Game.GOAL_Z_BOTTOM)));
@@ -35,22 +45,5 @@ public class NearFreeKickSituation extends FreeKickSituation {
         float newTargetInGoalPositionZ = Math.max(Game.GOAL_Z_BOTTOM, Math.min(targetInGoalPosition.getZ() + movedCursorDistanceZ, Game.GOAL_Z_TOP));
         targetInGoalPosition.setY(newTargetInGoalPositionY);
         targetInGoalPosition.setZ(newTargetInGoalPositionZ);
-    }
-
-    @Override
-    protected Vector3f getStartingPlayerPosition(Vector3f directionToOpponentGoal) {
-        return getBallApproachPosition(directionToOpponentGoal);
-    }
-
-    public float getOptimalShootStrength() {
-        return optimalShootStrength;
-    }
-
-    public void setTargetCursorDirection(Vector2f targetCursorDirection) {
-        this.targetCursorDirection.set(targetCursorDirection);
-    }
-
-    public Vector3f getTargetInGoalPosition() {
-        return targetInGoalPosition;
     }
 }

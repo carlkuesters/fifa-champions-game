@@ -1,6 +1,5 @@
 package com.carlkuesters.fifachampions.game.situations;
 
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PlayerObject;
@@ -14,8 +13,9 @@ public class PenaltySituation extends BallSituation {
         super(getStartingPlayer(team));
         this.team = team;
     }
+    private static final float BALL_DISTANCE_TO_GOAL = 11;
+    private static final float MINIMUM_DISTANCE_TO_BALL = 9.15f;
     private Team team;
-    private Vector3f ballPosition;
     @Getter
     @Setter
     private float targetShootDirection;
@@ -23,21 +23,20 @@ public class PenaltySituation extends BallSituation {
     @Setter
     private float targetGoalkeeperDirection;
 
-    @Override
-    public void start() {
-        super.start();
-        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 10, 0), 2);
-    }
-
     // TODO: Properly choosing a starting player (based on position?)
     private static PlayerObject getStartingPlayer(Team team) {
         return team.getPlayers()[team.getPlayers().length - 1];
     }
 
     @Override
-    public Vector3f getBallPosition() {
-        ballPosition = new Vector3f(game.getHalfTimeSideFactor() * team.getSide() * (Game.FIELD_HALF_WIDTH - 11), 0, 0);
-        return ballPosition;
+    public void start() {
+        super.start();
+        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 10, 0), 2);
+    }
+
+    @Override
+    protected Vector3f calculateBallPosition() {
+        return new Vector3f(game.getHalfTimeSideFactor() * team.getSide() * (Game.FIELD_HALF_WIDTH - BALL_DISTANCE_TO_GOAL), 0, 0);
     }
 
     @Override
@@ -45,12 +44,12 @@ public class PenaltySituation extends BallSituation {
         if (playerObject == startingPlayer) {
             return getBallApproachPosition(getDirectionToOpponentGoal());
         }
-        // Move out of penalty area
-        Vector3f position = super.getPlayerPosition(playerObject);
-        if ((playerObject != getGoalkeeper()) && (FastMath.abs(getOpponentGoalX() - position.getX()) < Game.PENALTY_AREA_WIDTH)) {
-            position.setX(getStartingPlayerXFactor() * (Game.FIELD_HALF_WIDTH - Game.PENALTY_AREA_WIDTH - 0.2f));
+        Vector3f playerPosition = super.getPlayerPosition(playerObject);
+        if (playerObject != getGoalkeeper()) {
+            moveOutOfPenaltyArea(playerPosition, false, 0);
+            moveAwayFromBall(playerPosition, MINIMUM_DISTANCE_TO_BALL);
         }
-        return position;
+        return playerPosition;
     }
 
     public PlayerObject getGoalkeeper() {

@@ -18,7 +18,7 @@ public class CornerKickSituation extends BallSituation {
     }
 
     @Override
-    public Vector3f getBallPosition() {
+    protected Vector3f calculateBallPosition() {
         return ballPosition;
     }
 

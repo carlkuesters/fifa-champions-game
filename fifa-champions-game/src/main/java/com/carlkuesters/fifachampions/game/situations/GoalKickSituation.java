@@ -5,6 +5,7 @@ import com.jme3.math.Vector3f;
 import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.game.PlayerObject;
 import com.carlkuesters.fifachampions.game.Team;
+import lombok.Setter;
 
 public class GoalKickSituation extends BallSituation {
     
@@ -16,6 +17,7 @@ public class GoalKickSituation extends BallSituation {
     private Team team;
     private float horizontalPosition;
     private float targetAngle;
+    @Setter
     private float targetAngleDirection;
 
     @Override
@@ -24,14 +26,7 @@ public class GoalKickSituation extends BallSituation {
     }
 
     @Override
-    public void update(float tpf) {
-        super.update(tpf);
-        targetAngle = Math.max(-1 * FastMath.HALF_PI, Math.min(targetAngle + (targetAngleDirection * 1 * FastMath.HALF_PI * tpf), FastMath.HALF_PI));
-        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 11, targetAngle), 1);
-    }
-
-    @Override
-    public Vector3f getBallPosition() {
+    protected Vector3f calculateBallPosition() {
         return new Vector3f((-1 * game.getHalfTimeSideFactor() * team.getSide()) * (Game.FIELD_HALF_WIDTH - 5.24f), 0, horizontalPosition * 8.75f);
     }
 
@@ -40,11 +35,19 @@ public class GoalKickSituation extends BallSituation {
         if (playerObject == startingPlayer) {
             return getBallApproachPosition(getDirectionToOpponentGoal());
         }
-        return super.getPlayerPosition(playerObject);
+        // Move out of penalty area
+        Vector3f playerPosition = super.getPlayerPosition(playerObject);
+        if (playerObject != startingPlayer) {
+            moveOutOfPenaltyArea(playerPosition, true, 1);
+        }
+        return playerPosition;
     }
 
-    public void setTargetAngleDirection(float targetAngleDirection) {
-        this.targetAngleDirection = targetAngleDirection;
+    @Override
+    public void update(float tpf) {
+        super.update(tpf);
+        targetAngle = Math.max(-1 * FastMath.HALF_PI, Math.min(targetAngle + (targetAngleDirection * 1 * FastMath.HALF_PI * tpf), FastMath.HALF_PI));
+        game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 11, targetAngle), 1);
     }
 
     public Vector3f getTargetDirection() {
