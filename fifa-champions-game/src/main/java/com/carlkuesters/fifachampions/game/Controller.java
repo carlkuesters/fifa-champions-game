@@ -34,7 +34,7 @@ public class Controller implements GameLoopListener {
 
     public void resetForNewGame(Game game) {
         this.game = game;
-        switchOrClearPlayer();
+        setPlayer(null);
         targetDirection.set(0, 0);
         isSprinting = false;
     }
@@ -42,15 +42,14 @@ public class Controller implements GameLoopListener {
     public void setTeamSide(int teamSide) {
         this.teamSide = teamSide;
         if (game != null) {
-            switchOrClearPlayer();
+            resetPlayer();
         }
     }
 
-    private void switchOrClearPlayer() {
+    public void resetPlayer() {
+        setPlayer(null);
         if (teamSide != 0) {
-            switchPlayer();
-        } else {
-            setPlayer(null);
+            game.switchToBallNearestPlayer(this);
         }
     }
 
@@ -69,13 +68,11 @@ public class Controller implements GameLoopListener {
 
     @Override
     public void update(float tpf) {
-        if (teamSide != 0) {
-            buttons.update(tpf);
-        }
+        buttons.update(tpf);
     }
 
     public void switchPlayer() {
-        game.switchToNearestSwitchablePlayer(this);
+        game.switchToNextBallNearestSwitchablePlayer(this);
     }
 
     public void setPlayer(PlayerObject playerObject) {

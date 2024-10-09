@@ -31,7 +31,14 @@ public class PenaltySituation extends BallSituation {
     @Override
     public void start() {
         super.start();
+        game.setPlayersCanMove(false);
         game.setCameraPerspective(getCameraPerspectiveTowardsEnemyGoal(3, 10, 0), 2);
+    }
+
+    @Override
+    public void customizePlayerSelection() {
+        super.customizePlayerSelection();
+        game.selectPlayer(getGoalkeeper());
     }
 
     @Override

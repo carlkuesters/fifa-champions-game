@@ -15,6 +15,6 @@ public class SprintButton extends ControllerButton {
 
     @Override
     public ControllerButtonBehaviour getBehaviour() {
-        return sprintButtonBehaviour;
+        return (controller.getGame().getActiveCinematic() == null) ? sprintButtonBehaviour : null;
     }
 }

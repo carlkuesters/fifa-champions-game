@@ -36,7 +36,7 @@ public class DefaultBallActionButton extends ControllerButton {
 
     @Override
     public ControllerButtonBehaviour getBehaviour() {
-        Game game = controller.getPlayerObject().getGame();
+        Game game = controller.getGame();
         PlayerObject ballOwner = game.getBall().getOwner();
         Situation situation = game.getSituation();
         if (game.getActiveCinematic() != null) {

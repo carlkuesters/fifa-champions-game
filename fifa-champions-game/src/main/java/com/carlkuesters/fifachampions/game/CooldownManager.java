@@ -21,6 +21,10 @@ public class CooldownManager implements GameLoopListener{
         cooldowns.add(cooldown);
     }
 
+    public void clear() {
+        cooldowns.clear();
+    }
+
     @Override
     public void update(float tpf) {
         for (int i = 0; i < cooldowns.size(); i++) {

@@ -37,28 +37,35 @@ public class ControllerButtonMap implements GameLoopListener {
 
     @Override
     public void update(float tpf) {
-        for (ControllerButton button : buttons) {
-            ControllerButtonBehaviour buttonBehaviour = button.getBehaviour();
-            if (buttonBehaviour != null) {
-                if (buttonBehaviour instanceof GameLoopListener) {
-                    GameLoopListener buttonBehaviourGameLoopListener = (GameLoopListener) buttonBehaviour;
-                    buttonBehaviourGameLoopListener.update(tpf);
-                }
-                if (buttonBehaviour.isTriggered()) {
-                    buttonBehaviour.trigger();
+        if (isListeningToInput()) {
+            for (ControllerButton button : buttons) {
+                ControllerButtonBehaviour behaviour = button.getBehaviour();
+                if (behaviour != null) {
+                    if (behaviour instanceof GameLoopListener gameLoopListener) {
+                        gameLoopListener.update(tpf);
+                    }
+                    if (behaviour.isTriggered()) {
+                        behaviour.trigger();
+                    }
                 }
             }
         }
     }
 
     public void onButtonPressed(int buttonIndex, boolean isPressed) {
-        ControllerButton button = getButton(buttonIndex);
-        if (button != null) {
-            ControllerButtonBehaviour behaviour = button.getBehaviour();
-            if (behaviour != null) {
-                button.getBehaviour().onPressed(isPressed);
+        if (isListeningToInput()) {
+            ControllerButton button = getButton(buttonIndex);
+            if (button != null) {
+                ControllerButtonBehaviour behaviour = button.getBehaviour();
+                if (behaviour != null) {
+                    button.getBehaviour().onPressed(isPressed);
+                }
             }
         }
+    }
+
+    private boolean isListeningToInput() {
+        return controller.getTeamSide() != 0;
     }
 
     private ControllerButton getButton(int buttonIndex) {

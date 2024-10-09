@@ -17,6 +17,7 @@ import lombok.Setter;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Game implements GameLoopListener {
 
@@ -325,16 +326,19 @@ public class Game implements GameLoopListener {
 
     private void updatePlayerObject(PlayerObject playerObject, float tpf) {
         Controller controller = playerObject.getController();
-        if (controller != null) {
+        if ((controller != null) && (getActiveCinematic() == null)) {
+            boolean canSteer = true;
             if (situation instanceof GoalKickSituation) {
                 GoalKickSituation goalKickSituation = (GoalKickSituation) situation;
                 if (playerObject == goalKickSituation.getStartingPlayer()) {
                     goalKickSituation.setTargetAngleDirection(-1 * controller.getTargetDirection().getX());
+                    canSteer = false;
                 }
             } else if (situation instanceof NearFreeKickSituation) {
                 NearFreeKickSituation nearFreeKickSituation = (NearFreeKickSituation) situation;
                 if (playerObject == nearFreeKickSituation.getStartingPlayer()) {
                     nearFreeKickSituation.setTargetCursorDirection(controller.getTargetDirection());
+                    canSteer = false;
                 }
             } else  if (situation instanceof PenaltySituation) {
                 PenaltySituation penaltySituation = (PenaltySituation) situation;
@@ -344,7 +348,9 @@ public class Game implements GameLoopListener {
                 } else if (playerObject == penaltySituation.getGoalkeeper()) {
                     penaltySituation.setTargetGoalkeeperDirection(targetDirection);
                 }
-            } else if (!controller.getButtons().isChargingBallButton()) {
+                canSteer = false;
+            }
+            if (canSteer && !controller.getButtons().isChargingBallButton()) {
                 playerObject.setTargetWalkDirection(controller.getTargetDirection());
             }
         } else if (!playerObject.isGoalkeeperJumping()) {
@@ -421,7 +427,12 @@ public class Game implements GameLoopListener {
 
     private void startSituation() {
         applyPlayerSwitches();
+        cooldownManager.clear();
         situation.start();
+        for (Controller controller : controllers) {
+            controller.resetPlayer();
+        }
+        situation.customizePlayerSelection();
     }
 
     private void applyPlayerSwitches() {
@@ -439,12 +450,19 @@ public class Game implements GameLoopListener {
         }
     }
 
-    public void continueFromBallSituation() {
-        if (situation instanceof BallSituation) {
-            BallSituation ballSituation = (BallSituation) situation;
-            ballSituation.getStartingPlayer().setCanMove(true);
+    public void continueFromSituation() {
+        if (situation != null) {
+            setPlayersCanMove(true);
             situation = null;
             isTimeRunning = true;
+        }
+    }
+
+    public void setPlayersCanMove(boolean canMove) {
+        for (Team team : teams) {
+            for (PlayerObject playerObject : team.getPlayers()) {
+                playerObject.setCanMove(canMove);
+            }
         }
     }
 
@@ -518,27 +536,33 @@ public class Game implements GameLoopListener {
         return directionFromPlayer.angleBetween(directionToTarget);
     }
 
-    public void switchToNearestSwitchablePlayer(Controller controller) {
+    public void switchToNextBallNearestSwitchablePlayer(Controller controller) {
+        PlayerObject newPlayer = switchToBallNearestSwitchablePlayer(controller, playerObject -> !playerObject.isGoalkeeper() && cooldownManager.isNotOnCooldown(new SwitchToPlayerCooldown(playerObject)));
+        if (newPlayer != null) {
+            cooldownManager.putOnCooldown(new SwitchToPlayerCooldown(newPlayer));
+        }
+    }
+
+    public void switchToBallNearestPlayer(Controller controller) {
+        switchToBallNearestSwitchablePlayer(controller, _ -> true);
+    }
+
+    private PlayerObject switchToBallNearestSwitchablePlayer(Controller controller, Predicate<PlayerObject> isSwitchable) {
         PlayerObject nearestSwitchablePlayer = null;
         float minimumDistanceToBallSquared = Float.MAX_VALUE;
-        SwitchToPlayerCooldown switchToNearestPlayerCooldown = null;
         for (PlayerObject playerObject : controller.getTeam().getPlayers()) {
-            if ((playerObject.getController() == null) && (!playerObject.isGoalkeeper())) {
-                SwitchToPlayerCooldown switchToPlayerCooldown = new SwitchToPlayerCooldown(playerObject);
-                if (cooldownManager.isNotOnCooldown(switchToPlayerCooldown)) {
-                    float distanceToBallSquared = playerObject.getPosition().distanceSquared(ball.getPosition());
-                    if (distanceToBallSquared < minimumDistanceToBallSquared) {
-                        nearestSwitchablePlayer = playerObject;
-                        minimumDistanceToBallSquared = distanceToBallSquared;
-                        switchToNearestPlayerCooldown = switchToPlayerCooldown;
-                    }
+            if ((playerObject.getController() == null) && isSwitchable.test(playerObject)) {
+                float distanceToBallSquared = playerObject.getPosition().distanceSquared(ball.getPosition());
+                if (distanceToBallSquared < minimumDistanceToBallSquared) {
+                    nearestSwitchablePlayer = playerObject;
+                    minimumDistanceToBallSquared = distanceToBallSquared;
                 }
             }
         }
         if (nearestSwitchablePlayer != null) {
             controller.setPlayer(nearestSwitchablePlayer);
-            cooldownManager.putOnCooldown(switchToNearestPlayerCooldown);
         }
+        return nearestSwitchablePlayer;
     }
 
     public static OutSide getOutside(Vector3f position) {

@@ -13,6 +13,12 @@ public class KickOffSituation extends BallSituation {
     }
 
     @Override
+    public void start() {
+        super.start();
+        game.setPlayersCanMove(false);
+    }
+
+    @Override
     protected Vector3f calculateBallPosition() {
         return Vector3f.ZERO;
     }

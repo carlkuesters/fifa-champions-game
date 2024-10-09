@@ -27,7 +27,6 @@ public abstract class BallSituation extends Situation {
         }
         startingPlayer.setDirection(getStartingPlayerDirection());
         startingPlayer.setCanMove(false);
-        game.selectPlayer(startingPlayer);
         game.setReplayRecordingEnabled(false);
     }
 

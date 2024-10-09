@@ -6,6 +6,10 @@ public abstract class Situation implements GameLoopListener {
 
     public abstract void start();
 
+    public void customizePlayerSelection() {
+
+    }
+
     @Override
     public void update(float tpf) {
 

@@ -15,6 +15,6 @@ public class SwitchPlayerButton extends ControllerButton {
 
     @Override
     public ControllerButtonBehaviour getBehaviour() {
-        return switchPlayerButtonBehaviour;
+        return (controller.getGame().getActiveCinematic() == null) ? switchPlayerButtonBehaviour : null;
     }
 }

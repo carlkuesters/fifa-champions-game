@@ -73,7 +73,7 @@ public abstract class ChargedButtonBehaviour extends ControllerButtonBehaviour i
     protected abstract void onTrigger(float strength);
 
     private float getCurrentTime() {
-        return controller.getPlayerObject().getGame().getLogicTime();
+        return controller.getGame().getLogicTime();
     }
 
     public boolean isCharging() {

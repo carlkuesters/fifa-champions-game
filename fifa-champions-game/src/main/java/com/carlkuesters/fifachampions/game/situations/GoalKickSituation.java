@@ -21,11 +21,6 @@ public class GoalKickSituation extends BallSituation {
     private float targetAngleDirection;
 
     @Override
-    public void start() {
-        super.start();
-    }
-
-    @Override
     protected Vector3f calculateBallPosition() {
         return new Vector3f((-1 * game.getHalfTimeSideFactor() * team.getSide()) * (Game.FIELD_HALF_WIDTH - 5.24f), 0, horizontalPosition * 8.75f);
     }
