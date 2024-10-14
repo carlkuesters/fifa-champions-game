@@ -4,7 +4,6 @@ import com.carlkuesters.fifachampions.game.Game;
 import com.carlkuesters.fifachampions.visuals.TimeMaterialParamControl;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.MatParam;
@@ -19,33 +18,38 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.shadow.DirectionalLightShadowFilter;
-import com.jme3.texture.Texture;
-import com.jme3.util.SkyFactory;
+import jme3utilities.sky.SkyControl;
+import jme3utilities.sky.StarsOption;
 
 public class StadiumAppState extends BaseDisplayAppState {
 
+    private SkyControl skyControl;
     private Material[] audienceMaterials;
 
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
-        AmbientLight ambient = new AmbientLight();
-        ambient.setColor(ColorRGBA.White);
-        mainApplication.getRootNode().addLight(ambient);
+        AmbientLight ambientLight = new AmbientLight();
+        ambientLight.setColor(ColorRGBA.White);
+        mainApplication.getRootNode().addLight(ambientLight);
 
-        DirectionalLight sun = new DirectionalLight();
-        sun.setDirection((new Vector3f(-1, -1, -1)).normalizeLocal());
-        sun.setColor(ColorRGBA.White);
-        mainApplication.getRootNode().addLight(sun);
+        DirectionalLight directionalLight = new DirectionalLight();
+        directionalLight.setDirection((new Vector3f(-1, -2.5f, -1)).normalizeLocal());
+        directionalLight.setColor(ColorRGBA.White);
+        mainApplication.getRootNode().addLight(directionalLight);
 
         PostFilterAppState postFilterAppState = getAppState(PostFilterAppState.class);
         postFilterAppState.addFilter(new SSAOFilter(10, 25, 6, 0.1f));
         DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(mainApplication.getAssetManager(), 8192, 4);
-        shadowFilter.setLight(sun);
+        shadowFilter.setLight(directionalLight);
         shadowFilter.setShadowIntensity(0.4f);
         postFilterAppState.addFilter(shadowFilter);
 
-        addSky("miramar");
+        skyControl = new SkyControl(mainApplication.getAssetManager(), mainApplication.getCamera(), 0.7f, StarsOption.Cube, true);
+        skyControl.setCloudiness(0.8f);
+        skyControl.getSunAndStars().setHour(12);
+        mainApplication.getRootNode().addControl(skyControl);
+        skyControl.setEnabled(true);
 
         Node stadium = (Node) mainApplication.getAssetManager().loadModel("models/stadium/stadium_fixed.j3o");
         stadium.move(12.765f, 0, -10.06f);
@@ -110,17 +114,6 @@ public class StadiumAppState extends BaseDisplayAppState {
                 mainApplication.getRootNode().attachChild(goalTestBounds);
             }
         }
-    }
-
-    private void addSky(String skyName) {
-        AssetManager assetManager = mainApplication.getAssetManager();
-        Texture textureWest = assetManager.loadTexture("textures/skies/" + skyName + "/left.png");
-        Texture textureEast = assetManager.loadTexture("textures/skies/" + skyName + "/right.png");
-        Texture textureNorth = assetManager.loadTexture("textures/skies/" + skyName + "/front.png");
-        Texture textureSouth = assetManager.loadTexture("textures/skies/" + skyName + "/back.png");
-        Texture textureUp = assetManager.loadTexture("textures/skies/" + skyName + "/up.png");
-        Texture textureDown = assetManager.loadTexture("textures/skies/" + skyName + "/down.png");
-        mainApplication.getRootNode().attachChild(SkyFactory.createSky(assetManager, textureWest, textureEast, textureNorth, textureSouth, textureUp, textureDown));
     }
 
     public void setAudienceHyped(boolean hyped) {
