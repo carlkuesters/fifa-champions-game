@@ -80,6 +80,7 @@ public class Game implements GameLoopListener {
     private NextSituation nextSituation;
     private Situation situation;
     private int[] goals = new int[2];
+    @Getter
     private CameraPerspective cameraPerspective;
     private float cameraPerspectiveRemainingNonSituationDuration;
     private Function<CinematicInfo<?>, Cinematic> createCinematic;
@@ -328,20 +329,17 @@ public class Game implements GameLoopListener {
         Controller controller = playerObject.getController();
         if ((controller != null) && (getActiveCinematic() == null)) {
             boolean canSteer = true;
-            if (situation instanceof GoalKickSituation) {
-                GoalKickSituation goalKickSituation = (GoalKickSituation) situation;
+            if (situation instanceof GoalKickSituation goalKickSituation) {
                 if (playerObject == goalKickSituation.getStartingPlayer()) {
                     goalKickSituation.setTargetAngleDirection(-1 * controller.getTargetDirection().getX());
                     canSteer = false;
                 }
-            } else if (situation instanceof NearFreeKickSituation) {
-                NearFreeKickSituation nearFreeKickSituation = (NearFreeKickSituation) situation;
+            } else if (situation instanceof NearFreeKickSituation nearFreeKickSituation) {
                 if (playerObject == nearFreeKickSituation.getStartingPlayer()) {
                     nearFreeKickSituation.setTargetCursorDirection(controller.getTargetDirection());
                     canSteer = false;
                 }
-            } else  if (situation instanceof PenaltySituation) {
-                PenaltySituation penaltySituation = (PenaltySituation) situation;
+            } else  if (situation instanceof PenaltySituation penaltySituation) {
                 float targetDirection = Math.signum(controller.getTargetDirection().getX());
                 if (playerObject == penaltySituation.getStartingPlayer()) {
                     penaltySituation.setTargetShootDirection(targetDirection);
@@ -355,8 +353,7 @@ public class Game implements GameLoopListener {
             }
         } else if (!playerObject.isGoalkeeperJumping()) {
             Vector2f idealLocation;
-            if (situation instanceof BallSituation) {
-                BallSituation ballSituation = (BallSituation) situation;
+            if (situation instanceof BallSituation ballSituation) {
                 idealLocation = MathUtil.convertTo2D_XZ(ballSituation.getPlayerPosition(playerObject));
             } else {
                 idealLocation = playerObject.getTeam().getIdealLocation(playerObject);
@@ -708,10 +705,6 @@ public class Game implements GameLoopListener {
     public void setCameraPerspective(CameraPerspective cameraPerspective, float maximumNonSituationDuration) {
         this.cameraPerspective = cameraPerspective;
         this.cameraPerspectiveRemainingNonSituationDuration = maximumNonSituationDuration;
-    }
-
-    public CameraPerspective getCameraPerspective() {
-        return cameraPerspective;
     }
 
     public void playCinematic(CinematicInfo<?> cinematicInfo) {

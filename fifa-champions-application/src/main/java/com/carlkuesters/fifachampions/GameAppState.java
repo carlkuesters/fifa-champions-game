@@ -25,6 +25,10 @@ import java.util.HashMap;
 
 public class GameAppState extends BaseDisplayAppState {
 
+    public static final float DEFAULT_CAMERA_FIELD_OF_VIEW = 25;
+    public static final Vector3f DEFAULT_CAMERA_LOCATION = new Vector3f(0, 30, 50);
+    public static final Vector3f DEFAULT_CAMERA_DIRECTION = new Vector3f(0, -0.6f, -0.9f).normalizeLocal();
+
     @Getter
     private Game game;
     @Getter
@@ -125,8 +129,8 @@ public class GameAppState extends BaseDisplayAppState {
         CameraAppState cameraAppState = getAppState(CameraAppState.class);
         Cinematic activeCinematic = (Cinematic) game.getActiveCinematic();
         if (activeCinematic != null) {
-            cameraAppState.setDefaultFieldOfView();
             if (activeCinematic != cinematicAppState.getCurrentCinematic()) {
+                cameraAppState.setDefaultFieldOfView();
                 cinematicAppState.playCinematic(activeCinematic);
             }
         } else {
@@ -140,13 +144,14 @@ public class GameAppState extends BaseDisplayAppState {
                 } else {
                     // Use the ball visual instead of the ball game object to support camera during replays
                     Vector3f ballPosition = ballVisual.getBallModel().getLocalTranslation();
-                    float x = 1.1f * ballPosition.getX();
+                    float x = 1.1f * ballPosition.getX(); // DEFAULT_CAMERA_LOCATION.getX() is 0
                     x = Math.max(-44, Math.min(x, 44));
-                    float y = 30;
-                    float z = (1 * (ballPosition.getZ() - 10)) + 60;
+                    float y = DEFAULT_CAMERA_LOCATION.getY();
+                    float zShift = -10;
+                    float z = (1 * (ballPosition.getZ() + zShift)) + (DEFAULT_CAMERA_LOCATION.getZ() - zShift);
                     z = Math.max(30, Math.min(z, 63));
-                    cameraAppState.setFieldOfView(25);
-                    cameraAppState.setLocationAndDirection(new Vector3f(x, y, z), new Vector3f(0, -0.6f, -0.9f));
+                    cameraAppState.setFieldOfView(DEFAULT_CAMERA_FIELD_OF_VIEW);
+                    cameraAppState.setLocationAndDirection(new Vector3f(x, y, z), DEFAULT_CAMERA_DIRECTION);
                 }
             }
         }

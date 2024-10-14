@@ -1,9 +1,6 @@
 package com.carlkuesters.fifachampions.cinematics.cinematics;
 
-import com.carlkuesters.fifachampions.GameAppState;
-import com.carlkuesters.fifachampions.IngameAppState;
-import com.carlkuesters.fifachampions.PostFilterAppState;
-import com.carlkuesters.fifachampions.ReplayAppState;
+import com.carlkuesters.fifachampions.*;
 import com.carlkuesters.fifachampions.cinematics.Cinematic;
 import com.carlkuesters.fifachampions.cinematics.CinematicPart;
 import com.carlkuesters.fifachampions.cinematics.actions.*;
@@ -16,10 +13,7 @@ import com.jme3.audio.AudioData;
 import com.jme3.audio.AudioNode;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Spline;
-import com.jme3.math.Vector3f;
+import com.jme3.math.*;
 import com.jme3.post.filters.FadeFilter;
 
 public class GameIntroCinematic extends Cinematic {
@@ -263,12 +257,22 @@ public class GameIntroCinematic extends Cinematic {
                 addWayPoint(new Vector3f(-42, 35, -55));
                 addWayPoint(new Vector3f(41, 7, -28));
                 addWayPoint(new Vector3f(14, 4, 26));
-                addWayPoint(new Vector3f(0, 20, 32.5f));
+                addWayPoint(GameAppState.DEFAULT_CAMERA_LOCATION);
             }});
             setDirectionType(Direction.LookAt);
-            setLookAt(new Vector3f(0, -6, 0), Vector3f.UNIT_Y);
+
+            Plane groundPlane = new Plane(Vector3f.UNIT_Y, 0);
+            Ray defaultGameCameraRay = new Ray(GameAppState.DEFAULT_CAMERA_LOCATION, GameAppState.DEFAULT_CAMERA_DIRECTION);
+            Vector3f defaultGameCameraLookAtOnGround = new Vector3f();
+            defaultGameCameraRay.intersectsWherePlane(groundPlane, defaultGameCameraLookAtOnGround);
+            setLookAt(defaultGameCameraLookAtOnGround, Vector3f.UNIT_Y);
+
             setInitialDuration(8);
         }})));
+        CameraAppState cameraAppState = simpleApplication.getStateManager().getState(CameraAppState.class);
+        addPart(new CinematicPart(cameraPart9, new SimpleAction(() -> {
+            cameraAppState.setFieldOfView(GameAppState.DEFAULT_CAMERA_FIELD_OF_VIEW);
+        })));
     }
 
     @Override
