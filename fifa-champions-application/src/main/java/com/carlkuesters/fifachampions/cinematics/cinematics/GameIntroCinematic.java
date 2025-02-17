@@ -68,11 +68,11 @@ public class GameIntroCinematic extends Cinematic {
         // Tunnel
         addPart(new CinematicPart(cameraPart2, new CameraPathAction(new MotionEvent() {{
             setPath(new MotionPath() {{
-                addWayPoint(new Vector3f(0, 3, 36));
-                addWayPoint(new Vector3f(0, 6, -22));
+                addWayPoint(new Vector3f(0, 3, -36));
+                addWayPoint(new Vector3f(0, 6, 22));
             }});
             setDirectionType(Direction.Rotation);
-            setRotation(new Quaternion(0.027416293f, -0.008860216f, 2.664796E-4f, 0.99958473f));
+            setRotation(new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y));
             setInitialDuration(11.5f);
         }})));
         addPart(new CinematicPart(cameraPart2, new SimpleAction(() -> gameAppState.setDisplayVisuals(true))));
@@ -88,9 +88,9 @@ public class GameIntroCinematic extends Cinematic {
                 CinematicPart walkPart = addPart(new CinematicPart(cameraPart2, new MoveAction(playerVisual.getModelNode(), new MotionEvent() {{
                     setPath(new MotionPath() {{
                         setPathSplineType(Spline.SplineType.Linear);
-                        addWayPoint(new Vector3f(startX, 0, 54 + (_r * 2)));
-                        addWayPoint(new Vector3f(startX, 0, 1));
-                        addWayPoint(new Vector3f(side * (1 + _r), 0, 1));
+                        addWayPoint(new Vector3f(startX, 0, -54 - (_r * 2)));
+                        addWayPoint(new Vector3f(startX, 0, -1));
+                        addWayPoint(new Vector3f(side * (1 + _r), 0, -1));
                         addWayPoint(new Vector3f(side * (1 + _r), 0, 0));
                     }});
                     setDirectionType(Direction.Path);

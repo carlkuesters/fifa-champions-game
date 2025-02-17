@@ -17,13 +17,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.dl4j>1.0.0-M2.1</version.dl4j>
-        <version.jme3>3.6.1-stable</version.jme3>
+        <version.jme3>3.7.0-stable</version.jme3>
         <version.fifa-champions>1.0.0</version.fifa-champions>
         <version.groovy>3.0.22</version.groovy>
         <version.json>20240303</version.json>
         <version.lemur>1.16.0</version.lemur>
         <version.lemur-proto>1.13.0</version.lemur-proto>
-        <version.lombok>1.18.34</version.lombok>
+        <version.lombok>1.18.36</version.lombok>
         <version.maven-compiler-plugin>3.13.0</version.maven-compiler-plugin>
         <version.opencv>4.9.0-0</version.opencv>
         <version.sky-control>1.0.5</version.sky-control>

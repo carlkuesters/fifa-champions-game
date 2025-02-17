@@ -51,19 +51,45 @@ public class StadiumAppState extends BaseDisplayAppState {
         mainApplication.getRootNode().addControl(skyControl);
         skyControl.setEnabled(true);
 
-        Node stadium = (Node) mainApplication.getAssetManager().loadModel("models/stadium/stadium_fixed.j3o");
+        Node stadium = (Node) mainApplication.getAssetManager().loadModel("models/stadium/stadium.j3o");
         stadium.move(12.765f, 0, -10.06f);
         stadium.rotate(0, FastMath.HALF_PI, 0);
         stadium.scale(1.1775f);
         stadium.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        mainApplication.getRootNode().attachChild(stadium);
+
+        // Rotate it so that the player entrance gate is lighted
+        Node wrapper = new Node();
+        wrapper.attachChild(stadium);
+        wrapper.rotate(0, FastMath.PI, 0);
+        mainApplication.getRootNode().attachChild(wrapper);
+
+        // The grass otherwise has shadow artifacts when casting shadows onto the field marking
+        Geometry grass = (Geometry) stadium.getChild("stadium-geom-11");
+        grass.setShadowMode(RenderQueue.ShadowMode.Receive);
 
         // The field marking is a bit above the ground in the model
-        Geometry fieldMarking = (Geometry) stadium.getChild("stadium_fixed-geom-10");
-        fieldMarking.setLocalTranslation(0, -0.19f, 0);
+        Geometry fieldMarking = (Geometry) stadium.getChild("stadium-geom-9");
+        fieldMarking.setLocalTranslation(0, -0.18f, 0);
         fieldMarking.setShadowMode(RenderQueue.ShadowMode.Receive);
 
-        String[] audienceGeometryNames = new String[] { "stadium_fixed-geom-3", "stadium_fixed-geom-4", "stadium_fixed-geom-9" };
+        // Some of the stadium tribunes have a darker blue background than the rest, we always want the bright color
+        Geometry darkTribune = (Geometry) stadium.getChild("stadium-geom-13");
+        Geometry brightTribune = (Geometry) stadium.getChild("stadium-geom-6");
+        darkTribune.setMaterial(brightTribune.getMaterial());
+        // The stadium tribunes sometimes have shadow artifacts when casting onto themselves
+        brightTribune.setShadowMode(RenderQueue.ShadowMode.Receive);
+        darkTribune.setShadowMode(RenderQueue.ShadowMode.Receive);
+
+        // The dark people texture has baked shadows/darkness in it - Since we apply that dynamically on top, we always use the bright texture
+        Geometry peopleDark = (Geometry) stadium.getChild("stadium-geom-8");
+        Geometry peopleBright1 = (Geometry) stadium.getChild("stadium-geom-3");
+        peopleDark.setMaterial(peopleBright1.getMaterial());
+
+        // The side banners are z-fighting the gray background mesh behind them
+        Geometry sideBanners = (Geometry) stadium.getChild("stadium-geom-1");
+        sideBanners.setUserData("layer", 1);
+
+        String[] audienceGeometryNames = new String[] { "stadium-geom-2", "stadium-geom-3", "stadium-geom-8" };
         audienceMaterials = new Material[audienceGeometryNames.length];
         for (int i = 0; i < audienceGeometryNames.length; i++) {
             Geometry geometry = (Geometry) stadium.getChild(audienceGeometryNames[i]);
@@ -84,9 +110,9 @@ public class StadiumAppState extends BaseDisplayAppState {
             geometry.getMaterial().getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
         }
 
-        // But we specifically enable culling for the flags, because they are in the way of the ingame camera (front culling because their normals are inverted)
-        Geometry flags = (Geometry) stadium.getChild("stadium_fixed-geom-1");
-        flags.getMaterial().getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Front);
+        // But we specifically enable culling for the flags, because they are in the way of the ingame camera
+        Geometry flags = (Geometry) stadium.getChild("stadium-geom-0");
+        flags.getMaterial().getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Back);
 
         if (false) {
             Geometry fieldTestBounds = new Geometry("", new Box(Game.FIELD_HALF_WIDTH, Game.GOAL_HEIGHT / 2, Game.FIELD_HALF_HEIGHT));

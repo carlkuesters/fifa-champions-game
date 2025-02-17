@@ -1,4 +1,4 @@
-// This file is copied and adapted from Common/MatDefs/Light/Lighting.frag
+// This file is copied and adapted from Common/MatDefs/Light/Lighting.vert
 
 #import "Common/ShaderLib/GLSLCompat.glsllib"
 #import "Common/ShaderLib/Instancing.glsllib"
