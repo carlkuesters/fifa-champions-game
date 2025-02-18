@@ -1,27 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.carlkuesters.fifachampions;
 
+import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.jme3.animation.AnimChannel;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
+import com.jme3.scene.*;
 
-
-/**
- *
- * @author Carl
- */
 public class JMonkeyUtil{
     
     public static void disableLogger(){
@@ -35,19 +25,6 @@ public class JMonkeyUtil{
             return new Vector3f(2 * boundingBox.getXExtent(), 2 * boundingBox.getYExtent(), 2 * boundingBox.getZExtent());
         }
         return new Vector3f(0, 0, 0);
-    }
-    
-    public static Spatial getChild(Spatial spatial, int... index){
-        for(int i=0;i<index.length;i++){
-            if(spatial instanceof Node){
-                Node node = (Node) spatial;
-                spatial = node.getChild(index[i]);
-            }
-            else{
-                break;
-            }
-        }
-        return spatial;
     }
     
     public static LinkedList<Geometry> getAllGeometryChilds(Spatial spatial){
@@ -67,28 +44,23 @@ public class JMonkeyUtil{
         }
         return geometryChilds;
     }
-    
-    public static void copyAnimation(AnimChannel sourceAnimationChannel, AnimChannel targetAnimationChannel){
-        if(sourceAnimationChannel.getAnimationName() != null){
-            targetAnimationChannel.setAnim(sourceAnimationChannel.getAnimationName());
-            targetAnimationChannel.setSpeed(sourceAnimationChannel.getSpeed());
-            targetAnimationChannel.setTime(sourceAnimationChannel.getTime());
-            targetAnimationChannel.setLoopMode(sourceAnimationChannel.getLoopMode());
+
+    public static void shiftAndScaleTextureCoordinates(Mesh mesh, Vector2f shift, Vector2f scale) {
+        VertexBuffer textCoordBuffer = mesh.getBuffer(VertexBuffer.Type.TexCoord);
+        FloatBuffer data = (FloatBuffer) textCoordBuffer.getData();
+        data.clear();
+        for (int i = 0; i < (data.limit() / 2); i++) {
+            float x = data.get();
+            float y = data.get();
+            data.position(data.position() - 2);
+            x = shift.getX() + (x * scale.getX());
+            y = shift.getY() + (y * scale.getY());
+            data.put(x).put(y);
         }
+        data.clear();
+        textCoordBuffer.updateData(data);
     }
-    
-    public static void setHardwareSkinningPreferred(Spatial spatial, boolean isPreferred){
-        SkeletonControl skeletonControl = spatial.getControl(SkeletonControl.class);
-        if(skeletonControl != null){
-            skeletonControl.setHardwareSkinningPreferred(isPreferred);
-        }
-    }
-    
-    public static void setLocalRotation(Spatial spatial, Vector3f rotation){
-        Vector3f lookAtLocation = spatial.getWorldTranslation().add(rotation);
-        spatial.lookAt(lookAtLocation, Vector3f.UNIT_Y);
-    }
-    
+
     public static Quaternion getQuaternion_X(float degrees){
         return getQuaternion(degrees, Vector3f.UNIT_X);
     }

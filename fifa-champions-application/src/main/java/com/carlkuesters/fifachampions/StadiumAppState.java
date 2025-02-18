@@ -11,6 +11,7 @@ import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.queue.RenderQueue;
@@ -63,8 +64,10 @@ public class StadiumAppState extends BaseDisplayAppState {
         wrapper.rotate(0, FastMath.PI, 0);
         mainApplication.getRootNode().attachChild(wrapper);
 
-        // The grass otherwise has shadow artifacts when casting shadows onto the field marking
         Geometry grass = (Geometry) stadium.getChild("stadium-geom-11");
+        // The bright and dark grass stripes are not well aligned with the field markings otherwise
+        JMonkeyUtil.shiftAndScaleTextureCoordinates(grass.getMesh(), new Vector2f(0.02f, 0), new Vector2f(1.31f, 1.31f));
+        // The grass otherwise has shadow artifacts when casting shadows onto the field marking
         grass.setShadowMode(RenderQueue.ShadowMode.Receive);
 
         // The field marking is a bit above the ground in the model
