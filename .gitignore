@@ -64,12 +64,3 @@ nbactions.xml
 # FIFA-Champions specific #
 workspace
 generated
-*.obj
-*.mtl
-*.fbx
-*.FBX
-*.psd
-*.blend
-*.mesh.xml
-*.skeleton.xml
-animations.csv
