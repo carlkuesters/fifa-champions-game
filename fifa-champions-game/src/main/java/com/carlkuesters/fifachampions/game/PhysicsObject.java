@@ -116,7 +116,7 @@ public class PhysicsObject extends GameObject {
                 return PhysicsDirection.X;
             } else if (outsideGoalPosition.getY() > Game.GOAL_HEIGHT) {
                 return PhysicsDirection.Y;
-            } else if ((outsideGoalPosition.getZ() < Game.GOAL_Z_BOTTOM) || (outsideGoalPosition.getZ() > Game.GOAL_Z_TOP)) {
+            } else if ((outsideGoalPosition.getZ() < (Game.GOAL_DEPTH / -2)) || (outsideGoalPosition.getZ() > (Game.GOAL_DEPTH / 2))) {
                 return PhysicsDirection.Z;
             }
         }

@@ -2,9 +2,8 @@ package com.carlkuesters.fifachampions.visuals;
 
 import com.carlkuesters.fifachampions.JMonkeyUtil;
 import com.carlkuesters.fifachampions.game.PlayerAnimation;
-import com.jme3.animation.AnimChannel;
-import com.jme3.animation.AnimControl;
-import com.jme3.animation.SkeletonControl;
+import com.jme3.anim.AnimComposer;
+import com.jme3.anim.SkinningControl;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.*;
@@ -19,26 +18,24 @@ public class PlayerVisual {
         this.assetManager = assetManager;
         this.playerSkin = playerSkin;
         playerModel = (Node) assetManager.loadModel("models/player/player.j3o");
-        float playerScale = 0.0106f;
+        float playerScale = 0.4174f;
         playerModel.scale(playerScale);
         float halfPlayerModelHeight = (JMonkeyUtil.getSpatialDimension(playerModel).getY() / 2);
         // Center player model on y axis
-        float playerModelOffsetForFeetsOnGround = 1.302f;
+        float playerModelOffsetForFeetsOnGround = 0.31f;
         playerModel.move(0, (playerModelOffsetForFeetsOnGround - halfPlayerModelHeight), 0);
-        playerModel.rotate(0, -1 * FastMath.HALF_PI, 0);
-        AnimControl animControl = playerModel.getControl(AnimControl.class);
-        AnimChannel animChannel = animControl.createChannel();
-        playerVisualAnimationControl = new PlayerVisualAnimationControl(animChannel);
+        AnimComposer animComposer = playerModel.getControl(AnimComposer.class);
+        playerVisualAnimationControl = new PlayerVisualAnimationControl(animComposer);
         playerModel.addControl(playerVisualAnimationControl);
         // Head
+        Geometry head = (Geometry) playerModel.getChild("head_0");
         Material materialHead = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         materialHead.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/face_" + playerSkin.getFaceName() + ".png"));
         materialHead.setTexture("NormalMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/face_normal.png"));
         materialHead.setTexture("SpecularMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/face_specular.png"));
-        Geometry head = (Geometry) playerModel.getChild("head");
         head.setMaterial(materialHead);
         // Body
-        Geometry body = (Geometry) playerModel.getChild("body");
+        Geometry body = (Geometry) playerModel.getChild("body_0");
         materialBody = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         materialBody.setTexture("DiffuseMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/body_original.png"));
         materialBody.setTexture("NormalMap", MaterialFactory.loadTexture(assetManager, "models/player/resources/body_normal.png"));
@@ -56,7 +53,7 @@ public class PlayerVisual {
         // Hair
         if (playerSkin.getHairName() != null) {
             Geometry hairModel = (Geometry) assetManager.loadModel("models/hair/" + playerSkin.getHairName() + ".j3o");
-            hairModel.setLocalScale(0.31f / playerScale);
+            hairModel.setLocalScale(12.5f / playerScale);
             hairModel.rotate(new Quaternion().fromAngleAxis(1.5f * FastMath.PI, Vector3f.UNIT_Z));
             Material materialHair = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
             materialHair.setBoolean("UseMaterialColors", true);
@@ -68,11 +65,11 @@ public class PlayerVisual {
 
             Node hairWrapper = new Node();
             hairWrapper.attachChild(hairModel);
-            hairWrapper.setLocalTranslation(-0.038f / playerScale, 0.038f / playerScale, 0);
+            hairWrapper.setLocalTranslation(-2.3f / playerScale, 0.5f / playerScale, 0);
             hairWrapper.rotate(new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_X));
 
-            SkeletonControl skeletonControl = playerModel.getControl(SkeletonControl.class);
-            skeletonControl.getAttachmentsNode("Bip001 Head").attachChild(hairWrapper);
+            SkinningControl skinningControl = playerModel.getControl(SkinningControl.class);
+            skinningControl.getAttachmentsNode("Bip001 Head").attachChild(hairWrapper);
         }
     }
     private AssetManager assetManager;

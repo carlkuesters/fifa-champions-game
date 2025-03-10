@@ -65,7 +65,8 @@ public class TrikotMenuAppState extends MenuAppState {
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        rotatePlayerVisuals(tpf);
+        // TODO: Decide if wanted to not, maybe on L2+R2 press?
+        // rotatePlayerVisuals(tpf);
     }
 
     private void rotatePlayerVisuals(float tpf) {

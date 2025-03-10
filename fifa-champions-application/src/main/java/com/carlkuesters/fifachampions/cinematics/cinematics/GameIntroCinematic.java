@@ -27,15 +27,15 @@ public class GameIntroCinematic extends Cinematic {
         Game game = gameAppState.getGame();
 
         // FadeIn
-        PostFilterAppState postFilterAppState = simpleApplication.getStateManager().getState(PostFilterAppState.class);
+        SceneProcessorAppState sceneProcessorAppState = simpleApplication.getStateManager().getState(SceneProcessorAppState.class);
         float fadeDuration = 2;
         FadeFilter fadeFilter = new FadeFilter(fadeDuration);
-        postFilterAppState.addFilter(fadeFilter);
+        sceneProcessorAppState.addFilter(fadeFilter);
         addPart(new CinematicPart(0, new SimpleAction(() -> {
             fadeFilter.setValue(0);
             fadeFilter.fadeIn();
         })));
-        addPart(new CinematicPart(fadeDuration, new SimpleAction(() -> postFilterAppState.removeFilter(fadeFilter))));
+        addPart(new CinematicPart(fadeDuration, new SimpleAction(() -> sceneProcessorAppState.removeFilter(fadeFilter))));
 
         // Audio
         AudioNode audioNode = new AudioNode(simpleApplication.getAssetManager(), "sounds/anthem_short.ogg", AudioData.DataType.Stream);

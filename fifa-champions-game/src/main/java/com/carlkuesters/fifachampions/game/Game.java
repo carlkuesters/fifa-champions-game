@@ -54,9 +54,8 @@ public class Game implements GameLoopListener {
     public static final float PENALTY_AREA_WIDTH = 16;
     public static final float PENALTY_AREA_HEIGHT = 39.2f;
     public static final float GOAL_WIDTH = 1.9f;
-    public static final float GOAL_HEIGHT = 3.05f;
-    public static final float GOAL_Z_BOTTOM = -4.5f;
-    public static final float GOAL_Z_TOP = 3.9f;
+    public static final float GOAL_HEIGHT = 3.32f;
+    public static final float GOAL_DEPTH = 8.6f;
     public static final float MAXIMUM_NEAR_FREE_KICK_DISTANCE = 30;
     private static final Vector3f CORNER_KICK_BOTTOM_LEFT = new Vector3f(-1 * FIELD_HALF_WIDTH, 0, -1 * FIELD_HALF_HEIGHT);
     private static final Vector3f CORNER_KICK_TOP_LEFT = new Vector3f(-1 * FIELD_HALF_WIDTH, 0, FIELD_HALF_HEIGHT);
@@ -623,8 +622,8 @@ public class Game implements GameLoopListener {
 
     private static boolean isInsideGoal_YZ(Vector3f position) {
         return (position.getY() < GOAL_HEIGHT)
-            && (position.getZ() > GOAL_Z_BOTTOM)
-            && (position.getZ() < GOAL_Z_TOP);
+            && (position.getZ() > (GOAL_DEPTH / -2))
+            && (position.getZ() < (GOAL_DEPTH / 2));
     }
 
     public float getDistanceToGoalLine(Vector3f position, Team goalTeam) {

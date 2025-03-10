@@ -6,8 +6,9 @@ import com.carlkuesters.fifachampions.replay.PlayerReplayState;
 import com.carlkuesters.fifachampions.replay.Replay;
 import com.carlkuesters.fifachampions.replay.ReplayFrame;
 import com.carlkuesters.fifachampions.visuals.PlayerVisual;
-import com.jme3.animation.AnimChannel;
-import com.jme3.animation.AnimControl;
+import com.jme3.anim.AnimComposer;
+import com.jme3.anim.AnimLayer;
+import com.jme3.anim.tween.action.Action;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -78,9 +79,10 @@ public class ReplayAppState extends BaseDisplayAppState {
             Vector3f position = playerVisual.getModelNode().getLocalTranslation().clone();
             Quaternion rotation = playerVisual.getModelNode().getLocalRotation().clone();
 
-            AnimChannel animChannel = playerVisual.getPlayerModel().getControl(AnimControl.class).getChannel(0);
-            String animationName = animChannel.getAnimationName();
-            float animationTime = animChannel.getTime();
+            AnimComposer animComposer = playerVisual.getPlayerModel().getControl(AnimComposer.class);
+            AnimLayer animLayer = animComposer.getLayer(AnimComposer.DEFAULT_LAYER);
+            String animationName = animLayer.getCurrentActionName();
+            float animationTime = (float) animLayer.getTime();
 
             playerStates.put(playerVisual, new PlayerReplayState(position, rotation, displayed, animationName, animationTime));
         }
@@ -110,13 +112,15 @@ public class ReplayAppState extends BaseDisplayAppState {
             modelNode.setLocalTranslation(playerState.getPosition());
             modelNode.setLocalRotation(playerState.getRotation());
 
-            AnimChannel animChannel = playerVisual.getPlayerModel().getControl(AnimControl.class).getChannel(0);
+            AnimComposer animComposer = playerVisual.getPlayerModel().getControl(AnimComposer.class);
             if (playerState.getAnimationName() != null) {
-                animChannel.setAnim(playerState.getAnimationName(), 0);
-                animChannel.setTime(playerState.getAnimationTime());
-                animChannel.setSpeed(0);
+                AnimLayer animLayer = animComposer.getLayer(AnimComposer.DEFAULT_LAYER);
+                Action action = animComposer.action(playerState.getAnimationName());
+                animLayer.setCurrentAction(action);
+                animLayer.setTime(playerState.getAnimationTime());
+                action.setSpeed(0);
             } else {
-                animChannel.reset(true);
+                animComposer.reset();
             }
         });
 

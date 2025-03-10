@@ -1,15 +1,16 @@
 package com.carlkuesters.fifachampions;
 
 import java.nio.FloatBuffer;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.anim.SkinningControl;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.material.Material;
+import com.jme3.math.*;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.*;
 
 public class JMonkeyUtil{
@@ -26,24 +27,6 @@ public class JMonkeyUtil{
         }
         return new Vector3f(0, 0, 0);
     }
-    
-    public static LinkedList<Geometry> getAllGeometryChilds(Spatial spatial){
-        LinkedList<Geometry> geometryChilds = new LinkedList<Geometry>();
-        if(spatial instanceof Node){
-            Node node = (Node) spatial;
-            for(int i=0;i<node.getChildren().size();i++){
-                Spatial child = node.getChild(i);
-                if(child instanceof Geometry){
-                    Geometry geometry = (Geometry) child;
-                    geometryChilds.add(geometry);
-                }
-                else{
-                    geometryChilds.addAll(getAllGeometryChilds(child));
-                }
-            }
-        }
-        return geometryChilds;
-    }
 
     public static void shiftAndScaleTextureCoordinates(Mesh mesh, Vector2f shift, Vector2f scale) {
         VertexBuffer textCoordBuffer = mesh.getBuffer(VertexBuffer.Type.TexCoord);
@@ -59,6 +42,22 @@ public class JMonkeyUtil{
         }
         data.clear();
         textCoordBuffer.updateData(data);
+    }
+
+    public static void setAmbient(Geometry geometry, float ambient) {
+        Material material = geometry.getMaterial();
+        material.setBoolean("UseMaterialColors", true);
+        material.setColor("Ambient", new ColorRGBA(ambient, ambient, ambient, 1));
+    }
+
+    public static void updateAnimatedModelBounds(Spatial spatial, RenderManager renderManager, ViewPort viewPort) {
+        SkinningControl skinningControl = spatial.getControl(SkinningControl.class);
+        skinningControl.setHardwareSkinningPreferred(false);
+        skinningControl.update(0);
+        skinningControl.render(renderManager, viewPort);
+        spatial.updateModelBound();
+        spatial.updateGeometricState();
+        skinningControl.setHardwareSkinningPreferred(true);
     }
 
     public static Quaternion getQuaternion_X(float degrees){

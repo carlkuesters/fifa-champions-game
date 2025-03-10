@@ -15,19 +15,19 @@ public class MainMenuCinematic extends Cinematic {
         loop = true;
         CinematicPart cameraPart1 = addPart(new CinematicPart(0, new CameraPathAction(new MotionEvent() {{
             setPath(new MotionPath() {{
-                addWayPoint(new Vector3f(-85, 25, -50));
-                addWayPoint(new Vector3f(40, 17, 20));
+                addWayPoint(new Vector3f(85, 25, 50));
+                addWayPoint(new Vector3f(-40, 17, -20));
             }});
             setDirectionType(Direction.Path);
             setSpeed(0.5f);
         }})));
         CinematicPart cameraPart2 = addPart(new CinematicPart(cameraPart1, new CameraPathAction(new MotionEvent() {{
             setPath(new MotionPath() {{
-                addWayPoint(new Vector3f(35, 6, -45));
-                addWayPoint(new Vector3f(-59, 6, -6));
+                addWayPoint(new Vector3f(-35, 6, 45));
+                addWayPoint(new Vector3f(59, 6, 6));
             }});
             setDirectionType(Direction.Rotation);
-            setRotation(new Quaternion().fromAngleAxis(0, Vector3f.UNIT_Y));
+            setRotation(new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y));
             setSpeed(0.5f);
         }})));
         addPart(new CinematicPart(cameraPart2, new CameraPathAction(new MotionEvent() {{

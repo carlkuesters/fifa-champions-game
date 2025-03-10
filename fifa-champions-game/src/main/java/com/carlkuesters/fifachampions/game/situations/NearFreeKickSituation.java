@@ -38,11 +38,11 @@ public class NearFreeKickSituation extends FreeKickSituation {
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        float maximumMovedCursorDistance = (tpf * (0.5f * (Game.GOAL_Z_TOP - Game.GOAL_Z_BOTTOM)));
+        float maximumMovedCursorDistance = (tpf * (Game.GOAL_DEPTH / 2));
         float movedCursorDistanceY = (-1 * targetCursorDirection.getY() * maximumMovedCursorDistance);
         float movedCursorDistanceZ = (game.getHalfTimeSideFactor() * targetCursorDirection.getX() * maximumMovedCursorDistance);
         float newTargetInGoalPositionY = Math.max(0, Math.min(targetInGoalPosition.getY() + movedCursorDistanceY, Game.GOAL_HEIGHT));
-        float newTargetInGoalPositionZ = Math.max(Game.GOAL_Z_BOTTOM, Math.min(targetInGoalPosition.getZ() + movedCursorDistanceZ, Game.GOAL_Z_TOP));
+        float newTargetInGoalPositionZ = Math.max((Game.GOAL_DEPTH / -2), Math.min(targetInGoalPosition.getZ() + movedCursorDistanceZ, (Game.GOAL_DEPTH / 2)));
         targetInGoalPosition.setY(newTargetInGoalPositionY);
         targetInGoalPosition.setZ(newTargetInGoalPositionZ);
     }

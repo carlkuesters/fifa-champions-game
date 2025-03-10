@@ -37,6 +37,7 @@ public class Main extends SimpleApplication {
     public void simpleInitApp() {
         assetManager.registerLocator("../assets/", FileLocator.class);
         viewPort.getQueue().setGeometryComparator(RenderQueue.Bucket.Opaque, new LayerGeometryComparator_Opaque());
+        viewPort.getQueue().setGeometryComparator(RenderQueue.Bucket.Transparent, new LayerGeometryComparator_Transparent());
 
         setPauseOnLostFocus(false);
         setDisplayStatView(false);
@@ -53,7 +54,7 @@ public class Main extends SimpleApplication {
 
         stateManager.attach(new ControllerAppState());
         stateManager.attach(new CameraAppState());
-        stateManager.attach(new PostFilterAppState());
+        stateManager.attach(new SceneProcessorAppState());
         stateManager.attach(new CinematicAppState());
         stateManager.attach(new StadiumAppState());
         stateManager.attach(new MainSettingsMenuAppState());

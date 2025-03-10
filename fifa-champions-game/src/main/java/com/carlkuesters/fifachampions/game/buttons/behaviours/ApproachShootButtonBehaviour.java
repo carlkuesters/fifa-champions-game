@@ -22,9 +22,9 @@ public abstract class ApproachShootButtonBehaviour<T extends BallSituation> exte
         playerObject.setForcedSpeed(APPROACH_SPEED);
         // Adjust the target location according to the animation, so the foot exactly hits the ball visually
         // TODO: Left foots have negated angle
-        Vector3f footOffset = new Quaternion().fromAngleAxis((true ? 1 : -1) * FastMath.HALF_PI, Vector3f.UNIT_Y).mult(playerObject.getDirection()).multLocal(0.4f);
+        Vector3f footOffset = new Quaternion().fromAngleAxis((true ? 1 : -1) * FastMath.HALF_PI, Vector3f.UNIT_Y).mult(playerObject.getDirection()).multLocal(0.2f);
         playerObject.setTargetLocation(MathUtil.convertTo2D_XZ(controller.getGame().getBall().getPosition().add(footOffset)));
-        playerObject.setAnimation(new PlayerAnimation("stand_kick", 2.41f));
+        playerObject.setAnimation(new PlayerAnimation("run_kick", 2.41f));
         playerObject.getGame().enqueue(new EnqueuedAction(() -> {
             playerObject.setForcedSpeed(null);
             playerObject.setTargetLocation(null);

@@ -22,7 +22,9 @@ public class GoalKickSituation extends BallSituation {
 
     @Override
     protected Vector3f calculateBallPosition() {
-        return new Vector3f((-1 * game.getHalfTimeSideFactor() * team.getSide()) * (Game.FIELD_HALF_WIDTH - 5.24f), 0, horizontalPosition * 8.75f);
+        // So the ball aligns visually with the 5m line
+        float ballOffsetX = 0.18f;
+        return new Vector3f((-1 * game.getHalfTimeSideFactor() * team.getSide()) * (Game.FIELD_HALF_WIDTH - (5 + ballOffsetX)), 0, horizontalPosition * 8.75f);
     }
 
     @Override
