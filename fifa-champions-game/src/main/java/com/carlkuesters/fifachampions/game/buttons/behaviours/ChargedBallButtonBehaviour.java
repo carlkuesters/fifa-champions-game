@@ -11,13 +11,21 @@ public abstract class ChargedBallButtonBehaviour extends ChargedButtonBehaviour 
     @Override
     public void onPressed(boolean isPressed) {
         super.onPressed(isPressed);
-        if (isPressed && controller.getPlayerObject().isOwningBall()) {
-            onBallOwnerPressed();
-            controller.getGame().setReplayRecordingEnabled(true);
+        if (isPressed) {
+            if (controller.getPlayerObject().isOwningBall()) {
+                onBallOwnerPressed();
+                controller.getGame().setReplayRecordingEnabled(true);
+            } else {
+                onNotBallOwnerPressed();
+            }
         }
     }
 
     protected void onBallOwnerPressed() {
+
+    }
+
+    protected void onNotBallOwnerPressed() {
 
     }
 

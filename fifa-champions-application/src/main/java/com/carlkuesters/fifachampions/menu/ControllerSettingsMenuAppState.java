@@ -38,6 +38,7 @@ public class ControllerSettingsMenuAppState extends SettingsMenuAppState {
         addRecordButton("Schuss", ControllerSettings::getButtonIndex_Shoot, ControllerSettings::setButtonIndex_Shoot);
         addRecordButton("Sprint", ControllerSettings::getButtonIndex_Sprint, ControllerSettings::setButtonIndex_Sprint);
         addRecordButton("Spieler wechseln", ControllerSettings::getButtonIndex_SwitchPlayer, ControllerSettings::setButtonIndex_SwitchPlayer);
+        addRecordButton("Fallrückzieher", ControllerSettings::getButtonIndex_TrickShot, ControllerSettings::setButtonIndex_TrickShot);
         update();
     }
 

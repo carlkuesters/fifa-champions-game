@@ -17,10 +17,31 @@ public class ShootButtonBehaviour extends ChargedBallButtonBehaviour {
     }
 
     @Override
+    protected void onNotBallOwnerPressed() {
+        super.onNotBallOwnerPressed();
+        if (controller.isTrickShooting()) {
+            int bicycleStartFrames = 66 - 46;
+            int bicycleStartToEndFrames = 135 - 46;
+            // The animation is precisely so long, that the kick happens at max charge duration
+            float freezeTime = (maxChargedDuration * (((float) bicycleStartToEndFrames) / bicycleStartFrames));
+            controller.getPlayerObject().setAnimation(new PlayerAnimation("bicycle_kick", freezeTime));
+            controller.getPlayerObject().freeze(freezeTime);
+            controller.getPlayerObject().turnIntoControllerTargetDirection();
+            controller.getPlayerObject().setTrickShooting(true);
+        }
+    }
+
+    @Override
     protected void onTrigger(float strength) {
         PlayerObject playerObject = controller.getPlayerObject();
         playerObject.turnIntoControllerTargetDirection();
-        if (playerObject.getGame().getBall().getPosition().getY() > 1) {
+        if (playerObject.isTrickShooting()) {
+            float freezeTime = 2;
+            playerObject.setAnimation(new PlayerAnimation("bicycle_kick_end", freezeTime));
+            playerObject.freeze(freezeTime);
+            playerObject.shoot(strength);
+            playerObject.setTrickShooting(false);
+        } else if (playerObject.getGame().getBall().getPosition().getY() > 1) {
             playerObject.header(strength);
             playerObject.setAnimation(new PlayerAnimation("header_end", 0.5f));
         } else {

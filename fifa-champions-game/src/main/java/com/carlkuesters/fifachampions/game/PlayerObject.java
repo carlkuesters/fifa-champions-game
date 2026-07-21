@@ -27,10 +27,14 @@ public class PlayerObject extends PhysicsObject {
     private boolean canMove = true;
     private float remainingFreezeTime;
     private Float forcedSpeed;
+    @Setter
     private boolean isSprinting;
     private boolean isPressuring;
     private boolean isStraddling;
     private float remainingFallingDuration;
+    @Getter
+    @Setter
+    private boolean isTrickShooting;
     private boolean isGoalkeeperJumping;
     @Getter
     @Setter
@@ -45,6 +49,7 @@ public class PlayerObject extends PhysicsObject {
             remainingFreezeTime -= tpf;
             if (remainingFreezeTime <= 0) {
                 remainingFreezeTime = 0;
+                isTrickShooting = false;
             }
         }
         isTurning = false;
@@ -355,10 +360,6 @@ public class PlayerObject extends PhysicsObject {
 
     public void setForcedSpeed(Float forcedSpeed) {
         this.forcedSpeed = forcedSpeed;
-    }
-
-    public void setIsSprinting(boolean isSprinting) {
-        this.isSprinting = isSprinting;
     }
 
     public void setIsPressuring(boolean isPressuring) {

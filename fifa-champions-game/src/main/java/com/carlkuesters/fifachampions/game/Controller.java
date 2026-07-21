@@ -31,6 +31,9 @@ public class Controller implements GameLoopListener {
     private Vector2f targetDirection;
     @Getter
     private boolean isSprinting;
+    @Getter
+    @Setter
+    private boolean isTrickShooting;
 
     public void resetForNewGame(Game game) {
         this.game = game;
@@ -91,6 +94,6 @@ public class Controller implements GameLoopListener {
 
     public void setIsSprinting(boolean isSprinting) {
         this.isSprinting = isSprinting;
-        playerObject.setIsSprinting(isSprinting);
+        playerObject.setSprinting(isSprinting);
     }
 }

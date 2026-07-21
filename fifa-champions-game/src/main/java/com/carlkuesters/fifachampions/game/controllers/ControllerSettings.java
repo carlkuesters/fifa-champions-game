@@ -12,4 +12,5 @@ public class ControllerSettings {
     private int buttonIndex_PassInRunOrGoalkeeperPressure = ControllerButtonPS5.TRIANGLE.getButtonIndex();
     private int buttonIndex_SwitchPlayer = ControllerButtonPS5.L1.getButtonIndex();
     private int buttonIndex_Sprint = ControllerButtonPS5.R2.getButtonIndex();
+    private int buttonIndex_TrickShot = ControllerButtonPS5.L2.getButtonIndex();
 }

@@ -17,6 +17,7 @@ public class ControllerButtonMap implements GameLoopListener {
         shootButton = new ShootButton(controller);
         sprintButton = new SprintButton(controller);
         switchPlayerButton = new SwitchPlayerButton(controller);
+        trickShotButton = new TrickShotButton(controller);
         buttons = new ControllerButton[] {
             passDirectOrPressureButton,
             passInRunOrGoalkeeperPressureButton,
@@ -24,6 +25,7 @@ public class ControllerButtonMap implements GameLoopListener {
             shootButton,
             sprintButton,
             switchPlayerButton,
+            trickShotButton,
         };
     }
     private Controller controller;
@@ -33,6 +35,7 @@ public class ControllerButtonMap implements GameLoopListener {
     private ShootButton shootButton;
     private SprintButton sprintButton;
     private SwitchPlayerButton switchPlayerButton;
+    private TrickShotButton trickShotButton;
     private ControllerButton[] buttons;
 
     @Override
@@ -82,6 +85,8 @@ public class ControllerButtonMap implements GameLoopListener {
             return sprintButton;
         } else if (buttonIndex == settings.getButtonIndex_SwitchPlayer()) {
             return switchPlayerButton;
+        } else if (buttonIndex == settings.getButtonIndex_TrickShot()) {
+            return trickShotButton;
         }
         return null;
     }
